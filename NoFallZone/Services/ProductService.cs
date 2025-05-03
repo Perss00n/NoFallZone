@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NoFallZone.Data;
 using NoFallZone.Menu;
+using NoFallZone.Utilities;
 using NoFallZone.Models;
 
 namespace NoFallZone.Services;
@@ -21,12 +22,12 @@ public class ProductService
     public void ShowAllProducts()
     {
         var products = db.Products
-                         .Include(p => p.Category)
-                         .Include(p => p.Supplier)
+                         .Include(product => product.Category)
+                         .Include(product => product.Supplier)
                          .ToList();
 
-        var productDetails = products.Select(p =>
-            $"[{p.Id}] {p.Name} ({p.Category?.Name}) - {p.Price:C} | Stock: {p.Stock}"
+        var productDetails = products.Select(product =>
+            $"[{product.Id}] {product.Name} ({product.Category?.Name}) - {product.Price:C} | Stock: {product.Stock}"
         ).ToList();
 
         GUI.DrawWindow("Products", 20, 1, productDetails, maxLineWidth: 100);
@@ -37,7 +38,7 @@ public class ProductService
     {
 
         var deals = db.Products
-        .Where(p => p.IsFeatured == true)
+        .Where(product => product.IsFeatured == true)
         .Take(3)
         .ToList();
 
@@ -69,22 +70,57 @@ public class ProductService
 
     public void AddProduct()
     {
-        string input;
-        bool isValidName;
-        do
+        Console.Clear();
+        Console.WriteLine("=== Add a new product ===");
+
+        string name = InputHelper.Prompt("Product name", productName => !string.IsNullOrWhiteSpace(productName), "Product name can't be empty! Please try again...");
+
+        string description = InputHelper.Prompt("Product description", productDescription => !string.IsNullOrWhiteSpace(productDescription), "Product description can't be empty! Please try again...");
+
+        decimal price = InputHelper.PromptDecimal("Price", 1m, 10000m, $"Please enter a valid number from 1 to 10 000! Try again...");
+
+        int stock = InputHelper.PromptInt("Quantity in stock", 0, 1000, "Please enter a valid number from 1 to 1000! Try again...");
+
+        // Hämta alla kategorier från databasen
+        var categories = db.Categories.ToList();
+        Console.WriteLine("\nChoose category:");
+        for (int i = 0; i < categories.Count; i++)
         {
-        Console.Write("Enter the name of the product: ");
-            input = Console.ReadLine()!;
-            isValidName = !String.IsNullOrEmpty(input);
+            Console.WriteLine($"{i + 1}. {categories[i].Name}");
+        }
+        int categoryIndex = InputHelper.PromptInt("Enter the number of the category", 1, categories.Count, $"Please enter a valid number from 1 to {categories.Count}! Try again...");
+        int categoryId = categories[categoryIndex - 1].Id;
 
-            if (!isValidName)
-            {
-                Console.WriteLine("The product name can't be empty! Please try again.");
-            }
-            
-        } while (!isValidName);
+        // Hämta alla leverantörer från databasen
+        var suppliers = db.Suppliers.ToList();
+        Console.WriteLine("\nChoose supplier:");
+        for (int i = 0; i < suppliers.Count; i++)
+        {
+            Console.WriteLine($"{i + 1}. {suppliers[i].Name}");
+        }
+        int supplierIndex = InputHelper.PromptInt("Enter the number of the supplier", 1, suppliers.Count, $"Please enter a valid number from 1 to {suppliers.Count}! Try again...");
+        int supplierId = suppliers[supplierIndex - 1].Id;
 
-        string productName = input;
+        bool isFeatured = InputHelper.PromptYesNo("Should the product be displayed as an offer?", "Please enter only 'Y' for Yes and 'N' for No! Try again...");
+
+        // Skapa produkten
+        var product = new Product
+        {
+            Name = name,
+            Description = description,
+            Price = price,
+            Stock = stock,
+            CategoryId = categoryId,
+            SupplierId = supplierId,
+            IsFeatured = isFeatured
+        };
+
+        db.Products.Add(product);
+        db.SaveChanges();
+
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("\nThe product has been added to the database!");
+        Console.ResetColor();
     }
 
 

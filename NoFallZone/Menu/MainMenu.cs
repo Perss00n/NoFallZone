@@ -27,7 +27,7 @@ namespace NoFallZone.Menu
                 Console.WriteLine();
                 Console.WriteLine("=== NoFallZone – Main Menu ===");
                 Console.WriteLine("1. Show All Products");
-                Console.WriteLine("2. Show Latest Order");
+                Console.WriteLine("2. Add Products");
                 Console.WriteLine("3. Exit");
                 Console.Write("Choice: ");
                 _productService.ShowDeals();
@@ -41,7 +41,7 @@ namespace NoFallZone.Menu
                         _productService.ShowAllProducts();
                         break;
                     case "2":
-                        //_orderService.ShowLatestPurchase();
+                        _productService.AddProduct();
                         break;
                     case "3":
                         Console.Clear();
