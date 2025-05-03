@@ -26,10 +26,10 @@ public class ProductService
                          .ToList();
 
         var productDetails = products.Select(p =>
-            $"[{p.Id}] {p.Name} ({p.Category?.Name}) - {p.Price} kr | Lager: {p.Stock}"
+            $"[{p.Id}] {p.Name} ({p.Category?.Name}) - {p.Price:C} | Stock: {p.Stock}"
         ).ToList();
 
-        GUI.DrawWindow("Produkter", 5, 5, productDetails, maxLineWidth: 100);
+        GUI.DrawWindow("Products", 20, 1, productDetails, maxLineWidth: 100);
     }
 
 
@@ -49,22 +49,42 @@ public class ProductService
 
                 if (deal != null)
                 {
-                    GUI.DrawWindow($"Erbjudande {i + 1}", fromLeft, fromTop, new List<string>
+                    GUI.DrawWindow($"Deal {i + 1}", fromLeft, fromTop, new List<string>
             {
                 deal.Name!,
                 deal.Description!,
                 $"{deal.Price:C}",
-                $"{deal.Stock} st kvar i lager"
+                $"{deal.Stock} pieces left in stock!"
             }, maxLineWidth: 30);
                 }
                 else
                 {
-                    GUI.DrawWindow($"Erbjudande {i + 1}", fromLeft, fromTop, new List<string>
+                    GUI.DrawWindow($"Deal {i + 1}", fromLeft, fromTop, new List<string>
             {
-                "No deal available"
+                "No deal available at this moment"
             });
                 }
             }
+    }
+
+    public void AddProduct()
+    {
+        string input;
+        bool isValidName;
+        do
+        {
+        Console.Write("Enter the name of the product: ");
+            input = Console.ReadLine()!;
+            isValidName = !String.IsNullOrEmpty(input);
+
+            if (!isValidName)
+            {
+                Console.WriteLine("The product name can't be empty! Please try again.");
+            }
+            
+        } while (!isValidName);
+
+        string productName = input;
     }
 
 

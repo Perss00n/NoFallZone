@@ -23,13 +23,13 @@ namespace NoFallZone.Menu
             while (running)
             {
                 Console.Clear();
-                GUI.DrawWindow("", 2, 1, new List<string> { "=== NoFallZone ===", "Your No. 1 Source Of Climbing Gear!" });               
+                GUI.DrawWindow("=== NoFallZone ===", 0, 0, new List<string> { "Your No. 1 Source Of Climbing Gear!" });               
                 Console.WriteLine();
-                Console.WriteLine("=== NoFallZone – Huvudmeny ===");
-                Console.WriteLine("1. Visa produkter");
-                Console.WriteLine("2. Visa senaste ordern");
-                Console.WriteLine("3. Avsluta");
-                Console.Write("Val: ");
+                Console.WriteLine("=== NoFallZone – Main Menu ===");
+                Console.WriteLine("1. Show All Products");
+                Console.WriteLine("2. Show Latest Order");
+                Console.WriteLine("3. Exit");
+                Console.Write("Choice: ");
                 _productService.ShowDeals();
 
                 var input = Console.ReadLine();
@@ -45,17 +45,17 @@ namespace NoFallZone.Menu
                         break;
                     case "3":
                         Console.Clear();
-                        Console.WriteLine("Tack för att du besökte NoFallZone! På Återseende!");
+                        Console.WriteLine("Thank you for visiting NoFallZone! Laters!");
                         running = false;
                         break;
                     default:
-                        Console.WriteLine("Ogiltigt val, försök igen!");
+                        Console.WriteLine("Unvalid choice, please try again!");
                         break;
                 }
 
                 if (running)
                 {
-                    Console.Write("\nTryck på valfri tangent för att fortsätta...");
+                    Console.Write("\nPress any key to continue...");
                     Console.ReadKey();
                 }
             }
