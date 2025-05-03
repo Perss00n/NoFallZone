@@ -28,7 +28,9 @@ namespace NoFallZone.Menu
                 Console.WriteLine("=== NoFallZone – Main Menu ===");
                 Console.WriteLine("1. Show All Products");
                 Console.WriteLine("2. Add Products");
-                Console.WriteLine("3. Exit");
+                Console.WriteLine("3. Edit Products");
+                Console.WriteLine("4. Delete Products");
+                Console.WriteLine("5. Exit");
                 Console.Write("Choice: ");
                 _productService.ShowDeals();
 
@@ -44,6 +46,12 @@ namespace NoFallZone.Menu
                         _productService.AddProduct();
                         break;
                     case "3":
+                        _productService.EditProduct();
+                        break;
+                    case "4":
+                        _productService.DeleteProduct();
+                        break;
+                    case "5":
                         Console.Clear();
                         Console.WriteLine("Thank you for visiting NoFallZone! Laters!");
                         running = false;
