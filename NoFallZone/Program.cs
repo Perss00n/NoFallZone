@@ -13,6 +13,7 @@ namespace NoFallZone
         {
             using var db = new NoFallZoneContext();
 
+            //SeedData.ClearDatabase(db);
             //SeedData.Initialize(db);
 
 

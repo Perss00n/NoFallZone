@@ -11,25 +11,24 @@ namespace NoFallZone.Utilities
     {
         public static void Initialize(NoFallZoneContext context)
         {
-            // Säkerställ att databasen är skapad
             context.Database.EnsureCreated();
 
-            // Kategorier
+            // Categories
             if (!context.Categories.Any())
             {
                 var categories = new List<Category>
                 {
-                    new Category { Name = "Klätterskor" },
-                    new Category { Name = "Klätterselar" },
-                    new Category { Name = "Klätterrep" },
-                    new Category { Name = "Karbinhakar" },
-                    new Category { Name = "Säkringsutrustning" }
+                    new Category { Name = "Climbing Shoes" },
+                    new Category { Name = "Harnesses" },
+                    new Category { Name = "Ropes" },
+                    new Category { Name = "Carabiners" },
+                    new Category { Name = "Belay Devices" }
                 };
                 context.Categories.AddRange(categories);
                 context.SaveChanges();
             }
 
-            // Leverantörer
+            // Suppliers
             if (!context.Suppliers.Any())
             {
                 var suppliers = new List<Supplier>
@@ -44,7 +43,7 @@ namespace NoFallZone.Utilities
                 context.SaveChanges();
             }
 
-            // Produkter
+            // Products
             if (!context.Products.Any())
             {
                 var categories = context.Categories.ToList();
@@ -55,51 +54,51 @@ namespace NoFallZone.Utilities
                     new Product
                     {
                         Name = "La Sportiva Kataki",
-                        Description = "Tekniska klätterskor för avancerad sportklättring.",
+                        Description = "Technical climbing shoes designed for advanced sport climbing.",
                         Price = 1899.00m,
                         Stock = 15,
                         IsFeatured = true,
-                        CategoryId = categories.First(c => c.Name == "Klätterskor").Id,
+                        CategoryId = categories.First(c => c.Name == "Climbing Shoes").Id,
                         SupplierId = suppliers.First(s => s.Name == "La Sportiva").Id
                     },
                     new Product
                     {
                         Name = "Black Diamond Momentum Harness",
-                        Description = "Bekväm och justerbar klättersele för allroundbruk.",
+                        Description = "Comfortable and adjustable all-around climbing harness.",
                         Price = 799.00m,
                         Stock = 20,
                         IsFeatured = false,
-                        CategoryId = categories.First(c => c.Name == "Klätterselar").Id,
+                        CategoryId = categories.First(c => c.Name == "Harnesses").Id,
                         SupplierId = suppliers.First(s => s.Name == "Black Diamond").Id
                     },
                     new Product
                     {
                         Name = "Petzl Arial 9.5mm 70m",
-                        Description = "Lätt och hållbart klätterrep för sportklättring.",
+                        Description = "Light and durable climbing rope for sport climbing.",
                         Price = 2499.00m,
                         Stock = 10,
                         IsFeatured = true,
-                        CategoryId = categories.First(c => c.Name == "Klätterrep").Id,
+                        CategoryId = categories.First(c => c.Name == "Ropes").Id,
                         SupplierId = suppliers.First(s => s.Name == "Petzl").Id
                     },
                     new Product
                     {
                         Name = "Mammut Wall Alpine Belay",
-                        Description = "Säkringsanordning för multipitch-klättring.",
+                        Description = "Belay device designed for multipitch climbing and rappelling.",
                         Price = 599.00m,
                         Stock = 25,
                         IsFeatured = false,
-                        CategoryId = categories.First(c => c.Name == "Säkringsutrustning").Id,
+                        CategoryId = categories.First(c => c.Name == "Belay Devices").Id,
                         SupplierId = suppliers.First(s => s.Name == "Mammut").Id
                     },
                     new Product
                     {
                         Name = "Scarpa Drago",
-                        Description = "Aggressiva klätterskor för bouldering och överhäng.",
+                        Description = "Aggressive bouldering shoes with sensitive sole and tight fit.",
                         Price = 1999.00m,
                         Stock = 12,
                         IsFeatured = true,
-                        CategoryId = categories.First(c => c.Name == "Klätterskor").Id,
+                        CategoryId = categories.First(c => c.Name == "Climbing Shoes").Id,
                         SupplierId = suppliers.First(s => s.Name == "Scarpa").Id
                     }
                 };
@@ -108,32 +107,32 @@ namespace NoFallZone.Utilities
                 context.SaveChanges();
             }
 
-            // Fraktalternativ
+            // Shipping Options
             if (!context.ShippingOptions.Any())
             {
                 var shippingOptions = new List<ShippingOption>
                 {
-                    new ShippingOption { Name = "Standardfrakt (3-5 dagar)", Price = 59.00m },
-                    new ShippingOption { Name = "Expressfrakt (1-2 dagar)", Price = 129.00m },
-                    new ShippingOption { Name = "Gratis frakt vid köp över 1000 kr", Price = 0.00m }
+                    new ShippingOption { Name = "Standard Shipping (3–5 days)", Price = 59.00m },
+                    new ShippingOption { Name = "Express Shipping (1–2 days)", Price = 129.00m },
+                    new ShippingOption { Name = "Free Shipping on Orders over 1000 SEK", Price = 0.00m }
                 };
                 context.ShippingOptions.AddRange(shippingOptions);
                 context.SaveChanges();
             }
 
-            // Kunder
+            // Customers
             if (!context.Customers.Any())
             {
                 var customers = new List<Customer>
                 {
                     new Customer
                     {
-                        FullName = "Anna Bergström",
+                        FullName = "Anna Bergstrom",
                         Email = "anna.bergstrom@example.com",
                         Phone = "070-1234567",
                         Address = "Storgatan 1",
-                        City = "Göteborg",
-                        Country = "Sverige",
+                        City = "Gothenburg",
+                        Country = "Sweden",
                         Age = 28
                     },
                     new Customer
@@ -143,7 +142,7 @@ namespace NoFallZone.Utilities
                         Phone = "070-7654321",
                         Address = "Lillgatan 5",
                         City = "Stockholm",
-                        Country = "Sverige",
+                        Country = "Sweden",
                         Age = 35
                     }
                 };
@@ -151,7 +150,7 @@ namespace NoFallZone.Utilities
                 context.SaveChanges();
             }
 
-            // Orders och OrderItems
+            // Orders + OrderItems
             if (!context.Orders.Any())
             {
                 var customers = context.Customers.ToList();
@@ -163,7 +162,7 @@ namespace NoFallZone.Utilities
                     OrderDate = DateTime.Now.AddDays(-10),
                     TotalPrice = 1999.00m + 59.00m,
                     ShippingCost = 59.00m,
-                    PaymentMethod = "Kort",
+                    PaymentMethod = "Credit Card",
                     CustomerId = customers.First().Id,
                     ShippingOptionId = shippingOptions.First().Id
                 };
@@ -203,5 +202,32 @@ namespace NoFallZone.Utilities
                 context.SaveChanges();
             }
         }
+
+
+        public static void ClearDatabase(NoFallZoneContext context)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("WARNING: This will delete all data in the database.");
+            Console.WriteLine("Are you sure you want to continue?");
+            Console.ResetColor();
+
+            if (!InputHelper.PromptYesNo("Confirm wipe", "Please select 'Y' for Yes and 'N' for No")) return;
+
+            context.OrderItems.RemoveRange(context.OrderItems);
+            context.Orders.RemoveRange(context.Orders);
+            context.Customers.RemoveRange(context.Customers);
+            context.Products.RemoveRange(context.Products);
+            context.Categories.RemoveRange(context.Categories);
+            context.Suppliers.RemoveRange(context.Suppliers);
+            context.ShippingOptions.RemoveRange(context.ShippingOptions);
+
+            context.SaveChanges();
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("All data has been cleared.");
+            Console.ResetColor();
+        }
+
+
     }
 }
