@@ -8,6 +8,7 @@ using NoFallZone.Data;
 using NoFallZone.Menu;
 using NoFallZone.Utilities;
 using NoFallZone.Models;
+using System.Threading.Channels;
 
 namespace NoFallZone.Services;
 public class ProductService
@@ -73,8 +74,9 @@ public class ProductService
         for (int i = 0; i < 3; i++)
         {
             var deal = deals.ElementAtOrDefault(i);
-            int fromLeft = i == 0 ? 2 : i == 1 ? 33 : 67;
+            int fromLeft = i == 0 ? 0 : i == 1 ? 40 : 78;
             int fromTop = 15;
+            string dealBuyKeyMessage = i == 0 ? "Press X to buy" : i == 1 ? "Press A to buy" : "Press Z to buy";
 
             if (deal != null)
             {
@@ -83,8 +85,10 @@ public class ProductService
                 deal.Name!,
                 deal.Description!,
                 $"{deal.Price:C}",
-                $"{deal.Stock} pieces left in stock!"
-            }, maxLineWidth: 30);
+                $"{deal.Stock} pieces left in stock!",
+                "",
+                dealBuyKeyMessage
+            }, maxLineWidth: 33);
             }
             else
             {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 using NoFallZone.Services;
 
 namespace NoFallZone.Menu
@@ -23,41 +24,57 @@ namespace NoFallZone.Menu
             while (running)
             {
                 Console.Clear();
-                GUI.DrawWindow("=== NoFallZone ===", 0, 0, new List<string> { "Your No. 1 Source Of Climbing Gear!" });               
+                GUI.DrawWindow("=== NoFallZone ===", 43, 0, new List<string> { "Your #1 Source Of Climbing Gear!" });               
                 Console.WriteLine();
-                Console.WriteLine("=== NoFallZone – Main Menu ===");
-                Console.WriteLine("1. Show All Products");
-                Console.WriteLine("2. Add Products");
-                Console.WriteLine("3. Edit Products");
-                Console.WriteLine("4. Delete Products");
-                Console.WriteLine("5. Exit");
-                Console.Write("Choice: ");
+
+                GUI.DrawWindow("Main Menu", 0, 5, new List<string>
+                {
+                    "1. Show All Products",
+                    "2. Add Products",
+                    "3. Edit Products",
+                    "4. Delete Products",
+                    "5. Exit"
+                });
+
                 _productService.ShowDeals();
 
-                var input = Console.ReadLine();
+                var input = Console.ReadKey(true).Key;
 
                 switch (input)
                 {
-                    case "1":
+                    case ConsoleKey.D1:
                         Console.Clear();
                         _productService.ShowAllProducts();
                         break;
-                    case "2":
+                    case ConsoleKey.D2:
                         _productService.AddProduct();
                         break;
-                    case "3":
+                    case ConsoleKey.D3:
                         _productService.EditProduct();
                         break;
-                    case "4":
+                    case ConsoleKey.D4:
                         _productService.DeleteProduct();
                         break;
-                    case "5":
+                    case ConsoleKey.X:
+                        Console.Clear();
+                        Console.WriteLine("This adds deal number 1 to the cart!");
+                        break;
+                    case ConsoleKey.A:
+                        Console.Clear();
+                        Console.WriteLine("This adds deal number 2 to the cart!");
+                        break;
+                    case ConsoleKey.Z:
+                        Console.Clear();
+                        Console.WriteLine("This adds deal number 3 to the cart!");
+                        break;
+                    case ConsoleKey.D5:
                         Console.Clear();
                         Console.WriteLine("Thank you for visiting NoFallZone! Laters!");
                         running = false;
                         break;
                     default:
-                        Console.WriteLine("Unvalid choice, please try again!");
+                        Console.Clear();
+                        Console.WriteLine("Invalid choice, please try again!");
                         break;
                 }
 
