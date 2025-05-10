@@ -20,48 +20,46 @@ public class ProductService : IProductService
         db = context;
     }
 
-    public void ShowAllProducts()
+    public void ShowProducts()
     {
         Console.Clear();
-        Console.WriteLine("=== Show Products by Category ===\n");
-
-        var categories = db.Categories
-            .Include(c => c.Products)
-            .ToList();
-
-        if (categories.Count == 0)
-        {
-            Console.WriteLine("No categories found in the database. Returning to main menu...");
-            Console.ReadKey();
-            return;
-        }
-
-        for (int i = 0; i < categories.Count; i++)
-            Console.WriteLine($"{i + 1}. {categories[i].Name}");
-
-        int selected = InputHelper.PromptInt("\nChoose a category", 1, categories.Count, $"Please enter a valid number from 1 to {categories.Count}! Try again...");
-        var category = categories[selected - 1];
+        var category = CategorySelector.ChooseCategory(db);
+        if (category == null) return;
 
         var products = db.Products
             .Where(p => p.CategoryId == category.Id)
-            .Include(p => p.Category)
             .Include(p => p.Supplier)
             .ToList();
 
-        var productDetails = products.Select(product => $"[{product.Id}] {product.Name} ({product.Supplier?.Name}) - {product.Price:C} | Stock: {product.Stock}").ToList();
+        Console.Clear();
 
-        if (productDetails.Count == 0)
+        if (products.Count == 0)
         {
-            Console.Clear();
-            GUI.DrawWindow($"Products in {category.Name}", 1, 1, new List<string> { "No products available in this category." }, maxLineWidth: 100);
+            GUI.DrawWindow($"Products in {category.Name}", 1, 1,
+                new List<string> { "No products available in this category." },
+                maxLineWidth: 100);
+            return;
         }
-        else
+
+        int fromTop = 2;
+
+        foreach (var p in products)
         {
-            Console.Clear();
-            GUI.DrawWindow($"Products in {category.Name}", 1, 1, productDetails, maxLineWidth: 100);
+            GUI.DrawWindow($"Product: {p.Name}", 1, fromTop, new List<string>
+        {
+            $"ID:         {p.Id}",
+            $"Name:       {p.Name}",
+            $"Price:      {p.Price:C}",
+            $"Stock:      {p.Stock}",
+            $"Category:   {category.Name}",
+            $"Supplier:   {p.Supplier?.Name ?? "Unknown"}",
+            $"Featured:   {(p.IsFeatured == true ? "Yes" : "No")}"
+        }, maxLineWidth: 70);
+
+            fromTop += 10;
         }
+
     }
-
 
     public void ShowDeals()
     {
@@ -105,28 +103,19 @@ public class ProductService : IProductService
         Console.Clear();
         Console.WriteLine("=== Add a new product ===");
 
+        var category = CategorySelector.ChooseCategory(db);
+        if (category == null) return;
+        int categoryId = category.Id;
+
+        var supplier = SupplierSelector.ChooseSupplier(db);
+        if (supplier == null) return;
+        int supplierId = supplier.Id;
+
         string name = ProductValidator.PromptName();
         string description = ProductValidator.PromptDescription();
         decimal price = ProductValidator.PromptPrice();
         int stock = ProductValidator.PromptStock();
 
-        var categories = db.Categories.ToList();
-        Console.WriteLine("\nChoose category:");
-        for (int i = 0; i < categories.Count; i++)
-        {
-            Console.WriteLine($"{i + 1}. {categories[i].Name}");
-        }
-        int categoryIndex = InputHelper.PromptInt("Enter the number of the category", 1, categories.Count, $"Please enter a valid number from 1 to {categories.Count}! Try again...");
-        int categoryId = categories[categoryIndex - 1].Id;
-
-        var suppliers = db.Suppliers.ToList();
-        Console.WriteLine("\nChoose supplier:");
-        for (int i = 0; i < suppliers.Count; i++)
-        {
-            Console.WriteLine($"{i + 1}. {suppliers[i].Name}");
-        }
-        int supplierIndex = InputHelper.PromptInt("Enter the number of the supplier", 1, suppliers.Count, $"Please enter a valid number from 1 to {suppliers.Count}! Try again...");
-        int supplierId = suppliers[supplierIndex - 1].Id;
 
         Console.WriteLine("Should the product be displayed as an offer?");
         bool isFeatured = ProductValidator.PromptConfirmation();
@@ -156,55 +145,30 @@ public class ProductService : IProductService
         Console.Clear();
         Console.WriteLine("=== Edit Product ===");
 
-        var categories = db.Categories
-            .Include(c => c.Products)
-            .ToList();
-
-        if (categories.Count == 0)
-        {
-            Console.WriteLine("No categories found in the database. Returning to main menu...");
-            return;
-        }
-
-            Console.WriteLine("\nSelect a category:");
-        for (int i = 0; i < categories.Count; i++)
-            Console.WriteLine($"{i + 1}. {categories[i].Name}");
-
-        int categoryIndex = InputHelper.PromptInt("Enter number", 1, categories.Count, $"Please select a valid category from 1 to {categories.Count}! Try again...");
-        var selectedCategory = categories[categoryIndex - 1];
-
-        var products = selectedCategory.Products!.ToList();
-
-        if (products.Count == 0)
-        {
-            Console.WriteLine("No products found in this category. Returning to main menu...");
-            Console.ReadKey();
-            return;
-        }
-
-        Console.WriteLine("\nSelect a product to edit:");
-        for (int i = 0; i < products.Count; i++)
-            Console.WriteLine($"{i + 1}. {products[i].Name}");
-
-        int productIndex = InputHelper.PromptInt("Enter number", 1, products.Count, $"Please select a valid product from 1 to {products.Count}! Try again...");
-        var product = products[productIndex - 1];
+        var product = ProductSelector.ChooseProductFromCategory(db);
+        if (product == null) return;
 
         Console.Clear();
         Console.WriteLine($"=== Editing '{product.Name}' ===");
 
-        string newName = InputHelper.PromptOptionalLimitedString($"Name [{product.Name}]", 50, "The name is too long! Try again...");
-        if (!string.IsNullOrWhiteSpace(newName)) product.Name = newName;
+        string? newName = ProductValidator.PromptOptionalName(product.Name!);
+        if (!string.IsNullOrWhiteSpace(newName))
+            product.Name = newName;
 
-        string newDesc = InputHelper.PromptOptionalLimitedString($"Description [{product.Description}]", 200, "The description is too long! Try again...");
-        if (!string.IsNullOrWhiteSpace(newDesc)) product.Description = newDesc;
+        string? newDesc = ProductValidator.PromptOptionalDescription(product.Description!);
+        if (!string.IsNullOrWhiteSpace(newDesc))
+            product.Description = newDesc;
 
-        var newPrice = InputHelper.PromptOptionalDecimal($"Price [{product.Price}]", 1m, 10000m, "Please select a valid number! Try again...");
-        if (newPrice.HasValue) product.Price = newPrice.Value;
+        decimal? newPrice = ProductValidator.PromptOptionalPrice(product.Price ?? 0);
+        if (newPrice.HasValue)
+            product.Price = newPrice;
 
-        var newStock = InputHelper.PromptOptionalInt($"Stock [{product.Stock}]", 0, 1000, "Please select a valid number! Try again...");
-        if (newStock.HasValue) product.Stock = newStock.Value;
+        int? newStock = ProductValidator.PromptOptionalStock(product.Stock ?? 0);
+        if (newStock.HasValue)
+            product.Stock = newStock;
 
-        Console.WriteLine($"Should the product be displayed as an offer? Currently it {(product.IsFeatured == true ? "IS set to an offer" : "is NOT set to an offer")}");
+        Console.WriteLine($"\nShould the product be displayed as an offer?");
+        Console.WriteLine($"Currently it {(product.IsFeatured == true ? "IS set to an offer" : "is NOT set to an offer")}");
         product.IsFeatured = ProductValidator.PromptConfirmation();
 
         db.SaveChanges();
@@ -214,64 +178,33 @@ public class ProductService : IProductService
         Console.ResetColor();
     }
 
-
     public void DeleteProduct()
     {
         Console.Clear();
         Console.WriteLine("=== Delete Product ===");
 
+        var product = ProductSelector.ChooseProductFromCategory(db);
+        if (product == null) return;
 
-            var categories = db.Categories
-                .Include(c => c.Products)
-                .ToList();
+        Console.Clear();
+        Console.WriteLine($"Are you sure you want to delete '{product.Name}'?");
 
-        if (categories.Count == 0)
+        bool confirm = ProductValidator.PromptConfirmation();
+
+        if (confirm)
         {
-            Console.WriteLine("No categories found in the database. Returning to main menu...");
-            return;
+            db.Products.Remove(product);
+            db.SaveChanges();
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Product deleted successfully!");
+            Console.ResetColor();
         }
-
-            Console.WriteLine("\nSelect a category:");
-            for (int i = 0; i < categories.Count; i++)
-                Console.WriteLine($"{i + 1}. {categories[i].Name}");
-
-            int catIndex = InputHelper.PromptInt("Enter number", 1, categories.Count, $"Please select a valid category from 1 to {categories.Count}");
-            var selectedCategory = categories[catIndex - 1];
-
-            var products = selectedCategory.Products!.ToList();
-
-            if (products.Count == 0)
-            {
-                Console.WriteLine("No products found in this category. Returning to main menu...");
-                Console.ReadKey();
-                return;
-            }
-
-            Console.WriteLine("\nSelect a product to delete:");
-            for (int i = 0; i < products.Count; i++)
-                Console.WriteLine($"{i + 1}. {products[i].Name}");
-
-            int productIndex = InputHelper.PromptInt("Enter number", 1, products.Count, $"Please select a valid product from 1 to {products.Count}");
-            var product = products[productIndex - 1];
-
-            Console.Clear();
-            Console.WriteLine($"Are you sure you want to delete '{product.Name}'?");
-            bool confirm = ProductValidator.PromptConfirmation();
-
-            if (confirm)
-            {
-                db.Products.Remove(product);
-                db.SaveChanges();
-
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Product deleted succesfully!");
-                Console.ResetColor();
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Deletion cancelled! Returning to main menu...");
-                Console.ResetColor();
-            }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Deletion cancelled! Returning to main menu...");
+            Console.ResetColor();
         }
     }
+}

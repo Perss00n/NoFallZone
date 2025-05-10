@@ -49,5 +49,41 @@ namespace NoFallZone.Utilities
         public static int PromptAge() =>
             InputHelper.PromptInt("Enter your age", MinAge, MaxAge,
                 $"Enter a valid age between {MinAge} and {MaxAge}.");
+
+        public static bool PromptConfirmation() =>
+            InputHelper.PromptYesNo("Confirm", "Please enter only 'Y' for Yes and 'N' for No.");
+
+        public static string? PromptOptionalName(string current) =>
+            InputHelper.PromptOptionalLimitedString($"Name [{current}]", MaxNameLength,
+                $"The name can't exceed {MaxNameLength} characters.");
+
+        public static string? PromptOptionalEmail(string current) =>
+            InputHelper.PromptOptionalEmail($"Email [{current}]", MaxEmailLength,
+                $"The email can't exceed {MaxEmailLength} characters.");
+
+        public static string? PromptOptionalPhone(string current) =>
+            InputHelper.PromptOptionalPhone($"Phone [{current}]", MaxPhoneLength,
+                $"The phone number can't exceed {MaxPhoneLength} characters.");
+
+        public static string? PromptOptionalAddress(string current) =>
+            InputHelper.PromptOptionalLimitedString($"Address [{current}]", MaxAddressLength,
+                $"The address can't exceed {MaxAddressLength} characters.");
+
+        public static string? PromptOptionalPostalCode(string current) =>
+            InputHelper.PromptOptionalPostalCode($"Postal code [{current}]", MaxPostalCodeLength,
+                $"The name can't exceed {MaxPostalCodeLength} characters.");
+
+        public static string? PromptOptionalCity(string current) =>
+            InputHelper.PromptOptionalLimitedString($"City [{current}]", MaxCityLength,
+                $"The city can't exceed {MaxCityLength} characters.");
+
+        public static string? PromptOptionalCountry(string current) =>
+            InputHelper.PromptOptionalLimitedString($"Country [{current}]", MaxCountryLength,
+                $"The country can't exceed {MaxCountryLength} characters.");
+
+        public static int? PromptOptionalAge(int current) =>
+            InputHelper.PromptOptionalInt($"Age [{current}]", MinAge, MaxAge,
+                $"Enter a valid age between {MinAge} and {MaxAge}.");
+
     }
 }

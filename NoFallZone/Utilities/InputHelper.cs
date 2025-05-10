@@ -225,6 +225,68 @@ namespace NoFallZone.Utilities
             } while (true);
         }
 
+        public static string? PromptOptionalPhone(string label, int maxLength, string errorMsg)
+        {
+            string input;
+            var phoneRegex = new Regex(@"^\+?[0-9\s\-()]{7,}$");
+
+            do
+            {
+                Console.Write($"{label} (Enter to keep current): ");
+                input = Console.ReadLine()!.Trim();
+
+                if (string.IsNullOrWhiteSpace(input))
+                    return null;
+
+                if (input.Length <= maxLength && phoneRegex.IsMatch(input))
+                    return input;
+
+                ShowError(errorMsg);
+            } while (true);
+        }
+
+
+        public static string? PromptOptionalEmail(string label, int maxLength, string errorMsg)
+        {
+            string input;
+            var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+
+            do
+            {
+                Console.Write($"{label} (Enter to keep current): ");
+                input = Console.ReadLine()!.Trim();
+
+                if (string.IsNullOrWhiteSpace(input))
+                    return null;
+
+                if (input.Length <= maxLength && emailRegex.IsMatch(input))
+                    return input;
+
+                ShowError(errorMsg);
+            } while (true);
+        }
+
+
+        public static string? PromptOptionalPostalCode(string label, int maxLength, string errorMsg)
+        {
+            string input;
+            var postalRegex = new Regex(@"^\d{3}\s?\d{2}$");
+
+            do
+            {
+                Console.Write($"{label} (Enter to keep current): ");
+                input = Console.ReadLine()!.Trim();
+
+                if (string.IsNullOrWhiteSpace(input))
+                    return null;
+
+                if (input.Length <= maxLength && postalRegex.IsMatch(input))
+                    return input;
+
+                ShowError(errorMsg);
+            } while (true);
+        }
+
 
 
         private static void ShowError(string msg)

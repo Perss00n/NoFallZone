@@ -7,5 +7,8 @@ using System.Threading.Tasks;
 namespace NoFallZone.Services;
 public interface ICustomerService
 {
+    void ShowAllCustomers();
     void AddCustomer();
+    void EditCustomer();
+    void DeleteCustomer();
 }

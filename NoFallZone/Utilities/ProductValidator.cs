@@ -32,4 +32,21 @@ public static class ProductValidator
 
     public static bool PromptConfirmation() =>
         InputHelper.PromptYesNo("Confirm", "Please enter only 'Y' for Yes and 'N' for No.");
+
+    public static string? PromptOptionalName(string currentValue) =>
+    InputHelper.PromptOptionalLimitedString($"Name [{currentValue}]", MaxNameLength,
+        $"Name must not exceed {MaxNameLength} characters.");
+
+    public static string? PromptOptionalDescription(string currentValue) =>
+        InputHelper.PromptOptionalLimitedString($"Description [{currentValue}]", MaxDescriptionLength,
+            $"Description must not exceed {MaxDescriptionLength} characters.");
+
+    public static decimal? PromptOptionalPrice(decimal currentPrice) =>
+        InputHelper.PromptOptionalDecimal($"Price [{currentPrice}]", MinPrice, MaxPrice,
+            $"Price must be between {MinPrice} and {MaxPrice}.");
+
+    public static int? PromptOptionalStock(int currentStock) =>
+        InputHelper.PromptOptionalInt($"Stock [{currentStock}]", MinStock, MaxStock,
+            $"Stock must be between {MinStock} and {MaxStock}.");
+
 }

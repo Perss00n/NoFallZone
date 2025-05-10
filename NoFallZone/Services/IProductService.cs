@@ -8,7 +8,7 @@ namespace NoFallZone.Services
 {
     public interface IProductService
     {
-        void ShowAllProducts();
+        void ShowProducts();
         void ShowDeals();
         void AddProduct();
         void EditProduct();

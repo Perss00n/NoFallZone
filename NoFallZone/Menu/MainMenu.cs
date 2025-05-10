@@ -36,7 +36,10 @@ namespace NoFallZone.Menu
                     "3. Edit Products",
                     "4. Delete Products",
                     "5. Exit",
-                    "6. Add Customer"
+                    "6. Add Customer",
+                    "7. Delete Customer",
+                    "8. Show All Customers",
+                    "9. Edit Customer"
                 });
 
                 _productService.ShowDeals();
@@ -46,7 +49,7 @@ namespace NoFallZone.Menu
                 switch (input)
                 {
                     case ConsoleKey.D1:
-                        _productService.ShowAllProducts();
+                        _productService.ShowProducts();
                         break;
                     case ConsoleKey.D2:
                         _productService.AddProduct();
@@ -76,6 +79,15 @@ namespace NoFallZone.Menu
                         break;
                     case ConsoleKey.D6:
                         _customerService.AddCustomer();
+                        break;
+                    case ConsoleKey.D7:
+                        _customerService.DeleteCustomer();
+                        break;
+                    case ConsoleKey.D8:
+                        _customerService.ShowAllCustomers();
+                        break;
+                    case ConsoleKey.D9:
+                        _customerService.EditCustomer();
                         break;
                     default:
                         Console.Clear();
