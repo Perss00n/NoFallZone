@@ -131,6 +131,7 @@ namespace NoFallZone.Utilities
                         Email = "anna.bergstrom@example.com",
                         Phone = "070-1234567",
                         Address = "Storgatan 1",
+                        PostalCode = "451 34",
                         City = "Gothenburg",
                         Country = "Sweden",
                         Age = 28
@@ -141,6 +142,7 @@ namespace NoFallZone.Utilities
                         Email = "erik.johansson@example.com",
                         Phone = "070-7654321",
                         Address = "Lillgatan 5",
+                        PostalCode = "451 54",
                         City = "Stockholm",
                         Country = "Sweden",
                         Age = 35

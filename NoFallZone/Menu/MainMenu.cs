@@ -10,11 +10,13 @@ namespace NoFallZone.Menu
 {
     public class MainMenu
     {
-        private readonly ProductService _productService;
+        private readonly IProductService _productService;
+        private readonly ICustomerService _customerService;
 
-        public MainMenu(ProductService productService)
+        public MainMenu(IProductService productService, ICustomerService customerService)
         {
             _productService = productService;
+            _customerService = customerService;
         }
 
         public void Show()
@@ -33,7 +35,8 @@ namespace NoFallZone.Menu
                     "2. Add Products",
                     "3. Edit Products",
                     "4. Delete Products",
-                    "5. Exit"
+                    "5. Exit",
+                    "6. Add Customer"
                 });
 
                 _productService.ShowDeals();
@@ -43,7 +46,6 @@ namespace NoFallZone.Menu
                 switch (input)
                 {
                     case ConsoleKey.D1:
-                        Console.Clear();
                         _productService.ShowAllProducts();
                         break;
                     case ConsoleKey.D2:
@@ -71,6 +73,9 @@ namespace NoFallZone.Menu
                         Console.Clear();
                         Console.WriteLine("Thank you for visiting NoFallZone! Laters!");
                         running = false;
+                        break;
+                    case ConsoleKey.D6:
+                        _customerService.AddCustomer();
                         break;
                     default:
                         Console.Clear();

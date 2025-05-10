@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NoFallZone.Data;
 
@@ -11,9 +12,11 @@ using NoFallZone.Data;
 namespace NoFallZone.Migrations
 {
     [DbContext(typeof(NoFallZoneContext))]
-    partial class NoFallZoneContextModelSnapshot : ModelSnapshot
+    [Migration("20250510143340_Added the field PostalCode to Customers")]
+    partial class AddedthefieldPostalCodetoCustomers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,8 +70,8 @@ namespace NoFallZone.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PostalCode")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("PostalCode")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

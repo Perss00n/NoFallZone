@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace NoFallZone.Utilities
@@ -153,11 +154,85 @@ namespace NoFallZone.Utilities
             } while (true);
         }
 
+        public static string PromptPhone(string label, int maxLength, string errorMsg)
+        {
+            string input;
+
+            // Regex för att matcha telefonnummer med minst 7 tecken med format som +46, (070), 070-123 45 67 etc.
+            var phoneRegex = new Regex(@"^\+?[0-9\s\-()]{7,}$");
+
+            do
+            {
+                Console.Write($"{label} (max {maxLength} chars): ");
+                input = Console.ReadLine()!.Trim();
+
+                if (!string.IsNullOrWhiteSpace(input) &&
+                    input.Length <= maxLength &&
+                    phoneRegex.IsMatch(input))
+                {
+                    return input;
+                }
+
+                ShowError(errorMsg);
+            } while (true);
+        }
+
+
+        public static string PromptEmail(string label, int maxLength, string errorMsg)
+        {
+            string input;
+
+            // Regex för att matcha enkla e-postadresser som marcus@nofallzone.com, marcus.lehm@nofallzone.com etc.
+            var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+
+            do
+            {
+                Console.Write($"{label} (max {maxLength} chars): ");
+                input = Console.ReadLine()!.Trim();
+
+                if (!string.IsNullOrWhiteSpace(input) &&
+                    input.Length <= maxLength &&
+                    emailRegex.IsMatch(input))
+                {
+                    return input;
+                }
+
+                ShowError(errorMsg);
+            } while (true);
+        }
+
+        public static string PromptPostalCode(string label, int maxLength, string errorMsg)
+        {
+            string input;
+
+            // Tillåt svensk form: 3 siffror + valfritt mellanslag + 2 siffror (t.ex. "12345" eller "123 45")
+            var postalRegex = new Regex(@"^\d{3}\s?\d{2}$");
+
+            do
+            {
+                Console.Write($"{label} (Ex 45141 or 451 41): ");
+                input = Console.ReadLine()!.Trim();
+
+                if (!string.IsNullOrWhiteSpace(input)
+                    && input.Length <= maxLength
+                    && postalRegex.IsMatch(input))
+                {
+                    return input;
+                }
+
+                ShowError(errorMsg);
+
+            } while (true);
+        }
+
+
+
         private static void ShowError(string msg)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(msg);
             Console.ResetColor();
         }
+
     }
 }

@@ -11,7 +11,7 @@ using NoFallZone.Models;
 using System.Threading.Channels;
 
 namespace NoFallZone.Services;
-public class ProductService
+public class ProductService : IProductService
 {
     private readonly NoFallZoneContext db;
 

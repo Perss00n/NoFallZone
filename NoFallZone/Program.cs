@@ -11,16 +11,18 @@ namespace NoFallZone
     {
         static void Main(string[] args)
         {
-            using var db = new NoFallZoneContext();
+            var db = new NoFallZoneContext();
+            IProductService productService = new ProductService(db);
+            ICustomerService customerService = new CustomerService(db);
+
+
+            var menu = new MainMenu(productService, customerService);
+            menu.Show();
+
+
 
             //SeedData.ClearDatabase(db);
             //SeedData.Initialize(db);
-
-
-            var productService = new ProductService(db);
-
-            var menu = new MainMenu(productService);
-            menu.Show();
         }
     }
 }
