@@ -105,13 +105,10 @@ public class ProductService : IProductService
         Console.Clear();
         Console.WriteLine("=== Add a new product ===");
 
-        string name = InputHelper.PromptRequiredLimitedString("Product name", 50, "Name is required and must not exceed the maximum length.");
-
-        string description = InputHelper.PromptRequiredLimitedString("Product description", 200, "Description is required and must not exceed the maximum length.");
-
-        decimal price = InputHelper.PromptDecimal("Price", 1m, 10000m, $"Please enter a valid number! Try again...");
-
-        int stock = InputHelper.PromptInt("Quantity in stock", 0, 1000, "Please enter a valid number! Try again...");
+        string name = ProductValidator.PromptName();
+        string description = ProductValidator.PromptDescription();
+        decimal price = ProductValidator.PromptPrice();
+        int stock = ProductValidator.PromptStock();
 
         var categories = db.Categories.ToList();
         Console.WriteLine("\nChoose category:");
@@ -131,7 +128,8 @@ public class ProductService : IProductService
         int supplierIndex = InputHelper.PromptInt("Enter the number of the supplier", 1, suppliers.Count, $"Please enter a valid number from 1 to {suppliers.Count}! Try again...");
         int supplierId = suppliers[supplierIndex - 1].Id;
 
-        bool isFeatured = InputHelper.PromptYesNo("Should the product be displayed as an offer?", "Please enter only 'Y' for Yes and 'N' for No! Try again...");
+        Console.WriteLine("Should the product be displayed as an offer?");
+        bool isFeatured = ProductValidator.PromptConfirmation();
 
         var product = new Product
         {
@@ -206,7 +204,8 @@ public class ProductService : IProductService
         var newStock = InputHelper.PromptOptionalInt($"Stock [{product.Stock}]", 0, 1000, "Please select a valid number! Try again...");
         if (newStock.HasValue) product.Stock = newStock.Value;
 
-        product.IsFeatured = InputHelper.PromptYesNo($"Should the product be displayed as an offer? Currently it {(product.IsFeatured == true ? "IS set to an offer" : "is NOT set to an offer")}", "Please enter only 'Y' for Yes and 'N' for No! Try again...");
+        Console.WriteLine($"Should the product be displayed as an offer? Currently it {(product.IsFeatured == true ? "IS set to an offer" : "is NOT set to an offer")}");
+        product.IsFeatured = ProductValidator.PromptConfirmation();
 
         db.SaveChanges();
 
@@ -222,7 +221,7 @@ public class ProductService : IProductService
         Console.WriteLine("=== Delete Product ===");
 
 
-            List<Category> categories = db.Categories
+            var categories = db.Categories
                 .Include(c => c.Products)
                 .ToList();
 
@@ -257,7 +256,7 @@ public class ProductService : IProductService
 
             Console.Clear();
             Console.WriteLine($"Are you sure you want to delete '{product.Name}'?");
-            bool confirm = InputHelper.PromptYesNo("Confirm deletion", "Please enter only 'Y' for Yes and 'N' for No! Try again...");
+            bool confirm = ProductValidator.PromptConfirmation();
 
             if (confirm)
             {
@@ -271,7 +270,7 @@ public class ProductService : IProductService
             else
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Deletion cancelled!");
+                Console.WriteLine("Deletion cancelled! Returning to main menu...");
                 Console.ResetColor();
             }
         }

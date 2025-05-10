@@ -25,22 +25,21 @@ public class CustomerService : ICustomerService
         Console.Clear();
         Console.WriteLine("=== Add a new customer ===");
 
-
-        string name = InputHelper.PromptRequiredLimitedString("Enter your full name", 50, "Name can't be empty and can't exeed the maximum length! Please try again...");
-        string email = InputHelper.PromptEmail("Enter your email", 70, "Invalid email! Please try again...");
-        string phone = InputHelper.PromptPhone("Enter your phone number", 20, "Invalid phone number format! Please try again...");
-        string adress = InputHelper.PromptRequiredLimitedString("Enter your adress", 100, "Adress can't be empty and can't exeed the maximum length! Please try again...");
-        string postalCode = InputHelper.PromptPostalCode("Enter your postal code", 6, "Invalid postal code format! Please try again...");
-        string city = InputHelper.PromptRequiredLimitedString("Enter your city", 50, "City can't be empty and can't exeed the maximum length! Please try again...");
-        string country = InputHelper.PromptRequiredLimitedString("Enter your country", 55, "Country can't be empty and can't exeed the maximum length! Please try again...");
-        int age = InputHelper.PromptInt("Enter your age", 1, 100, "Enter a valid age! Please try again...");
+        string name = CustomerValidator.PromptName();
+        string email = CustomerValidator.PromptEmail();
+        string phone = CustomerValidator.PromptPhone();
+        string address = CustomerValidator.PromptAddress();
+        string postalCode = CustomerValidator.PromptPostalCode();
+        string city = CustomerValidator.PromptCity();
+        string country = CustomerValidator.PromptCountry();
+        int age = CustomerValidator.PromptAge();
 
         var customer = new Customer
         {
             FullName = name,
             Email = email,
             Phone = phone,
-            Address = adress,
+            Address = address,
             PostalCode = postalCode,
             City = city,
             Country = country,
