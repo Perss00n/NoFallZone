@@ -16,6 +16,11 @@ public class Customer
     public string? City { get; set; }
     public string? Country { get; set; }
     public int? Age { get; set; }
+    public string? Username { get; set; }
+    public string? Password { get; set; }
+    public string Role { get; set; } = "user";
+
+
 
     public ICollection<Order>? Orders { get; set; }
 }
