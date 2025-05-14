@@ -46,10 +46,12 @@ public class CustomerService : ICustomerService
         $"PostalCode: {c.PostalCode}",
         $"City:       {c.City}",
         $"Country:    {c.Country}",
-        $"Age:        {c.Age}"
+        $"Age:        {c.Age}",
+        $"Username:   {c.Username ?? "Username not set"}",
+        $"Role:       {c.Role.ToString()}"
     });
 
-            fromTop += 11;
+            fromTop += 13;
         }
     }
 
@@ -60,13 +62,16 @@ public class CustomerService : ICustomerService
         Console.WriteLine("=== Add a new customer ===");
 
         string name = CustomerValidator.PromptName();
-        string email = CustomerValidator.PromptEmail();
+        string email = CustomerValidator.PromptEmail(db);
         string phone = CustomerValidator.PromptPhone();
         string address = CustomerValidator.PromptAddress();
         string postalCode = CustomerValidator.PromptPostalCode();
         string city = CustomerValidator.PromptCity();
         string country = CustomerValidator.PromptCountry();
         int age = CustomerValidator.PromptAge();
+        string userName = CustomerValidator.PromptUsername(db);
+        string password = CustomerValidator.PromptPassword();
+        Role role = CustomerValidator.PromptRole();
 
         var customer = new Customer
         {
@@ -77,7 +82,10 @@ public class CustomerService : ICustomerService
             PostalCode = postalCode,
             City = city,
             Country = country,
-            Age = age
+            Age = age,
+            Username = userName,
+            Password = password,
+            Role = role
         };
 
         db.Customers.Add(customer);
@@ -107,7 +115,7 @@ public class CustomerService : ICustomerService
         string? newName = CustomerValidator.PromptOptionalName(customer.FullName!);
         if (!string.IsNullOrWhiteSpace(newName)) customer.FullName = newName;
 
-        string? newEmail = CustomerValidator.PromptOptionalEmail(customer.Email!);
+        string? newEmail = CustomerValidator.PromptOptionalEmail(db, customer.Email!);
         if (!string.IsNullOrWhiteSpace(newEmail)) customer.Email = newEmail;
 
         string? newPhone = CustomerValidator.PromptOptionalPhone(customer.Phone!);
@@ -127,6 +135,16 @@ public class CustomerService : ICustomerService
 
         int? newAge = CustomerValidator.PromptOptionalAge(customer.Age!.Value);
         if (newAge.HasValue) customer.Age = newAge.Value;
+
+        string? newUsername = CustomerValidator.PromptOptionalUsername(db, customer.Username!);
+        if (!string.IsNullOrWhiteSpace(newUsername)) customer.Username = newUsername;
+
+        string? newPassword = CustomerValidator.PromptOptionalPassword(customer.Password!);
+        if (!string.IsNullOrWhiteSpace(newPassword)) customer.Password = newPassword;
+
+        Role? newRole = CustomerValidator.PromptOptionalRole(customer.Role);
+        if (newRole.HasValue) customer.Role = newRole.Value;
+
 
         db.SaveChanges();
 

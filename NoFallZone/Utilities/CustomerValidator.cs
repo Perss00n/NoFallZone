@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NoFallZone.Data;
+using NoFallZone.Models;
 
 namespace NoFallZone.Utilities
 {
     public static class CustomerValidator
     {
         public const int MaxNameLength = 50;
+        public const int MinUsernameLength = 3;
+        public const int MaxUsernameLength = 50;
+        public const int MinPasswordLength = 8;
+        public const int MaxPasswordLength = 100;
         public const int MaxEmailLength = 70;
         public const int MaxPhoneLength = 20;
         public const int MaxAddressLength = 100;
@@ -22,9 +28,20 @@ namespace NoFallZone.Utilities
             InputHelper.PromptRequiredLimitedString("Enter your full name", MaxNameLength,
                 $"Name can't be empty and can't exceed {MaxNameLength} characters.");
 
-        public static string PromptEmail() =>
+        public static string PromptUsername(NoFallZoneContext db) =>
+            InputHelper.PromptUsername("Enter a username", MinUsernameLength, MaxUsernameLength,
+                $"Username must be between {MinUsernameLength} and {MaxUsernameLength} characters.", db);
+
+        public static Role PromptRole() =>
+            InputHelper.PromptRole("Enter user role", "Role must be 'user' or 'admin'.");
+
+        public static string PromptPassword() =>
+            InputHelper.PromptPassword("Enter a password", MinPasswordLength, MaxPasswordLength,
+                $"Password must be between {MinPasswordLength} and {MaxPasswordLength} characters.");
+
+        public static string PromptEmail(NoFallZoneContext db) =>
             InputHelper.PromptEmail("Enter your email", MaxEmailLength,
-                $"Email must be valid and can't exceed {MaxEmailLength} characters.");
+                $"Email must be valid and can't exceed {MaxEmailLength} characters.", db);
 
         public static string PromptPhone() =>
             InputHelper.PromptPhone("Enter your phone number", MaxPhoneLength,
@@ -57,9 +74,9 @@ namespace NoFallZone.Utilities
             InputHelper.PromptOptionalLimitedString($"Name [{current}]", MaxNameLength,
                 $"The name can't exceed {MaxNameLength} characters.");
 
-        public static string? PromptOptionalEmail(string current) =>
-            InputHelper.PromptOptionalEmail($"Email [{current}]", MaxEmailLength,
-                $"The email can't exceed {MaxEmailLength} characters.");
+        public static string? PromptOptionalEmail(NoFallZoneContext db, string currentEmail) =>
+            InputHelper.PromptOptionalEmail($"Email [{currentEmail}]", MaxEmailLength,
+                $"Email must be valid and not exceed {MaxEmailLength} characters.", db, currentEmail);
 
         public static string? PromptOptionalPhone(string current) =>
             InputHelper.PromptOptionalPhone($"Phone [{current}]", MaxPhoneLength,
@@ -84,6 +101,18 @@ namespace NoFallZone.Utilities
         public static int? PromptOptionalAge(int current) =>
             InputHelper.PromptOptionalInt($"Age [{current}]", MinAge, MaxAge,
                 $"Enter a valid age between {MinAge} and {MaxAge}.");
+
+        public static string? PromptOptionalPassword(string current) =>
+            InputHelper.PromptOptionalPassword($"Password [hidden]", MinPasswordLength, MaxPasswordLength,
+                $"Password must be between {MinPasswordLength} and {MaxPasswordLength} characters.");
+
+        public static Role? PromptOptionalRole(Role current) =>
+            InputHelper.PromptOptionalRole($"Role [{current}]", "Role must be 'user' or 'admin'.");
+
+        public static string? PromptOptionalUsername(NoFallZoneContext db, string currentUsername) =>
+            InputHelper.PromptOptionalUsername($"Username [{currentUsername}]", MinUsernameLength, MaxUsernameLength,
+                $"Username must be between {MinUsernameLength} and {MaxUsernameLength} characters.", db, currentUsername);
+
 
     }
 }

@@ -12,6 +12,8 @@ namespace NoFallZone
         static void Main(string[] args)
         {
             var db = new NoFallZoneContext();
+            //SeedData.ClearDatabase(db);
+            //SeedData.Initialize(db);
             IProductService productService = new ProductService(db);
             ICustomerService customerService = new CustomerService(db);
 
@@ -24,11 +26,11 @@ namespace NoFallZone
             {
                 Console.Clear();
                 GUI.DrawWindow("Welcome to NoFallZone", 30, 2, new List<string>
-        {
-            "[1] Log in as Customer",
-            "[2] Log in as Admin",
-            "[3] Exit"
-        });
+            {
+                "[1] Log in as Customer",
+                "[2] Log in as Admin",
+                "[3] Exit"
+            });
 
                 var choice = Console.ReadKey(true).Key;
 
@@ -55,8 +57,6 @@ namespace NoFallZone
             Console.Clear();
             Console.WriteLine("Thank you for visiting NoFallZone!");
 
-            //SeedData.ClearDatabase(db);
-            //SeedData.Initialize(db);
         }
     }
 }

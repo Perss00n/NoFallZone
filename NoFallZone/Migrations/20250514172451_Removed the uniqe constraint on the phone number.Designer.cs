@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NoFallZone.Data;
 
@@ -11,9 +12,11 @@ using NoFallZone.Data;
 namespace NoFallZone.Migrations
 {
     [DbContext(typeof(NoFallZoneContext))]
-    partial class NoFallZoneContextModelSnapshot : ModelSnapshot
+    [Migration("20250514172451_Removed the uniqe constraint on the phone number")]
+    partial class Removedtheuniqeconstraintonthephonenumber
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

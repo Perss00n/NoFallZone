@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using NoFallZone.Data;
+using NoFallZone.Models;
 
 namespace NoFallZone.Utilities
 {
@@ -64,63 +66,6 @@ namespace NoFallZone.Utilities
             return value;
         }
 
-        public static int? PromptOptionalInt(string label, int min, int max, string errorMsg)
-        {
-            string input;
-            int value;
-            do
-            {
-                Console.Write($"{label} (Min '{min}' and Max '{max}', Press enter too keep the current value as it is): ");
-                input = Console.ReadLine()!;
-                if (string.IsNullOrWhiteSpace(input))
-                    return null;
-
-                if (int.TryParse(input, out value) && value >= min && value <= max)
-                    return value;
-
-                ShowError(errorMsg);
-
-            } while (true);
-        }
-
-        public static decimal? PromptOptionalDecimal(string label, decimal min, decimal max, string errorMsg)
-        {
-            string input;
-            decimal value;
-            do
-            {
-                Console.Write($"{label} (Min '{min}' and Max '{max}', Press enter too keep the current value as it is): ");
-                input = Console.ReadLine()!;
-                if (string.IsNullOrWhiteSpace(input))
-                    return null;
-
-                if (decimal.TryParse(input, out value) && value >= min && value <= max)
-                    return value;
-
-                ShowError(errorMsg);
-
-            } while (true);
-        }
-
-        public static string PromptOptionalLimitedString(string label, int maxLength, string errorMsg)
-        {
-            string input;
-            do
-            {
-                Console.Write($"{label} (Max {maxLength} chars, Press enter too keep the current value as it is): ");
-                input = Console.ReadLine()!;
-
-                if (string.IsNullOrWhiteSpace(input))
-                    return "";
-
-                if (input.Length <= maxLength)
-                    return input;
-
-                ShowError(errorMsg);
-
-            } while (true);
-        }
-
 
         public static string PromptRequiredLimitedString(string label, int maxLength, string errorMsg)
         {
@@ -178,11 +123,9 @@ namespace NoFallZone.Utilities
         }
 
 
-        public static string PromptEmail(string label, int maxLength, string errorMsg)
+        public static string PromptEmail(string label, int maxLength, string errorMsg, NoFallZoneContext db)
         {
             string input;
-
-            // Regex för att matcha enkla e-postadresser som marcus@nofallzone.com, marcus.lehm@nofallzone.com etc.
             var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
 
             do
@@ -190,15 +133,21 @@ namespace NoFallZone.Utilities
                 Console.Write($"{label} (max {maxLength} chars): ");
                 input = Console.ReadLine()!.Trim();
 
-                if (!string.IsNullOrWhiteSpace(input) &&
-                    input.Length <= maxLength &&
-                    emailRegex.IsMatch(input))
-                {
-                    return input;
-                }
+                bool isValidEmail = !string.IsNullOrWhiteSpace(input) &&
+                                    input.Length <= maxLength &&
+                                    emailRegex.IsMatch(input);
 
-                ShowError(errorMsg);
-            } while (true);
+                bool isUnique = !db.Customers.Any(c => c.Email == input);
+
+                if (isValidEmail && isUnique)
+                    return input;
+
+                if (!isValidEmail)
+                    ShowError(errorMsg);
+                else if (!isUnique)
+                    ShowError("That email is already registered! Try a different one...");
+            }
+            while (true);
         }
 
         public static string PromptPostalCode(string label, int maxLength, string errorMsg)
@@ -225,6 +174,126 @@ namespace NoFallZone.Utilities
             } while (true);
         }
 
+        public static string PromptUsername(string label, int minLength, int maxLength, string errorMsg, NoFallZoneContext db)
+        {
+            string input;
+
+            do
+            {
+                Console.Write($"{label} ({minLength}-{maxLength} chars): ");
+                input = Console.ReadLine()!.Trim();
+
+                bool isValid = !string.IsNullOrWhiteSpace(input) &&
+                               input.Length >= minLength &&
+                               input.Length <= maxLength;
+
+                bool isUnique = !db.Customers.Any(c => c.Username == input);
+
+                if (isValid && isUnique)
+                    return input;
+
+                if (!isValid)
+                    ShowError(errorMsg);
+                else if (!isUnique)
+                    ShowError("That username is already taken! Try a different one...");
+            }
+            while (true);
+        }
+
+        public static string PromptPassword(string label, int minLength, int maxLength, string errorMsg)
+        {
+            string input;
+
+            do
+            {
+                Console.Write($"{label} ({minLength}-{maxLength} chars): ");
+                input = Console.ReadLine()!.Trim();
+
+                if (!string.IsNullOrWhiteSpace(input) &&
+                    input.Length >= minLength &&
+                    input.Length <= maxLength)
+                {
+                    return input;
+                }
+
+                ShowError(errorMsg);
+            }
+            while (true);
+        }
+
+        public static Role PromptRole(string label, string errorMsg)
+        {
+            do
+            {
+                Console.Write($"{label} (User/Admin): ");
+                string input = Console.ReadLine()!.Trim();
+
+                if (Enum.TryParse<Role>(input, true, out Role role))
+                    return role;
+
+                ShowError(errorMsg);
+            }
+            while (true);
+        }
+
+        public static int? PromptOptionalInt(string label, int min, int max, string errorMsg)
+        {
+            string input;
+            int value;
+            do
+            {
+                Console.Write($"{label} (Min '{min}' and Max '{max}, enter to keep current): ");
+                input = Console.ReadLine()!;
+                if (string.IsNullOrWhiteSpace(input))
+                    return null;
+
+                if (int.TryParse(input, out value) && value >= min && value <= max)
+                    return value;
+
+                ShowError(errorMsg);
+
+            } while (true);
+        }
+
+        public static decimal? PromptOptionalDecimal(string label, decimal min, decimal max, string errorMsg)
+        {
+            string input;
+            decimal value;
+            do
+            {
+                Console.Write($"{label} (Min '{min}' and Max '{max}, enter to keep current): ");
+                input = Console.ReadLine()!;
+                if (string.IsNullOrWhiteSpace(input))
+                    return null;
+
+                if (decimal.TryParse(input, out value) && value >= min && value <= max)
+                    return value;
+
+                ShowError(errorMsg);
+
+            } while (true);
+        }
+
+        public static string PromptOptionalLimitedString(string label, int maxLength, string errorMsg)
+        {
+            string input;
+            do
+            {
+                Console.Write($"{label} (Max {maxLength} chars, enter to keep current): ");
+                input = Console.ReadLine()!;
+
+                if (string.IsNullOrWhiteSpace(input))
+                    return "";
+
+                if (input.Length <= maxLength)
+                    return input;
+
+                ShowError(errorMsg);
+
+            } while (true);
+        }
+
+
         public static string? PromptOptionalPhone(string label, int maxLength, string errorMsg)
         {
             string input;
@@ -232,7 +301,7 @@ namespace NoFallZone.Utilities
 
             do
             {
-                Console.Write($"{label} (Enter to keep current): ");
+                Console.Write($"{label} (Max {maxLength} chars, enter to keep current): ");
                 input = Console.ReadLine()!.Trim();
 
                 if (string.IsNullOrWhiteSpace(input))
@@ -246,24 +315,31 @@ namespace NoFallZone.Utilities
         }
 
 
-        public static string? PromptOptionalEmail(string label, int maxLength, string errorMsg)
+        public static string? PromptOptionalEmail(string label, int maxLength, string errorMsg, NoFallZoneContext db, string currentEmail)
         {
             string input;
             var emailRegex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
 
             do
             {
-                Console.Write($"{label} (Enter to keep current): ");
+                Console.Write($"{label} (Max {maxLength}, enter to keep current): ");
                 input = Console.ReadLine()!.Trim();
 
                 if (string.IsNullOrWhiteSpace(input))
                     return null;
 
-                if (input.Length <= maxLength && emailRegex.IsMatch(input))
+                bool isValid = input.Length <= maxLength && emailRegex.IsMatch(input);
+                bool isUnique = input == currentEmail || !db.Customers.Any(c => c.Email == input);
+
+                if (isValid && isUnique)
                     return input;
 
-                ShowError(errorMsg);
-            } while (true);
+                if (!isValid)
+                    ShowError(errorMsg);
+                else if (!isUnique)
+                    ShowError("That email is already registered. Try another.");
+            }
+            while (true);
         }
 
 
@@ -274,7 +350,7 @@ namespace NoFallZone.Utilities
 
             do
             {
-                Console.Write($"{label} (Enter to keep current): ");
+                Console.Write($"{label} (Max {maxLength} chars, enter to keep current): ");
                 input = Console.ReadLine()!.Trim();
 
                 if (string.IsNullOrWhiteSpace(input))
@@ -286,6 +362,70 @@ namespace NoFallZone.Utilities
                 ShowError(errorMsg);
             } while (true);
         }
+
+        public static string? PromptOptionalPassword(string label, int minLength, int maxLength, string errorMsg)
+        {
+            string input;
+
+            do
+            {
+                Console.Write($"{label} ({minLength}-{maxLength} chars, enter to keep current): ");
+                input = Console.ReadLine()!.Trim();
+
+                if (string.IsNullOrWhiteSpace(input))
+                    return null;
+
+                if (input.Length >= minLength && input.Length <= maxLength)
+                    return input;
+
+                ShowError(errorMsg);
+            }
+            while (true);
+        }
+
+
+        public static Role? PromptOptionalRole(string label, string errorMsg)
+        {
+            Console.Write($"{label} (user/admin, enter to keep current): ");
+            string input = Console.ReadLine()!.Trim();
+
+            if (string.IsNullOrWhiteSpace(input))
+                return null;
+
+            if (Enum.TryParse<Role>(input, true, out Role role))
+                return role;
+
+            ShowError(errorMsg);
+            return PromptOptionalRole(label, errorMsg);
+        }
+
+
+        public static string? PromptOptionalUsername(string label, int minLength, int maxLength, string errorMsg, NoFallZoneContext db, string currentUsername)
+        {
+            string input;
+
+            do
+            {
+                Console.Write($"{label} ({minLength}-{maxLength} chars, enter to keep current): ");
+                input = Console.ReadLine()!.Trim();
+
+                if (string.IsNullOrWhiteSpace(input))
+                    return null;
+
+                bool isValid = input.Length >= minLength && input.Length <= maxLength;
+                bool isUnique = input == currentUsername || !db.Customers.Any(c => c.Username == input);
+
+                if (isValid && isUnique)
+                    return input;
+
+                if (!isValid)
+                    ShowError(errorMsg);
+                else if (!isUnique)
+                    ShowError("That username is already taken. Try another.");
+            }
+            while (true);
+        }
+
 
 
 

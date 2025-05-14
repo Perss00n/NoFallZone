@@ -57,6 +57,18 @@ public class NoFallZoneContext : DbContext
         modelBuilder.Entity<ShippingOption>()
             .Property(so => so.Price)
             .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Customer>()
+            .HasIndex(c => c.Username)
+            .IsUnique();
+
+        modelBuilder.Entity<Customer>()
+            .HasIndex(c => c.Email)
+            .IsUnique();
+
+        modelBuilder.Entity<Customer>()
+            .Property(c => c.Role)
+            .HasConversion<string>();
     }
 
 }

@@ -127,25 +127,31 @@ namespace NoFallZone.Utilities
                 {
                     new Customer
                     {
-                        FullName = "Anna Bergstrom",
-                        Email = "anna.bergstrom@example.com",
-                        Phone = "070-1234567",
-                        Address = "Storgatan 1",
+                        FullName = "Marcus Lehm",
+                        Email = "Perss00n@gmail.com",
+                        Phone = "073-7871226",
+                        Address = "Äsperödsvägen 10B",
                         PostalCode = "451 34",
-                        City = "Gothenburg",
+                        City = "Uddevalla",
                         Country = "Sweden",
-                        Age = 28
+                        Age = 38,
+                        Username = "Perss00n",
+                        Password = "thisisatest",
+                        Role = Role.Admin
                     },
                     new Customer
                     {
-                        FullName = "Erik Johansson",
-                        Email = "erik.johansson@example.com",
+                        FullName = "Ida Hammar",
+                        Email = "ida_hammar@hotmail.com",
                         Phone = "070-7654321",
                         Address = "Lillgatan 5",
                         PostalCode = "451 54",
-                        City = "Stockholm",
+                        City = "Uddevalla",
                         Country = "Sweden",
-                        Age = 35
+                        Age = 35,
+                        Username = "Hammer",
+                        Password = "thisisalsoatest",
+                        Role = Role.User
                     }
                 };
                 context.Customers.AddRange(customers);

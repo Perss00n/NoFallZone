@@ -18,9 +18,13 @@ public class Customer
     public int? Age { get; set; }
     public string? Username { get; set; }
     public string? Password { get; set; }
-    public string Role { get; set; } = "user";
-
-
+    public Role Role { get; set; } = Role.User;
 
     public ICollection<Order>? Orders { get; set; }
+}
+
+public enum Role
+{
+    User,
+    Admin
 }
