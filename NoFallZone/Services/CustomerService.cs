@@ -104,7 +104,7 @@ public class CustomerService : ICustomerService
         var customer = CustomerSelector.ChooseCustomer(db);
         if (customer == null)
         {
-            Console.WriteLine("No customer selected. Returning to main menu...");
+            Console.WriteLine("No customer selected! Returning to main menu...");
             Console.ReadKey();
             return;
         }
@@ -158,41 +158,25 @@ public class CustomerService : ICustomerService
         Console.Clear();
         Console.WriteLine("=== Delete a customer ===");
 
-        var customers = db.Customers.ToList();
+        var customer = CustomerSelector.ChooseCustomer(db);
 
-        if (customers.Count == 0)
+        if (customer == null)
         {
-            Console.WriteLine("No customers found in the database. Returning to main menu...");
-            return;
-        }
-
-        customers.ForEach(customer => Console.WriteLine($"Id: {customer.Id}\tName: {customer.FullName}"));
-
-        int firstId = customers.First().Id;
-        int lastId = customers.Last().Id;
-
-        int customerId = InputHelper.PromptInt("Enter the id of the customer you want to delete", firstId, lastId, $"Enter a valid number between {firstId} and {lastId}");
-        var selectedCustomer = customers.FirstOrDefault(c => c.Id == customerId);
-
-        if (selectedCustomer == null)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Customer not found. Returning to main menu...");
-            Console.ResetColor();
+            Console.WriteLine("Returning to main menu...");
             return;
         }
 
         Console.Clear();
-        Console.WriteLine($"Are you sure you want to delete the user '{selectedCustomer.FullName}'?");
+        Console.WriteLine($"Are you sure you want to delete the user '{customer.FullName}'?");
         bool confirm = CustomerValidator.PromptConfirmation();
 
         if (confirm)
         {
-            db.Customers.Remove(selectedCustomer);
+            db.Customers.Remove(customer);
             db.SaveChanges();
 
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("User deleted succesfully!");
+            Console.WriteLine("User deleted successfully!");
             Console.ResetColor();
         }
         else

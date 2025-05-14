@@ -67,16 +67,20 @@ namespace NoFallZone.Utilities
         }
 
 
-        public static string PromptRequiredLimitedString(string label, int maxLength, string errorMsg)
+        public static string PromptRequiredLimitedString(string label, int minLength, int maxLength, string errorMsg)
         {
             string input;
             do
             {
-                Console.Write($"{label} (Max {maxLength} chars): ");
+                Console.Write($"{label} ({minLength}-{maxLength} chars): ");
                 input = Console.ReadLine()!;
 
-                if (!string.IsNullOrWhiteSpace(input) && input.Length <= maxLength)
+                if (!string.IsNullOrWhiteSpace(input) &&
+                    input.Length >= minLength &&
+                    input.Length <= maxLength)
+                {
                     return input;
+                }
 
                 ShowError(errorMsg);
 
@@ -150,7 +154,7 @@ namespace NoFallZone.Utilities
             while (true);
         }
 
-        public static string PromptPostalCode(string label, int maxLength, string errorMsg)
+        public static string PromptPostalCode(string label, int minLength, int maxLength, string errorMsg)
         {
             string input;
 
@@ -163,6 +167,7 @@ namespace NoFallZone.Utilities
                 input = Console.ReadLine()!.Trim();
 
                 if (!string.IsNullOrWhiteSpace(input)
+                    && input.Length >= minLength
                     && input.Length <= maxLength
                     && postalRegex.IsMatch(input))
                 {
@@ -173,6 +178,7 @@ namespace NoFallZone.Utilities
 
             } while (true);
         }
+
 
         public static string PromptUsername(string label, int minLength, int maxLength, string errorMsg, NoFallZoneContext db)
         {
@@ -274,23 +280,24 @@ namespace NoFallZone.Utilities
             } while (true);
         }
 
-        public static string PromptOptionalLimitedString(string label, int maxLength, string errorMsg)
+        public static string? PromptOptionalLimitedString(string label, int minLength, int maxLength, string errorMsg)
         {
             string input;
+
             do
             {
-                Console.Write($"{label} (Max {maxLength} chars, enter to keep current): ");
-                input = Console.ReadLine()!;
+                Console.Write($"{label} ({minLength}-{maxLength} chars, enter to keep current): ");
+                input = Console.ReadLine()!.Trim();
 
                 if (string.IsNullOrWhiteSpace(input))
-                    return "";
+                    return null;
 
-                if (input.Length <= maxLength)
+                if (input.Length >= minLength && input.Length <= maxLength)
                     return input;
 
                 ShowError(errorMsg);
-
-            } while (true);
+            }
+            while (true);
         }
 
 
@@ -343,24 +350,26 @@ namespace NoFallZone.Utilities
         }
 
 
-        public static string? PromptOptionalPostalCode(string label, int maxLength, string errorMsg)
+        public static string? PromptOptionalPostalCode(string label, int minLength, int maxLength, string errorMsg)
         {
             string input;
+
             var postalRegex = new Regex(@"^\d{3}\s?\d{2}$");
 
             do
             {
-                Console.Write($"{label} (Max {maxLength} chars, enter to keep current): ");
+                Console.Write($"{label} (Ex 45141 or 451 41, enter to keep current): ");
                 input = Console.ReadLine()!.Trim();
 
                 if (string.IsNullOrWhiteSpace(input))
                     return null;
 
-                if (input.Length <= maxLength && postalRegex.IsMatch(input))
+                if (input.Length >= minLength && input.Length <= maxLength && postalRegex.IsMatch(input))
                     return input;
 
                 ShowError(errorMsg);
-            } while (true);
+            }
+            while (true);
         }
 
         public static string? PromptOptionalPassword(string label, int minLength, int maxLength, string errorMsg)
