@@ -39,9 +39,8 @@ public static class RegistrationHelper
         db.Customers.Add(customer);
         db.SaveChanges();
 
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("Account created successfully!");
-        Console.ResetColor();
-        Thread.Sleep(1500);
+        Console.Clear();
+        OutputHelper.ShowSuccess("Account created successfully! You may now log in on the homepage");
+        Thread.Sleep(2000);
     }
 }

@@ -4,19 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NoFallZone.Services;
+using NoFallZone.Utilities;
 
 namespace NoFallZone.Menu;
 public class StartPage
 {
     private readonly IProductService _productService;
     private readonly ICustomerService _customerService;
+    private readonly ICategoryService _categoryService;
     private readonly CustomerMenu? _customerMenu;
     private readonly AdminMenu? _adminMenu;
 
-    public StartPage(IProductService productService, ICustomerService customerService, CustomerMenu? customerMenu, AdminMenu? adminMenu)
+    public StartPage(IProductService productService, ICustomerService customerService, ICategoryService categoryService, CustomerMenu? customerMenu, AdminMenu? adminMenu)
     {
         _productService = productService;
         _customerService = customerService;
+        _categoryService = categoryService;
         _customerMenu = customerMenu;
         _adminMenu = adminMenu;
     }
@@ -39,7 +42,6 @@ public class StartPage
 
             _productService.ShowDeals();
 
-            Console.WriteLine("\n\nChoose an option or press Q to quit:");
             var input = Console.ReadKey(true).Key;
 
             if (_adminMenu != null)
@@ -69,7 +71,7 @@ public class StartPage
 
             if (running)
             {
-                Console.WriteLine("\nPress any key to return...");
+                OutputHelper.ShowInfo("Press any key to return...");
                 Console.ReadKey();
             }
         }

@@ -1,4 +1,5 @@
 ﻿using NoFallZone.Services;
+using NoFallZone.Utilities;
 
 namespace NoFallZone.Menu
 {
@@ -6,14 +7,14 @@ namespace NoFallZone.Menu
     {
         private readonly IProductService _productService;
         private readonly ICustomerService _customerService;
-        //private readonly ICategoryService _categoryService;
+        private readonly ICategoryService _categoryService;
         //private readonly IStatsService _statsService;
 
-        public AdminMenu(IProductService productService, ICustomerService customerService/*, ICategoryService categoryService, IStatsService statsService*/)
+        public AdminMenu(IProductService productService, ICustomerService customerService, ICategoryService categoryService/*, IStatsService statsService*/)
         {
             _productService = productService;
             _customerService = customerService;
-            //_categoryService = categoryService;
+            _categoryService = categoryService;
             //_statsService = statsService;
         }
 
@@ -57,7 +58,7 @@ namespace NoFallZone.Menu
                     _productService.DeleteProduct();
                     break;
                 default:
-                    Console.WriteLine("Ogiltigt val i produktmenyn.");
+                    OutputHelper.ShowError("Ogiltigt val i produktmenyn! Försök igen...");
                     break;
             }
         }
@@ -78,19 +79,19 @@ namespace NoFallZone.Menu
             switch (key)
             {
                 case ConsoleKey.D1:
-                    //_categoryService.ShowAllCategories();
+                    _categoryService.ShowAllCategories();
                     break;
                 case ConsoleKey.D2:
-                    //_categoryService.AddCategory();
+                    _categoryService.AddCategory();
                     break;
                 case ConsoleKey.D3:
-                    //_categoryService.EditCategory();
+                    _categoryService.EditCategory();
                     break;
                 case ConsoleKey.D4:
-                    //_categoryService.DeleteCategory();
+                    _categoryService.DeleteCategory();
                     break;
                 default:
-                    Console.WriteLine("Ogiltigt val i kategorimenyn.");
+                    OutputHelper.ShowError("Ogiltigt val i kategorimenyn! Försök igen...");
                     break;
             }
         }
@@ -123,7 +124,7 @@ namespace NoFallZone.Menu
                     _customerService.DeleteCustomer();
                     break;
                 default:
-                    Console.WriteLine("Ogiltigt val i kundmenyn.");
+                    OutputHelper.ShowError("Ogiltigt val i kundmenyn! Försök igen...");
                     break;
             }
         }
@@ -156,7 +157,7 @@ namespace NoFallZone.Menu
                     //_statsService.ShowTotalSales();
                     break;
                 default:
-                    Console.WriteLine("Ogiltigt val i statistikmenyn.");
+                    OutputHelper.ShowError("Ogiltigt val i statistikmenyn! Försök igen...");
                     break;
             }
         }

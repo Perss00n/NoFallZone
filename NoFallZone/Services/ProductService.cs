@@ -35,30 +35,28 @@ public class ProductService : IProductService
 
         if (products.Count == 0)
         {
-            GUI.DrawWindow($"Products in {category.Name}", 1, 1,
+            GUI.DrawWindow($"Products in {category.Name}", 1, 2,
                 new List<string> { "No products available in this category." },
-                maxLineWidth: 100);
+                maxLineWidth: 70);
             return;
         }
 
         int fromTop = 2;
-
         foreach (var p in products)
         {
             GUI.DrawWindow($"Product: {p.Name}", 1, fromTop, new List<string>
         {
-            $"ID:         {p.Id}",
-            $"Name:       {p.Name}",
-            $"Price:      {p.Price:C}",
-            $"Stock:      {p.Stock}",
-            $"Category:   {category.Name}",
-            $"Supplier:   {p.Supplier?.Name ?? "Unknown"}",
-            $"Featured:   {(p.IsFeatured == true ? "Yes" : "No")}"
+            $"ID:        {p.Id}",
+            $"Name:      {p.Name}",
+            $"Price:     {p.Price:C}",
+            $"Stock:     {p.Stock}",
+            $"Category:  {category.Name}",
+            $"Supplier:  {p.Supplier!.Name}",
+            $"Featured:  {(p.IsFeatured == true ? "Yes" : "No")}"
         }, maxLineWidth: 70);
 
             fromTop += 10;
         }
-
     }
 
     public void ShowDeals()
@@ -134,9 +132,7 @@ public class ProductService : IProductService
         db.Products.Add(product);
         db.SaveChanges();
 
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("\nThe product has been added to the database!");
-        Console.ResetColor();
+        OutputHelper.ShowSuccess("The product has been added to the database!");
     }
 
 
@@ -173,9 +169,7 @@ public class ProductService : IProductService
 
         db.SaveChanges();
 
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("\nProduct updated successfully!");
-        Console.ResetColor();
+        OutputHelper.ShowSuccess("Product updated successfully!");
     }
 
     public void DeleteProduct()
@@ -196,15 +190,11 @@ public class ProductService : IProductService
             db.Products.Remove(product);
             db.SaveChanges();
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Product deleted successfully!");
-            Console.ResetColor();
+            OutputHelper.ShowSuccess("Product deleted successfully!");
         }
         else
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Deletion cancelled! Returning to main menu...");
-            Console.ResetColor();
+            OutputHelper.ShowError("Deletion cancelled! Returning to main menu...");
         }
     }
 }

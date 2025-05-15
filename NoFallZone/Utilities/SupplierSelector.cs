@@ -16,7 +16,7 @@ public static class SupplierSelector
 
         if (suppliers.Count == 0)
         {
-            Console.WriteLine("No suppliers found! Returning to main menu...");
+            OutputHelper.ShowError("No suppliers found! Returning to main menu...");
             return null;
         }
 

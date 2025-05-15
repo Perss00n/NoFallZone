@@ -20,7 +20,7 @@ public static class ProductSelector
 
         if (products.Count == 0)
         {
-            Console.WriteLine("No products found in this category! Returning to main menu...");
+            OutputHelper.ShowError("No products found in this category! Returning to main menu...");
             return null;
         }
 

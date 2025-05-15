@@ -20,7 +20,7 @@ namespace NoFallZone.Utilities
                 input = Console.ReadLine()!;
                 if (!isValid(input))
                 {
-                    ShowError(errorMsg);
+                    OutputHelper.ShowError(errorMsg);
                 }
             } while (!isValid(input));
             return input;
@@ -39,7 +39,7 @@ namespace NoFallZone.Utilities
 
                 if (!isValid)
                 {
-                    ShowError(errorMsg);
+                    OutputHelper.ShowError(errorMsg);
                 }
 
             } while (!isValid);
@@ -59,7 +59,7 @@ namespace NoFallZone.Utilities
 
                 if (!isValid)
                 {
-                    ShowError(errorMsg);
+                    OutputHelper.ShowError(errorMsg);
                 }
 
             } while (!isValid);
@@ -82,7 +82,7 @@ namespace NoFallZone.Utilities
                     return input;
                 }
 
-                ShowError(errorMsg);
+                OutputHelper.ShowError(errorMsg);
 
             } while (true);
         }
@@ -98,7 +98,7 @@ namespace NoFallZone.Utilities
                 if (input == "Y") return true;
                 if (input == "N") return false;
 
-                ShowError(errorMsg);
+                OutputHelper.ShowError(errorMsg);
 
             } while (true);
         }
@@ -122,7 +122,7 @@ namespace NoFallZone.Utilities
                     return input;
                 }
 
-                ShowError(errorMsg);
+                OutputHelper.ShowError(errorMsg);
             } while (true);
         }
 
@@ -147,9 +147,9 @@ namespace NoFallZone.Utilities
                     return input;
 
                 if (!isValidEmail)
-                    ShowError(errorMsg);
+                    OutputHelper.ShowError(errorMsg);
                 else if (!isUnique)
-                    ShowError("That email is already registered! Try a different one...");
+                    OutputHelper.ShowError("That email is already registered! Try a different one...");
             }
             while (true);
         }
@@ -174,7 +174,7 @@ namespace NoFallZone.Utilities
                     return input;
                 }
 
-                ShowError(errorMsg);
+                OutputHelper.ShowError(errorMsg);
 
             } while (true);
         }
@@ -199,9 +199,9 @@ namespace NoFallZone.Utilities
                     return input;
 
                 if (!isValid)
-                    ShowError(errorMsg);
+                    OutputHelper.ShowError(errorMsg);
                 else if (!isUnique)
-                    ShowError("That username is already taken! Try a different one...");
+                    OutputHelper.ShowError("That username is already taken! Try a different one...");
             }
             while (true);
         }
@@ -222,7 +222,7 @@ namespace NoFallZone.Utilities
                     return input;
                 }
 
-                ShowError(errorMsg);
+                OutputHelper.ShowError(errorMsg);
             }
             while (true);
         }
@@ -237,7 +237,7 @@ namespace NoFallZone.Utilities
                 if (Enum.TryParse<Role>(input, true, out Role role))
                     return role;
 
-                ShowError(errorMsg);
+                OutputHelper.ShowError(errorMsg);
             }
             while (true);
         }
@@ -256,7 +256,7 @@ namespace NoFallZone.Utilities
                 if (int.TryParse(input, out value) && value >= min && value <= max)
                     return value;
 
-                ShowError(errorMsg);
+                OutputHelper.ShowError(errorMsg);
 
             } while (true);
         }
@@ -275,7 +275,7 @@ namespace NoFallZone.Utilities
                 if (decimal.TryParse(input, out value) && value >= min && value <= max)
                     return value;
 
-                ShowError(errorMsg);
+                OutputHelper.ShowError(errorMsg);
 
             } while (true);
         }
@@ -295,7 +295,7 @@ namespace NoFallZone.Utilities
                 if (input.Length >= minLength && input.Length <= maxLength)
                     return input;
 
-                ShowError(errorMsg);
+                OutputHelper.ShowError(errorMsg);
             }
             while (true);
         }
@@ -317,7 +317,7 @@ namespace NoFallZone.Utilities
                 if (input.Length <= maxLength && phoneRegex.IsMatch(input))
                     return input;
 
-                ShowError(errorMsg);
+                OutputHelper.ShowError(errorMsg);
             } while (true);
         }
 
@@ -342,9 +342,9 @@ namespace NoFallZone.Utilities
                     return input;
 
                 if (!isValid)
-                    ShowError(errorMsg);
+                    OutputHelper.ShowError(errorMsg);
                 else if (!isUnique)
-                    ShowError("That email is already registered. Try another.");
+                    OutputHelper.ShowError("That email is already registered. Try another.");
             }
             while (true);
         }
@@ -367,7 +367,7 @@ namespace NoFallZone.Utilities
                 if (input.Length >= minLength && input.Length <= maxLength && postalRegex.IsMatch(input))
                     return input;
 
-                ShowError(errorMsg);
+                OutputHelper.ShowError(errorMsg);
             }
             while (true);
         }
@@ -387,7 +387,7 @@ namespace NoFallZone.Utilities
                 if (input.Length >= minLength && input.Length <= maxLength)
                     return input;
 
-                ShowError(errorMsg);
+                OutputHelper.ShowError(errorMsg);
             }
             while (true);
         }
@@ -404,7 +404,7 @@ namespace NoFallZone.Utilities
             if (Enum.TryParse<Role>(input, true, out Role role))
                 return role;
 
-            ShowError(errorMsg);
+            OutputHelper.ShowError(errorMsg);
             return PromptOptionalRole(label, errorMsg);
         }
 
@@ -428,21 +428,11 @@ namespace NoFallZone.Utilities
                     return input;
 
                 if (!isValid)
-                    ShowError(errorMsg);
+                    OutputHelper.ShowError(errorMsg);
                 else if (!isUnique)
-                    ShowError("That username is already taken. Try another.");
+                    OutputHelper.ShowError("That username is already taken. Try another.");
             }
             while (true);
-        }
-
-
-
-
-        private static void ShowError(string msg)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(msg);
-            Console.ResetColor();
         }
 
     }

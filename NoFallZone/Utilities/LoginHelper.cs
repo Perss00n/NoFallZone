@@ -21,16 +21,14 @@ public static class LoginHelper
 
         if (customer == null)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Login failed! Incorrect username or password.");
-            Console.ResetColor();
+            Console.Clear();
+            OutputHelper.ShowError("Login failed! Incorrect username or password");
             Thread.Sleep(1500);
             return null;
         }
 
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine($"\nWelcome back, {customer.FullName}! You are logged in as {customer.Role}.");
-        Console.ResetColor();
+        Console.Clear();
+        OutputHelper.ShowInfo($"Welcome back, {customer.FullName}! You are now logged in as a {customer.Role}");
         Thread.Sleep(2500);
         return customer;
     }

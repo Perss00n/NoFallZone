@@ -1,7 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Logging;
-using NoFallZone.Data;
+﻿using NoFallZone.Data;
 using NoFallZone.Menu;
 using NoFallZone.Models;
 using NoFallZone.Services;
@@ -18,8 +15,9 @@ namespace NoFallZone
             //SeedData.Initialize(db);
             IProductService productService = new ProductService(db);
             ICustomerService customerService = new CustomerService(db);
+            ICategoryService categoryService = new CategoryService(db);
 
-            var adminMenu = new AdminMenu(productService, customerService);
+            var adminMenu = new AdminMenu(productService, customerService, categoryService);
             var customerMenu = new CustomerMenu(productService, customerService);
 
             bool running = true;
@@ -34,6 +32,7 @@ namespace NoFallZone
                     "[3] Exit"
                 });
 
+                Console.CursorVisible = false;
                 var choice = Console.ReadKey(true).Key;
 
                 switch (choice)
@@ -45,6 +44,7 @@ namespace NoFallZone
                         var startPage = new StartPage(
                             productService,
                             customerService,
+                            categoryService,
                             customerMenu,
                             user.Role == Role.Admin ? adminMenu : null
                         );
@@ -61,14 +61,15 @@ namespace NoFallZone
                         break;
 
                     default:
-                        Console.WriteLine("\nInvalid choice! Try again.");
+                        Console.Clear();
+                        OutputHelper.ShowError("Invalid choice! Please try again...");
                         Thread.Sleep(1500);
                         break;
                 }
             }
 
             Console.Clear();
-            Console.WriteLine("Thank you for visiting NoFallZone!");
+            OutputHelper.ShowInfo("Thank you for visiting NoFallZone! L8terZ!");
 
         }
     }

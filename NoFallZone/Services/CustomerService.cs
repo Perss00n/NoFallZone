@@ -29,27 +29,30 @@ public class CustomerService : ICustomerService
 
         if (customers.Count == 0)
         {
-            Console.WriteLine("No customers found in the database. Returning to main menu...");
+            GUI.DrawWindow("Customers", 1, 2, new List<string>
+        {
+            "No customers found in the database."
+        }, maxLineWidth: 70);
             return;
         }
 
         int fromTop = 2;
-
         foreach (var c in customers)
         {
-            GUI.DrawWindow("Customer", 1, fromTop, new List<string> {
-        $"ID:         {c.Id}",
-        $"Name:       {c.FullName}",
-        $"Email:      {c.Email}",
-        $"Phone:      {c.Phone}",
-        $"Address:    {c.Address}",
-        $"PostalCode: {c.PostalCode}",
-        $"City:       {c.City}",
-        $"Country:    {c.Country}",
-        $"Age:        {c.Age}",
-        $"Username:   {c.Username ?? "Username not set"}",
-        $"Role:       {c.Role.ToString()}"
-    });
+            GUI.DrawWindow($"Customer: {c.FullName}", 1, fromTop, new List<string>
+        {
+            $"ID:         {c.Id}",
+            $"Name:       {c.FullName}",
+            $"Email:      {c.Email}",
+            $"Phone:      {c.Phone}",
+            $"Address:    {c.Address}",
+            $"PostalCode: {c.PostalCode}",
+            $"City:       {c.City}",
+            $"Country:    {c.Country}",
+            $"Age:        {c.Age}",
+            $"Username:   {c.Username}",
+            $"Role:       {c.Role}"
+        }, maxLineWidth: 70);
 
             fromTop += 13;
         }
@@ -91,9 +94,7 @@ public class CustomerService : ICustomerService
         db.Customers.Add(customer);
         db.SaveChanges();
 
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("\nAccount successfully added to the database!");
-        Console.ResetColor();
+        OutputHelper.ShowSuccess("Account successfully added to the database!");
     }
 
     public void EditCustomer()
@@ -104,7 +105,7 @@ public class CustomerService : ICustomerService
         var customer = CustomerSelector.ChooseCustomer(db);
         if (customer == null)
         {
-            Console.WriteLine("No customer selected! Returning to main menu...");
+            OutputHelper.ShowError("No customer selected! Returning to main menu...");
             Console.ReadKey();
             return;
         }
@@ -148,9 +149,7 @@ public class CustomerService : ICustomerService
 
         db.SaveChanges();
 
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("\nCustomer updated successfully!");
-        Console.ResetColor();
+        OutputHelper.ShowSuccess("Customer updated successfully!");
     }
 
     public void DeleteCustomer()
@@ -162,7 +161,7 @@ public class CustomerService : ICustomerService
 
         if (customer == null)
         {
-            Console.WriteLine("Returning to main menu...");
+            OutputHelper.ShowError("Returning to main menu...");
             return;
         }
 
@@ -175,15 +174,11 @@ public class CustomerService : ICustomerService
             db.Customers.Remove(customer);
             db.SaveChanges();
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("User deleted successfully!");
-            Console.ResetColor();
+            OutputHelper.ShowSuccess("User deleted successfully!");
         }
         else
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Deletion cancelled! Returning to main menu...");
-            Console.ResetColor();
+            OutputHelper.ShowError("Deletion cancelled! Returning to main menu...");
         }
     }
 
