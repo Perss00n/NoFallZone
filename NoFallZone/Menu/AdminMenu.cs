@@ -8,37 +8,36 @@ namespace NoFallZone.Menu
         private readonly IProductService _productService;
         private readonly ICustomerService _customerService;
         private readonly ICategoryService _categoryService;
-        //private readonly IStatsService _statsService;
+        private readonly ISupplierService _supplierService;
 
-        public AdminMenu(IProductService productService, ICustomerService customerService, ICategoryService categoryService/*, IStatsService statsService*/)
+        public AdminMenu(IProductService productService, ICustomerService customerService, ICategoryService categoryService, ISupplierService supplierService)
         {
             _productService = productService;
             _customerService = customerService;
             _categoryService = categoryService;
-            //_statsService = statsService;
+            _supplierService = supplierService;
         }
 
         public List<string> GetMenuItems()
         {
             return new List<string>
-        {
-                    "1. Administrera produkter",
-                    "2. Administrera kategorier",
-                    "3. Administrera kunder",
-                    "4. Se statistik(Queries)",
-                    "5. Tillbaka till inloggning"
-        };
+    {
+                "1. Manage products",
+                "2. Manage categories",
+                "3. Manage customers",
+                "4. Manage suppliers",
+                "5. Back to login"
+    };
         }
 
         public void ShowProductAdminMenu()
         {
             Console.Clear();
-            GUI.DrawWindow("Produktmeny", 0, 0, new List<string>
-            {
-                "1. Visa produkter",
-                "2. Lägg till produkt",
-                "3. Redigera produkt",
-                "4. Ta bort produkt"
+            GUI.DrawWindow("Product Menu", 0, 0, new List<string>{
+                "1. Show products",
+                "2. Add product",
+                "3. Edit product",
+                "4. Delete product"
             });
 
             var key = Console.ReadKey(true).Key;
@@ -58,7 +57,7 @@ namespace NoFallZone.Menu
                     _productService.DeleteProduct();
                     break;
                 default:
-                    OutputHelper.ShowError("Ogiltigt val i produktmenyn! Försök igen...");
+                    OutputHelper.ShowError("Invalid choice! Please try again...");
                     break;
             }
         }
@@ -66,13 +65,13 @@ namespace NoFallZone.Menu
         public void ShowCategoryAdminMenu()
         {
             Console.Clear();
-            GUI.DrawWindow("Kategoriadministration", 0, 0, new List<string>
-            {
-                "1. Visa kategorier",
-                "2. Lägg till kategori",
-                "3. Redigera kategori",
-                "4. Ta bort kategori"
+            GUI.DrawWindow("Category Administration", 0, 0, new List<string>{
+                "1. Show categories",
+                "2. Add category",
+                "3. Edit category",
+                "4. Delete category"
             });
+
 
             var key = Console.ReadKey(true).Key;
 
@@ -91,7 +90,7 @@ namespace NoFallZone.Menu
                     _categoryService.DeleteCategory();
                     break;
                 default:
-                    OutputHelper.ShowError("Ogiltigt val i kategorimenyn! Försök igen...");
+                    OutputHelper.ShowError("Invalid choice! Please try again...");
                     break;
             }
         }
@@ -99,13 +98,14 @@ namespace NoFallZone.Menu
         public void ShowCustomerAdminMenu()
         {
             Console.Clear();
-            GUI.DrawWindow("Kundadministration", 0, 0, new List<string>
-            {
-                "1. Visa kunder",
-                "2. Lägg till kund",
-                "3. Redigera kund",
-                "4. Ta bort kund"
+            GUI.DrawWindow("Customer Administration", 0, 0, new List<string>
+{
+                "1. Show customers",
+                "2. Add customer",
+                "3. Edit customer",
+                "4. Delete customer"
             });
+
 
             var key = Console.ReadKey(true).Key;
 
@@ -124,20 +124,20 @@ namespace NoFallZone.Menu
                     _customerService.DeleteCustomer();
                     break;
                 default:
-                    OutputHelper.ShowError("Ogiltigt val i kundmenyn! Försök igen...");
+                    OutputHelper.ShowError("Invalid choice! Please try again...");
                     break;
             }
         }
 
-        public void ShowStatisticsMenu()
+        public void ShowSupplierAdminMenu()
         {
             Console.Clear();
-            GUI.DrawWindow("Statistik & Queries", 0, 0, new List<string>
+            GUI.DrawWindow("Supplier Administration", 0, 0, new List<string>
             {
-                "1. Visa antal produkter per kategori",
-                "2. Visa kunder med flest ordrar",
-                "3. Visa mest sålda produkter",
-                "4. Visa total försäljning"
+                "1. Show all suppliers",
+                "2. Add Supplier",
+                "3. Edit Supplier",
+                "4. Delete Supplier"
             });
 
             var key = Console.ReadKey(true).Key;
@@ -145,19 +145,19 @@ namespace NoFallZone.Menu
             switch (key)
             {
                 case ConsoleKey.D1:
-                    //_statsService.ShowProductCountPerCategory();
+                    _supplierService.ShowAllSuppliers();
                     break;
                 case ConsoleKey.D2:
-                    //_statsService.ShowTopCustomers();
+                    _supplierService.AddSupplier();
                     break;
                 case ConsoleKey.D3:
-                    //_statsService.ShowTopSellingProducts();
+                    _supplierService.EditSupplier();
                     break;
                 case ConsoleKey.D4:
-                    //_statsService.ShowTotalSales();
+                    _supplierService.DeleteSupplier();
                     break;
                 default:
-                    OutputHelper.ShowError("Ogiltigt val i statistikmenyn! Försök igen...");
+                    OutputHelper.ShowError("Invalid choice! Please try again...");
                     break;
             }
         }

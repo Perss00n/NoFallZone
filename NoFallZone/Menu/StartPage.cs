@@ -12,14 +12,16 @@ public class StartPage
     private readonly IProductService _productService;
     private readonly ICustomerService _customerService;
     private readonly ICategoryService _categoryService;
+    private readonly ISupplierService _supplierService;
     private readonly CustomerMenu? _customerMenu;
     private readonly AdminMenu? _adminMenu;
 
-    public StartPage(IProductService productService, ICustomerService customerService, ICategoryService categoryService, CustomerMenu? customerMenu, AdminMenu? adminMenu)
+    public StartPage(IProductService productService, ICustomerService customerService, ICategoryService categoryService, ISupplierService supplierService, CustomerMenu? customerMenu, AdminMenu? adminMenu)
     {
         _productService = productService;
         _customerService = customerService;
         _categoryService = categoryService;
+        _supplierService = supplierService;
         _customerMenu = customerMenu;
         _adminMenu = adminMenu;
     }
@@ -51,7 +53,7 @@ public class StartPage
                     case ConsoleKey.D1: _adminMenu.ShowProductAdminMenu(); break;
                     case ConsoleKey.D2: _adminMenu.ShowCategoryAdminMenu(); break;
                     case ConsoleKey.D3: _adminMenu.ShowCustomerAdminMenu(); break;
-                    case ConsoleKey.D4: _adminMenu.ShowStatisticsMenu(); break;
+                    case ConsoleKey.D4: _adminMenu.ShowSupplierAdminMenu(); break;
                     case ConsoleKey.D5: running = false; break;
                 }
             }

@@ -16,8 +16,9 @@ namespace NoFallZone
             IProductService productService = new ProductService(db);
             ICustomerService customerService = new CustomerService(db);
             ICategoryService categoryService = new CategoryService(db);
+            ISupplierService supplierService = new SupplierService(db);
 
-            var adminMenu = new AdminMenu(productService, customerService, categoryService);
+            var adminMenu = new AdminMenu(productService, customerService, categoryService, supplierService);
             var customerMenu = new CustomerMenu(productService, customerService);
 
             bool running = true;
@@ -45,6 +46,7 @@ namespace NoFallZone
                             productService,
                             customerService,
                             categoryService,
+                            supplierService,
                             customerMenu,
                             user.Role == Role.Admin ? adminMenu : null
                         );

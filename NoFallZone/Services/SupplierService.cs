@@ -1,0 +1,97 @@
+﻿using NoFallZone.Data;
+using NoFallZone.Menu;
+using NoFallZone.Models;
+using NoFallZone.Utilities;
+
+namespace NoFallZone.Services
+{
+    public class SupplierService : ISupplierService
+    {
+        private readonly NoFallZoneContext db;
+
+        public SupplierService(NoFallZoneContext context)
+        {
+            db = context;
+        }
+
+        public void ShowAllSuppliers()
+        {
+            Console.Clear();
+            Console.WriteLine("=== All Suppliers ===\n");
+
+            var suppliers = db.Suppliers.ToList();
+
+            if (suppliers.Count == 0)
+            {
+                GUI.DrawWindow("Suppliers", 1, 2, new List<string>
+                {
+                    "No suppliers found in the database."
+                });
+                return;
+            }
+
+            List<string> outputData = suppliers.Select(s => $"Id: {s.Id} | Name: {s.Name}").ToList();
+
+            GUI.DrawWindow("Suppliers", 1, 2, outputData, maxLineWidth: 60);
+        }
+
+        public void AddSupplier()
+        {
+            Console.Clear();
+            Console.WriteLine("=== Add a new supplier ===");
+
+            string supplierName = SupplierValidator.PromptName();
+
+            var newSupplier = new Supplier()
+            {
+                Name = supplierName
+            };
+
+            db.Suppliers.Add(newSupplier);
+            db.SaveChanges();
+
+            OutputHelper.ShowSuccess("The Supplier has been added to the database!");
+        }
+
+        public void EditSupplier()
+        {
+            var supplier = SupplierSelector.ChooseSupplier(db);
+
+            if (supplier == null) return;
+
+            string? newSupplierName = SupplierValidator.PromptOptionalName(supplier.Name!);
+            if (!string.IsNullOrWhiteSpace(newSupplierName))
+                supplier.Name = newSupplierName;
+
+            db.SaveChanges();
+
+            OutputHelper.ShowSuccess("Supplier updated successfully!");
+        }
+
+        public void DeleteSupplier()
+        {
+            Console.Clear();
+            Console.WriteLine("=== Delete a supplier ===");
+
+            var supplier = SupplierSelector.ChooseSupplier(db);
+            if (supplier == null) return;
+
+            Console.Clear();
+
+            Console.WriteLine($"Are you sure you want to delete the supplier '{supplier.Name}'?");
+            bool confirm = SupplierValidator.PromptConfirmation();
+
+            if (confirm)
+            {
+                db.Suppliers.Remove(supplier);
+                db.SaveChanges();
+
+                OutputHelper.ShowSuccess("Supplier deleted successfully!");
+            }
+            else
+            {
+                OutputHelper.ShowError("Deletion cancelled! Returning to main menu...");
+            }
+        }
+    }
+}
