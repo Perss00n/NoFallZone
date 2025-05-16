@@ -21,13 +21,12 @@ namespace NoFallZone.Menu
         public List<string> GetMenuItems()
         {
             return new List<string>
-    {
+        {
                 "1. Manage products",
                 "2. Manage categories",
                 "3. Manage customers",
                 "4. Manage suppliers",
-                "5. Back to login"
-    };
+        };
         }
 
         public void ShowProductAdminMenu()

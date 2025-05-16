@@ -54,7 +54,6 @@ namespace NoFallZone
                         );
 
                         startPage.Show();
-                        Session.Logout();
                         break;
 
                     case ConsoleKey.D2:

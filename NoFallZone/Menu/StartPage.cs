@@ -37,14 +37,15 @@ public class StartPage
             GUI.DrawWindow("=== NoFallZone ===", 43, 0, new List<string> {
                 "Your #1 Source Of Climbing Gear!",
                 "",
-                $"Welcome back, {Session.GetDisplayNameAndRole()}"
+                $"Welcome back, {Session.GetDisplayNameAndRole()}",
+                "To Logout Press 'Q'"
             });
 
             if (Session.IsLoggedIn && _customerMenu != null)
-                GUI.DrawWindow("Customer Menu", 0, 5, _customerMenu.GetMenuItems());
+                GUI.DrawWindow("Customer Menu", 0, 8, _customerMenu.GetMenuItems());
 
             if (Session.IsAdmin && _adminMenu != null)
-                GUI.DrawWindow("Admin Menu", 45, 5, _adminMenu.GetMenuItems());
+                GUI.DrawWindow("Admin Menu", 45, 8, _adminMenu.GetMenuItems());
 
             _productService.ShowDeals();
 
@@ -58,7 +59,6 @@ public class StartPage
                     case ConsoleKey.D2: _adminMenu.ShowCategoryAdminMenu(); break;
                     case ConsoleKey.D3: _adminMenu.ShowCustomerAdminMenu(); break;
                     case ConsoleKey.D4: _adminMenu.ShowSupplierAdminMenu(); break;
-                    case ConsoleKey.D5: inSession = false; break;
                 }
             }
 
@@ -73,7 +73,13 @@ public class StartPage
             }
 
             if (input == ConsoleKey.Q)
+            {
+                Session.Logout();
+                OutputHelper.ShowInfo("You have been logged out.");
+                Thread.Sleep(1000);
                 inSession = false;
+                return;
+            }
 
             if (inSession)
             {
