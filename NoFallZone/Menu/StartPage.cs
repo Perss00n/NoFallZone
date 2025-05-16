@@ -35,13 +35,13 @@ public class StartPage
             Console.Clear();
 
             GUI.DrawWindow("=== NoFallZone ===", 43, 0, new List<string> {
-                "Your #1 Source Of Climbing Gear!",
-                "",
-                $"Welcome back, {Session.GetDisplayNameAndRole()}",
-                "To Logout Press 'Q'"
-            });
+            "Your #1 Source Of Climbing Gear!",
+            "",
+            $"Welcome back, {Session.GetDisplayNameAndRole()}",
+            "To Logout Press 'Q'"
+        });
 
-            if (Session.IsLoggedIn && _customerMenu != null)
+            if (_customerMenu != null)
                 GUI.DrawWindow("Customer Menu", 0, 8, _customerMenu.GetMenuItems());
 
             if (Session.IsAdmin && _adminMenu != null)
@@ -50,25 +50,27 @@ public class StartPage
             _productService.ShowDeals();
 
             var input = Console.ReadKey(true).Key;
+            bool isValidChoice = false;
+
+            if (_customerMenu != null)
+            {
+                switch (input)
+                {
+                    case ConsoleKey.H: _customerMenu.GoHome(); isValidChoice = true; break;
+                    case ConsoleKey.E: _customerMenu.ShowShop(); isValidChoice = true; break;
+                    case ConsoleKey.C: _customerMenu.OpenCart(); isValidChoice = true; break;
+                    case ConsoleKey.S: _customerMenu.Search(); isValidChoice = true; break;
+                }
+            }
 
             if (Session.IsAdmin && _adminMenu != null)
             {
                 switch (input)
                 {
-                    case ConsoleKey.D1: _adminMenu.ShowProductAdminMenu(); break;
-                    case ConsoleKey.D2: _adminMenu.ShowCategoryAdminMenu(); break;
-                    case ConsoleKey.D3: _adminMenu.ShowCustomerAdminMenu(); break;
-                    case ConsoleKey.D4: _adminMenu.ShowSupplierAdminMenu(); break;
-                }
-            }
-
-            if (Session.IsUser && _customerMenu != null)
-            {
-                switch (input)
-                {
-                    case ConsoleKey.H: _customerMenu.GoHome(); break;
-                    case ConsoleKey.S: _customerMenu.ShowShop(); break;
-                    case ConsoleKey.C: _customerMenu.OpenCart(); break;
+                    case ConsoleKey.D1: _adminMenu.ShowProductAdminMenu(); isValidChoice = true; break;
+                    case ConsoleKey.D2: _adminMenu.ShowCategoryAdminMenu(); isValidChoice = true; break;
+                    case ConsoleKey.D3: _adminMenu.ShowCustomerAdminMenu(); isValidChoice = true; break;
+                    case ConsoleKey.D4: _adminMenu.ShowSupplierAdminMenu(); isValidChoice = true; break;
                 }
             }
 
@@ -77,15 +79,20 @@ public class StartPage
                 Session.Logout();
                 OutputHelper.ShowInfo("You have been logged out.");
                 Thread.Sleep(1000);
-                inSession = false;
                 return;
+            }
+
+            if (!isValidChoice)
+            {
+                OutputHelper.ShowError("Invalid choice!");
             }
 
             if (inSession)
             {
-                OutputHelper.ShowInfo("Press any key to return...");
+                OutputHelper.ShowInfo("Press any key to continue...");
                 Console.ReadKey();
             }
         }
     }
+
 }

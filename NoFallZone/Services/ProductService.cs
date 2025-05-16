@@ -61,6 +61,112 @@ public class ProductService : IProductService
         }
     }
 
+    public void SearchProducts()
+    {
+        Console.Clear();
+        Console.Write("Enter a keyword to search for (or 'Q' to cancel): ");
+        string keyword = Console.ReadLine()!.Trim().ToLower();
+
+        if (string.IsNullOrWhiteSpace(keyword) || keyword == "q")
+        {
+            OutputHelper.ShowInfo("Search cancelled!");
+            return;
+        }
+
+        var results = db.Products
+            .Where(p =>
+                p.Name!.ToLower().Contains(keyword) ||
+                p.Description!.ToLower().Contains(keyword) ||
+                p.Supplier!.Name!.ToLower().Contains(keyword))
+            .Include(p => p.Category)
+            .Include(p => p.Supplier)
+            .ToList();
+
+        Console.Clear();
+
+        if (results.Count == 0)
+        {
+            OutputHelper.ShowError("No products matched your search.");
+            return;
+        }
+
+        var outputData = results
+            .Select((p, i) => $"{i + 1}. {p.Name} || {p.Category?.Name} || {p.Price:C}")
+            .ToList();
+
+        GUI.DrawWindow("Matching products", 0, 0, outputData, maxLineWidth: 60);
+
+        bool waitingForValidInput = true;
+
+        while (waitingForValidInput)
+        {
+            Console.Write("\nEnter the number of the product to view details or 'Q' to cancel: ");
+            string input = Console.ReadLine()!.Trim().ToLower();
+
+            if (input == "q")
+            {
+                OutputHelper.ShowError("Search cancelled!");
+                return;
+            }
+
+            if (int.TryParse(input, out int index) && index >= 1 && index <= results.Count)
+            {
+                var selectedProduct = results[index - 1];
+                ShowProductDetails(selectedProduct);
+                waitingForValidInput = false;
+            }
+            else
+            {
+                OutputHelper.ShowError("Invalid selection. Please enter a valid product number or 'Q' to quit.");
+            }
+        }
+    }
+
+    public void ShowProductDetails(Product product)
+    {
+        Console.Clear();
+
+        var outputData = new List<string>
+    {
+        $"Name:        {product.Name}",
+        $"Description: {product.Description}",
+        $"Price:       {product.Price:C}",
+        $"Stock:       {product.Stock}",
+        $"Category:    {product.Category?.Name}",
+        $"Supplier:    {product.Supplier?.Name}"
+    };
+
+        GUI.DrawWindow("Product Details", 15, 1, outputData, maxLineWidth: 80);
+
+        bool waitingForValidInput = true;
+
+        while (waitingForValidInput)
+        {
+            Console.WriteLine();
+            Console.WriteLine("1. Add product to cart");
+            Console.WriteLine("2. Return to main menu");
+
+            var input = Console.ReadKey(true).Key;
+
+            switch (input)
+            {
+                case ConsoleKey.D1:
+                    OutputHelper.ShowSuccess("Product added to cart!");
+                    waitingForValidInput = false;
+                    break;
+
+                case ConsoleKey.D2:
+                    OutputHelper.ShowInfo("Returning to main menu...");
+                    waitingForValidInput = false;
+                    break;
+
+                default:
+                    OutputHelper.ShowError("Invalid choice! Please try again.");
+                    break;
+            }
+        }
+    }
+
     public void ShowDeals()
     {
 
