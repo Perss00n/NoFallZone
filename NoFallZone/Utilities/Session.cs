@@ -18,4 +18,6 @@ public static class Session
     {
         LoggedInUser = null;
     }
+    public static string GetDisplayNameAndRole() =>
+    IsLoggedIn ? $"{LoggedInUser!.FullName} ({LoggedInUser.Role})" : "Guest";
 }

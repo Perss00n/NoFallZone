@@ -34,13 +34,17 @@ public class StartPage
         {
             Console.Clear();
 
-            GUI.DrawWindow("=== NoFallZone ===", 43, 0, new List<string> { "Your #1 Source Of Climbing Gear!" });
+            GUI.DrawWindow("=== NoFallZone ===", 43, 0, new List<string> {
+                "Your #1 Source Of Climbing Gear!",
+                "",
+                $"Welcome back, {Session.GetDisplayNameAndRole()}"
+            });
 
-            if (Session.IsUser && _customerMenu != null)
-                GUI.DrawWindow("Customer Menu", 0, 4, _customerMenu.GetMenuItems());
+            if (Session.IsLoggedIn && _customerMenu != null)
+                GUI.DrawWindow("Customer Menu", 0, 5, _customerMenu.GetMenuItems());
 
             if (Session.IsAdmin && _adminMenu != null)
-                GUI.DrawWindow("Admin Menu", 45, 4, _adminMenu.GetMenuItems());
+                GUI.DrawWindow("Admin Menu", 45, 5, _adminMenu.GetMenuItems());
 
             _productService.ShowDeals();
 
