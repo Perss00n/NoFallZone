@@ -28,25 +28,25 @@ public class StartPage
 
     public void Show()
     {
-        bool running = true;
+        bool inSession = true;
 
-        while (running)
+        while (inSession)
         {
             Console.Clear();
 
             GUI.DrawWindow("=== NoFallZone ===", 43, 0, new List<string> { "Your #1 Source Of Climbing Gear!" });
 
-            if (_customerMenu != null)
+            if (Session.IsUser && _customerMenu != null)
                 GUI.DrawWindow("Customer Menu", 0, 4, _customerMenu.GetMenuItems());
 
-            if (_adminMenu != null)
+            if (Session.IsAdmin && _adminMenu != null)
                 GUI.DrawWindow("Admin Menu", 45, 4, _adminMenu.GetMenuItems());
 
             _productService.ShowDeals();
 
             var input = Console.ReadKey(true).Key;
 
-            if (_adminMenu != null)
+            if (Session.IsAdmin && _adminMenu != null)
             {
                 switch (input)
                 {
@@ -54,11 +54,11 @@ public class StartPage
                     case ConsoleKey.D2: _adminMenu.ShowCategoryAdminMenu(); break;
                     case ConsoleKey.D3: _adminMenu.ShowCustomerAdminMenu(); break;
                     case ConsoleKey.D4: _adminMenu.ShowSupplierAdminMenu(); break;
-                    case ConsoleKey.D5: running = false; break;
+                    case ConsoleKey.D5: inSession = false; break;
                 }
             }
 
-            if (_customerMenu != null)
+            if (Session.IsUser && _customerMenu != null)
             {
                 switch (input)
                 {
@@ -69,9 +69,9 @@ public class StartPage
             }
 
             if (input == ConsoleKey.Q)
-                running = false;
+                inSession = false;
 
-            if (running)
+            if (inSession)
             {
                 OutputHelper.ShowInfo("Press any key to return...");
                 Console.ReadKey();

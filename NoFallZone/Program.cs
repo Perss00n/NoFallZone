@@ -19,7 +19,7 @@ namespace NoFallZone
             ISupplierService supplierService = new SupplierService(db);
 
             var adminMenu = new AdminMenu(productService, customerService, categoryService, supplierService);
-            var customerMenu = new CustomerMenu(productService, customerService);
+            var customerMenu = new CustomerMenu(productService);
 
             bool running = true;
 
@@ -42,16 +42,19 @@ namespace NoFallZone
                         var user = LoginHelper.LoginUser(db);
                         if (user == null) break;
 
+                        Session.LoggedInUser = user;
+
                         var startPage = new StartPage(
                             productService,
                             customerService,
                             categoryService,
                             supplierService,
                             customerMenu,
-                            user.Role == Role.Admin ? adminMenu : null
+                            Session.IsAdmin ? adminMenu : null
                         );
 
                         startPage.Show();
+                        Session.Logout();
                         break;
 
                     case ConsoleKey.D2:

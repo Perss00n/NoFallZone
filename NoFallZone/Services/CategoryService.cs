@@ -21,6 +21,8 @@ public class CategoryService : ICategoryService
 
     public void ShowAllCategories()
     {
+        if (!RequireAdminAccess()) return;
+
         Console.Clear();
         Console.WriteLine("=== All Categories ===\n");
 
@@ -42,6 +44,7 @@ public class CategoryService : ICategoryService
 
     public void AddCategory()
     {
+        if (!RequireAdminAccess()) return;
 
         Console.Clear();
         Console.WriteLine("=== Add a new category ===");
@@ -60,6 +63,8 @@ public class CategoryService : ICategoryService
     }
     public void EditCategory()
     {
+        if (!RequireAdminAccess()) return;
+
         var category = CategorySelector.ChooseCategory(db);
 
         if (category == null) return;
@@ -74,6 +79,7 @@ public class CategoryService : ICategoryService
     }
     public void DeleteCategory()
     {
+        if (!RequireAdminAccess()) return;
 
         Console.Clear();
         Console.WriteLine("=== Delete a category ===");
@@ -99,5 +105,14 @@ public class CategoryService : ICategoryService
             OutputHelper.ShowError("Deletion cancelled! Returning to main menu...");
         }
 
+    }
+    private bool RequireAdminAccess()
+    {
+        if (!Session.IsAdmin)
+        {
+            OutputHelper.ShowError("Access Denied!");
+            return false;
+        }
+        return true;
     }
 }

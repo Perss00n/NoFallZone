@@ -16,6 +16,8 @@ namespace NoFallZone.Services
 
         public void ShowAllSuppliers()
         {
+            if (!RequireAdminAccess()) return;
+
             Console.Clear();
             Console.WriteLine("=== All Suppliers ===\n");
 
@@ -37,6 +39,8 @@ namespace NoFallZone.Services
 
         public void AddSupplier()
         {
+            if (!RequireAdminAccess()) return;
+
             Console.Clear();
             Console.WriteLine("=== Add a new supplier ===");
 
@@ -55,6 +59,8 @@ namespace NoFallZone.Services
 
         public void EditSupplier()
         {
+            if (!RequireAdminAccess()) return;
+
             var supplier = SupplierSelector.ChooseSupplier(db);
 
             if (supplier == null) return;
@@ -70,6 +76,8 @@ namespace NoFallZone.Services
 
         public void DeleteSupplier()
         {
+            if (!RequireAdminAccess()) return;
+
             Console.Clear();
             Console.WriteLine("=== Delete a supplier ===");
 
@@ -92,6 +100,15 @@ namespace NoFallZone.Services
             {
                 OutputHelper.ShowError("Deletion cancelled! Returning to main menu...");
             }
+        }
+        private bool RequireAdminAccess()
+        {
+            if (!Session.IsAdmin)
+            {
+                OutputHelper.ShowError("Access Denied!");
+                return false;
+            }
+            return true;
         }
     }
 }

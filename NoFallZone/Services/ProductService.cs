@@ -22,6 +22,8 @@ public class ProductService : IProductService
 
     public void ShowProducts()
     {
+        if (!RequireAdminAccess()) return;
+
         Console.Clear();
         var category = CategorySelector.ChooseCategory(db);
         if (category == null) return;
@@ -98,6 +100,8 @@ public class ProductService : IProductService
 
     public void AddProduct()
     {
+        if (!RequireAdminAccess()) return;
+
         Console.Clear();
         Console.WriteLine("=== Add a new product ===");
 
@@ -138,6 +142,8 @@ public class ProductService : IProductService
 
     public void EditProduct()
     {
+        if (!RequireAdminAccess()) return;
+
         Console.Clear();
         Console.WriteLine("=== Edit Product ===");
 
@@ -174,6 +180,8 @@ public class ProductService : IProductService
 
     public void DeleteProduct()
     {
+        if (!RequireAdminAccess()) return;
+
         Console.Clear();
         Console.WriteLine("=== Delete Product ===");
 
@@ -196,5 +204,15 @@ public class ProductService : IProductService
         {
             OutputHelper.ShowError("Deletion cancelled! Returning to main menu...");
         }
+    }
+
+    private bool RequireAdminAccess()
+    {
+        if (!Session.IsAdmin)
+        {
+            OutputHelper.ShowError("Access Denied!");
+            return false;
+        }
+        return true;
     }
 }

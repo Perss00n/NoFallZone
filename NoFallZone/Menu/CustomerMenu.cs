@@ -11,12 +11,10 @@ namespace NoFallZone.Menu
     public class CustomerMenu
     {
         private readonly IProductService _productService;
-        private readonly ICustomerService _customerService;
 
-        public CustomerMenu(IProductService productService, ICustomerService customerService)
+        public CustomerMenu(IProductService productService)
         {
             _productService = productService;
-            _customerService = customerService;
         }
 
         public List<string> GetMenuItems()

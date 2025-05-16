@@ -22,6 +22,8 @@ public class CustomerService : ICustomerService
 
     public void ShowAllCustomers()
     {
+        if (!RequireAdminAccess()) return;
+
         Console.Clear();
         Console.WriteLine("=== All Customers ===\n");
 
@@ -61,6 +63,8 @@ public class CustomerService : ICustomerService
 
     public void AddCustomer()
     {
+        if (!RequireAdminAccess()) return;
+
         Console.Clear();
         Console.WriteLine("=== Add a new customer ===");
 
@@ -99,6 +103,8 @@ public class CustomerService : ICustomerService
 
     public void EditCustomer()
     {
+        if (!RequireAdminAccess()) return;
+
         Console.Clear();
         Console.WriteLine("=== Edit Customer ===");
 
@@ -154,6 +160,8 @@ public class CustomerService : ICustomerService
 
     public void DeleteCustomer()
     {
+        if (!RequireAdminAccess()) return;
+
         Console.Clear();
         Console.WriteLine("=== Delete a customer ===");
 
@@ -180,6 +188,16 @@ public class CustomerService : ICustomerService
         {
             OutputHelper.ShowError("Deletion cancelled! Returning to main menu...");
         }
+    }
+
+    private bool RequireAdminAccess()
+    {
+        if (!Session.IsAdmin)
+        {
+            OutputHelper.ShowError("Access Denied!");
+            return false;
+        }
+        return true;
     }
 
 }
