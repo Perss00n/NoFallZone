@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
-using NoFallZone.Data;
-using NoFallZone.Models;
+﻿using NoFallZone.Data;
+using NoFallZone.Models.Entities;
+using NoFallZone.Models.Enums;
+using NoFallZone.Utilities.Helpers;
 
 namespace NoFallZone.Utilities
 {

@@ -1,8 +1,9 @@
 ﻿using NoFallZone.Data;
 using NoFallZone.Menu;
-using NoFallZone.Models;
-using NoFallZone.Services;
-using NoFallZone.Utilities;
+using NoFallZone.Services.Implementations;
+using NoFallZone.Services.Interfaces;
+using NoFallZone.Utilities.Helpers;
+using NoFallZone.Utilities.Session;
 
 namespace NoFallZone
 {

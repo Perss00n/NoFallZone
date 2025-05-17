@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NoFallZone.Services;
-using NoFallZone.Utilities;
+﻿using NoFallZone.Services.Interfaces;
+using NoFallZone.Utilities.Helpers;
+using NoFallZone.Utilities.Session;
 
 namespace NoFallZone.Menu;
 public class StartPage
