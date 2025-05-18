@@ -6,7 +6,7 @@ using NoFallZone.Services.Interfaces;
 using NoFallZone.Utilities.Validators;
 using NoFallZone.Utilities.Selectors;
 using NoFallZone.Utilities.Helpers;
-using NoFallZone.Utilities.Session;
+using NoFallZone.Utilities.SessionManagement;
 
 namespace NoFallZone.Services.Implementations;
 public class ProductService : IProductService

@@ -4,7 +4,7 @@ using NoFallZone.Services.Implementations;
 using NoFallZone.Services.Interfaces;
 using NoFallZone.Utilities;
 using NoFallZone.Utilities.Helpers;
-using NoFallZone.Utilities.Session;
+using NoFallZone.Utilities.SessionManagement;
 
 namespace NoFallZone
 {

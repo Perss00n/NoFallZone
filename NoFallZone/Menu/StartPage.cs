@@ -1,6 +1,6 @@
 ﻿using NoFallZone.Services.Interfaces;
 using NoFallZone.Utilities.Helpers;
-using NoFallZone.Utilities.Session;
+using NoFallZone.Utilities.SessionManagement;
 
 namespace NoFallZone.Menu;
 public class StartPage
@@ -30,46 +30,17 @@ public class StartPage
         {
             Console.Clear();
 
-            GUI.DrawWindow("=== NoFallZone ===", 13, 1, new List<string> {
-            "Your #1 Source Of Climbing Gear!",
-            "",
-            $"Welcome back, {Session.GetDisplayNameAndRole()}",
-            "To Logout Press 'Q'"
-        });
+            DisplayHelper.ShowWelcomeBanner();
 
             if (_customerMenu != null)
-                GUI.DrawWindow("Customer Menu", 2, 8, _customerMenu.GetMenuItems());
+                DisplayHelper.ShowCustomerMenu(_customerMenu);
 
             if (Session.IsAdmin && _adminMenu != null)
-                GUI.DrawWindow("Admin Menu", 35, 8, _adminMenu.GetMenuItems());
+                DisplayHelper.ShowAdminMenu(_adminMenu);
 
-            _productService.ShowDeals();
-            _customerService.ShowCart();
+            DisplayHelper.ShowCustomerDashboard(_productService, _customerService);
 
             var input = Console.ReadKey(true).Key;
-            bool isValidChoice = false;
-
-            if (_customerMenu != null)
-            {
-                switch (input)
-                {
-                    case ConsoleKey.H: _customerMenu.GoHome(); isValidChoice = true; break;
-                    case ConsoleKey.E: _customerMenu.ShowShop(); isValidChoice = true; break;
-                    case ConsoleKey.C: _customerMenu.OpenCart(); isValidChoice = true; break;
-                    case ConsoleKey.S: _customerMenu.Search(); isValidChoice = true; break;
-                }
-            }
-
-            if (Session.IsAdmin && _adminMenu != null)
-            {
-                switch (input)
-                {
-                    case ConsoleKey.D1: _adminMenu.ShowProductAdminMenu(); isValidChoice = true; break;
-                    case ConsoleKey.D2: _adminMenu.ShowCategoryAdminMenu(); isValidChoice = true; break;
-                    case ConsoleKey.D3: _adminMenu.ShowCustomerAdminMenu(); isValidChoice = true; break;
-                    case ConsoleKey.D4: _adminMenu.ShowSupplierAdminMenu(); isValidChoice = true; break;
-                }
-            }
 
             if (input == ConsoleKey.Q)
             {
@@ -79,22 +50,44 @@ public class StartPage
                 return;
             }
 
-            if (input == ConsoleKey.K && Session.Cart.Count > 0 && _customerMenu != null)
-            {
-                _customerMenu.OpenCart();
-                isValidChoice = true;
-            }
+            bool isValidChoice = HandleCustomerInput(input) || HandleAdminInput(input);
 
             if (!isValidChoice)
-            {
                 OutputHelper.ShowError("Invalid choice!");
-            }
 
-            if (inSession)
-            {
-                OutputHelper.ShowInfo("Press any key to continue...");
-                Console.ReadKey();
-            }
+            OutputHelper.ShowInfo("Press any key to continue...");
+            Console.ReadKey();
+        }
+    }
+
+
+    private bool HandleCustomerInput(ConsoleKey input)
+    {
+        if (_customerMenu == null) return false;
+
+        switch (input)
+        {
+            case ConsoleKey.H: _customerMenu.GoHome(); return true;
+            case ConsoleKey.E: _customerMenu.ShowShop(); return true;
+            case ConsoleKey.C: _customerMenu.OpenCart(); return true;
+            case ConsoleKey.S: _customerMenu.Search(); return true;
+            case ConsoleKey.K when Session.Cart.Count > 0:
+                _customerMenu.OpenCart(); return true;
+            default: return false;
+        }
+    }
+
+    private bool HandleAdminInput(ConsoleKey input)
+    {
+        if (_adminMenu == null || !Session.IsAdmin) return false;
+
+        switch (input)
+        {
+            case ConsoleKey.D1: _adminMenu.ShowProductAdminMenu(); return true;
+            case ConsoleKey.D2: _adminMenu.ShowCategoryAdminMenu(); return true;
+            case ConsoleKey.D3: _adminMenu.ShowCustomerAdminMenu(); return true;
+            case ConsoleKey.D4: _adminMenu.ShowSupplierAdminMenu(); return true;
+            default: return false;
         }
     }
 

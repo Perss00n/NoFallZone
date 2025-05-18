@@ -1,7 +1,7 @@
 ﻿using NoFallZone.Models.Entities;
 using NoFallZone.Models.Enums;
 
-namespace NoFallZone.Utilities.Session;
+namespace NoFallZone.Utilities.SessionManagement;
 public static class Session
 {
     public static Customer? LoggedInUser { get; set; }

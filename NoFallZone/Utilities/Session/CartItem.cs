@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NoFallZone.Models.Entities;
 
-namespace NoFallZone.Utilities.Session
+namespace NoFallZone.Utilities.SessionManagement
 {
     public class CartItem
     {

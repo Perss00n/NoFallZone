@@ -4,7 +4,7 @@ using NoFallZone.Services.Interfaces;
 using NoFallZone.Utilities.Validators;
 using NoFallZone.Utilities.Selectors;
 using NoFallZone.Utilities.Helpers;
-using NoFallZone.Utilities.Session;
+using NoFallZone.Utilities.SessionManagement;
 using NoFallZone.Models.Enums;
 using NoFallZone.Models.Entities;
 
@@ -187,35 +187,6 @@ public class CustomerService : ICustomerService
         {
             OutputHelper.ShowError("Deletion cancelled! Returning to main menu...");
         }
-    }
-
-    public void ShowCart()
-    {
-        if (Session.Cart.Count == 0)
-        {
-            GUI.DrawWindow("Your Cart", 78, 1, new List<string>
-            {
-                "Your cart is empty."
-            });
-            return;
-        }
-
-        decimal total = 0;
-        var lines = new List<string>();
-
-        for (int i = 0; i < Session.Cart.Count; i++)
-        {
-            var item = Session.Cart[i];
-            decimal itemTotal = item.Product.Price * item.Quantity;
-            total += itemTotal;
-
-            lines.Add($"{item.Quantity} x {item.Product.Name}");
-        }
-
-        lines.Add("------------------------");
-        lines.Add($"Total: {total:C}");
-        lines.Add("Press 'K' to checkout");
-        GUI.DrawWindow("Your Cart", 78, 1, lines, maxLineWidth: 50);
     }
 
     private bool RequireAdminAccess()

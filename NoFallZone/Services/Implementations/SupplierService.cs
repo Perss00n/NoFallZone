@@ -4,7 +4,8 @@ using NoFallZone.Models.Entities;
 using NoFallZone.Services.Interfaces;
 using NoFallZone.Utilities.Helpers;
 using NoFallZone.Utilities.Selectors;
-using NoFallZone.Utilities.Session;
+using NoFallZone.Utilities.SessionManagement;
+using NoFallZone.Utilities.Validators;
 
 namespace NoFallZone.Services.Implementations
 {

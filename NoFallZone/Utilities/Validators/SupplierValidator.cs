@@ -1,5 +1,6 @@
 ﻿using NoFallZone.Utilities.Helpers;
 
+namespace NoFallZone.Utilities.Validators;
 public static class SupplierValidator
 {
     public const int MinNameLength = 3;
