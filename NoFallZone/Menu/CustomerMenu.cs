@@ -59,38 +59,52 @@ namespace NoFallZone.Menu
 
                 lines.Add("------------------------");
                 lines.Add($"Total: {total:C}");
+
                 GUI.DrawWindow("Your Cart", 1, 1, lines, maxLineWidth: 50);
 
-                Console.WriteLine();
-                Console.WriteLine("Options:");
-                Console.WriteLine("[C] Change quantity");
-                Console.WriteLine("[R] Remove product");
-                Console.WriteLine("[Q] Return to menu");
+                GUI.DrawWindow("Options", 1, lines.Count + 3, new List<string>
+                {
+                    "[C] Change quantity",
+                    "[R] Remove product",
+                    "[Q] Return to menu"
+                });
 
                 var choice = Console.ReadKey(true).Key;
 
                 switch (choice)
                 {
                     case ConsoleKey.C:
-                        int indexToChange = InputHelper.PromptInt("Enter item number to change quantity", 1, Session.Cart.Count,
+                        int indexToChange = InputHelper.PromptInt("\nEnter item number to change quantity", 1, Session.Cart.Count,
                             $"Choose a number between 1 and {Session.Cart.Count}") - 1;
 
                         var itemToChange = Session.Cart[indexToChange];
-                        int newQty = InputHelper.PromptInt($"Enter new quantity for {itemToChange.Product.Name}", 1, itemToChange.Product.Stock,
+                        int newQty = InputHelper.PromptInt($"\nEnter new quantity for {itemToChange.Product.Name}", 1, itemToChange.Product.Stock,
                             $"Enter a number between 1 and {itemToChange.Product.Stock}");
 
                         itemToChange.Quantity = newQty;
                         OutputHelper.ShowSuccess($"Updated quantity of {itemToChange.Product.Name} to {newQty}");
                         break;
 
-                    case ConsoleKey.R:
-                        int indexToRemove = InputHelper.PromptInt("Enter item number to remove", 1, Session.Cart.Count,
-                            $"Choose a number between 1 and {Session.Cart.Count}") - 1;
+                    case ConsoleKey.R:                        
+                            int itemIndex = InputHelper.PromptInt("\nEnter item number to remove", 1, Session.Cart.Count,
+                                $"Choose a number between 1 and {Session.Cart.Count}") - 1;
 
-                        var itemToRemove = Session.Cart[indexToRemove];
-                        Session.Cart.RemoveAt(indexToRemove);
-                        OutputHelper.ShowSuccess($"{itemToRemove.Product.Name} removed from cart!");
-                        break;
+                            var item = Session.Cart[itemIndex];
+                            bool confirmed = InputHelper.PromptYesNo(
+                                $"Are you sure you want to remove {item.Product.Name} from your cart?",
+                                "Please answer 'Y' for Yes or 'N' for No!");
+
+                            if (!confirmed)
+                            {
+                                OutputHelper.ShowInfo("The action was cancelled!");
+                                break;
+                            }
+
+                            Session.Cart.RemoveAt(itemIndex);
+                            OutputHelper.ShowSuccess($"{item.Product.Name} removed from cart!");
+                            inCartMenu = false;
+                            break;
+                        
 
                     case ConsoleKey.Q:
                         inCartMenu = false;
