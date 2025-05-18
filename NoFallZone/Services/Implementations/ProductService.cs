@@ -51,7 +51,7 @@ public class ProductService : IProductService
             $"Price:     {p.Price:C}",
             $"Stock:     {p.Stock}",
             $"Category:  {category.Name}",
-            $"Supplier:  {p.Supplier!.Name}",
+            $"Supplier:  {p.Supplier.Name}",
             $"Featured:  {(p.IsFeatured == true ? "Yes" : "No")}"
         }, maxLineWidth: 70);
 
@@ -73,9 +73,9 @@ public class ProductService : IProductService
 
         var results = db.Products
             .Where(p =>
-                p.Name!.ToLower().Contains(keyword) ||
-                p.Description!.ToLower().Contains(keyword) ||
-                p.Supplier!.Name!.ToLower().Contains(keyword))
+                p.Name.ToLower().Contains(keyword) ||
+                p.Description.ToLower().Contains(keyword) ||
+                p.Supplier.Name!.ToLower().Contains(keyword))
             .Include(p => p.Category)
             .Include(p => p.Supplier)
             .ToList();
@@ -89,7 +89,7 @@ public class ProductService : IProductService
         }
 
         var outputData = results
-            .Select((p, i) => $"{i + 1}. {p.Name} || {p.Category?.Name} || {p.Price:C}")
+            .Select((p, i) => $"{i + 1}. {p.Name} || {p.Category.Name} || {p.Price:C}")
             .ToList();
 
         GUI.DrawWindow("Matching products", 0, 0, outputData, maxLineWidth: 60);
@@ -111,8 +111,8 @@ public class ProductService : IProductService
         $"Description: {product.Description}",
         $"Price:       {product.Price:C}",
         $"Stock:       {product.Stock}",
-        $"Category:    {product.Category?.Name}",
-        $"Supplier:    {product.Supplier?.Name}"
+        $"Category:    {product.Category.Name}",
+        $"Supplier:    {product.Supplier.Name}"
     };
 
         GUI.DrawWindow("Product Details", 15, 1, outputData, maxLineWidth: 80);
@@ -238,21 +238,21 @@ public class ProductService : IProductService
         Console.Clear();
         Console.WriteLine($"=== Editing '{product.Name}' ===");
 
-        string? newName = ProductValidator.PromptOptionalName(product.Name!);
+        string? newName = ProductValidator.PromptOptionalName(product.Name);
         if (!string.IsNullOrWhiteSpace(newName))
             product.Name = newName;
 
-        string? newDesc = ProductValidator.PromptOptionalDescription(product.Description!);
+        string? newDesc = ProductValidator.PromptOptionalDescription(product.Description);
         if (!string.IsNullOrWhiteSpace(newDesc))
             product.Description = newDesc;
 
-        decimal? newPrice = ProductValidator.PromptOptionalPrice(product.Price ?? 0);
+        decimal? newPrice = ProductValidator.PromptOptionalPrice(product.Price);
         if (newPrice.HasValue)
-            product.Price = newPrice;
+            product.Price = newPrice.Value;
 
-        int? newStock = ProductValidator.PromptOptionalStock(product.Stock ?? 0);
+        int? newStock = ProductValidator.PromptOptionalStock(product.Stock);
         if (newStock.HasValue)
-            product.Stock = newStock;
+            product.Stock = newStock.Value;
 
         Console.WriteLine($"\nShould the product be displayed as an offer?");
         Console.WriteLine($"Currently it {(product.IsFeatured == true ? "IS set to an offer" : "is NOT set to an offer")}");

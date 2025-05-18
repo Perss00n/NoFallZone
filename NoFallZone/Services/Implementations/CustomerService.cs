@@ -118,34 +118,34 @@ public class CustomerService : ICustomerService
         Console.Clear();
         Console.WriteLine($"=== Editing customer: {customer.FullName} ===");
 
-        string? newName = CustomerValidator.PromptOptionalName(customer.FullName!);
+        string? newName = CustomerValidator.PromptOptionalName(customer.FullName);
         if (!string.IsNullOrWhiteSpace(newName)) customer.FullName = newName;
 
-        string? newEmail = CustomerValidator.PromptOptionalEmail(db, customer.Email!);
+        string? newEmail = CustomerValidator.PromptOptionalEmail(db, customer.Email);
         if (!string.IsNullOrWhiteSpace(newEmail)) customer.Email = newEmail;
 
-        string? newPhone = CustomerValidator.PromptOptionalPhone(customer.Phone!);
+        string? newPhone = CustomerValidator.PromptOptionalPhone(customer.Phone);
         if (!string.IsNullOrWhiteSpace(newPhone)) customer.Phone = newPhone;
 
-        string? newAddress = CustomerValidator.PromptOptionalAddress(customer.Address!);
+        string? newAddress = CustomerValidator.PromptOptionalAddress(customer.Address);
         if (!string.IsNullOrWhiteSpace(newAddress)) customer.Address = newAddress;
 
-        string? newPostal = CustomerValidator.PromptOptionalPostalCode(customer.PostalCode!);
+        string? newPostal = CustomerValidator.PromptOptionalPostalCode(customer.PostalCode);
         if (!string.IsNullOrWhiteSpace(newPostal)) customer.PostalCode = newPostal;
 
-        string? newCity = CustomerValidator.PromptOptionalCity(customer.City!);
+        string? newCity = CustomerValidator.PromptOptionalCity(customer.City);
         if (!string.IsNullOrWhiteSpace(newCity)) customer.City = newCity;
 
-        string? newCountry = CustomerValidator.PromptOptionalCountry(customer.Country!);
+        string? newCountry = CustomerValidator.PromptOptionalCountry(customer.Country);
         if (!string.IsNullOrWhiteSpace(newCountry)) customer.Country = newCountry;
 
         int? newAge = CustomerValidator.PromptOptionalAge(customer.Age!.Value);
         if (newAge.HasValue) customer.Age = newAge.Value;
 
-        string? newUsername = CustomerValidator.PromptOptionalUsername(db, customer.Username!);
+        string? newUsername = CustomerValidator.PromptOptionalUsername(db, customer.Username);
         if (!string.IsNullOrWhiteSpace(newUsername)) customer.Username = newUsername;
 
-        string? newPassword = CustomerValidator.PromptOptionalPassword(customer.Password!);
+        string? newPassword = CustomerValidator.PromptOptionalPassword(customer.Password);
         if (!string.IsNullOrWhiteSpace(newPassword)) customer.Password = newPassword;
 
         Role? newRole = CustomerValidator.PromptOptionalRole(customer.Role);

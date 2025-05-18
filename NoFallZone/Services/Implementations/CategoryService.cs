@@ -68,7 +68,7 @@ public class CategoryService : ICategoryService
 
         if (category == null) return;
 
-        string? newCategoryName = CategoryValidator.PromptOptionalName(category.Name!);
+        string? newCategoryName = CategoryValidator.PromptOptionalName(category.Name);
         if (!string.IsNullOrWhiteSpace(newCategoryName))
             category.Name = newCategoryName;
 
