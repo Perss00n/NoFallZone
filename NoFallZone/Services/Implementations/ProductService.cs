@@ -94,30 +94,11 @@ public class ProductService : IProductService
 
         GUI.DrawWindow("Matching products", 0, 0, outputData, maxLineWidth: 60);
 
-        bool waitingForValidInput = true;
+        int index = InputHelper.PromptInt("\nEnter the number of the product you want to view the details of", 1, results.Count,
+            $"Please enter a number from 1 to {results.Count}");
 
-        while (waitingForValidInput)
-        {
-            Console.Write("\nEnter the number of the product to view details or 'Q' to cancel: ");
-            string input = Console.ReadLine()!.Trim().ToLower();
-
-            if (input == "q")
-            {
-                OutputHelper.ShowError("Search cancelled!");
-                return;
-            }
-
-            if (int.TryParse(input, out int index) && index >= 1 && index <= results.Count)
-            {
-                var selectedProduct = results[index - 1];
-                ShowProductDetails(selectedProduct);
-                waitingForValidInput = false;
-            }
-            else
-            {
-                OutputHelper.ShowError("Invalid selection. Please enter a valid product number or 'Q' to quit.");
-            }
-        }
+        var selectedProduct = results[index - 1];
+        ShowProductDetails(selectedProduct);
     }
 
     public void ShowProductDetails(Product product)
