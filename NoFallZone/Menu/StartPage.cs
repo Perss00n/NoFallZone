@@ -41,9 +41,10 @@ public class StartPage
                 GUI.DrawWindow("Customer Menu", 0, 8, _customerMenu.GetMenuItems());
 
             if (Session.IsAdmin && _adminMenu != null)
-                GUI.DrawWindow("Admin Menu", 45, 8, _adminMenu.GetMenuItems());
+                GUI.DrawWindow("Admin Menu", 35, 8, _adminMenu.GetMenuItems());
 
             _productService.ShowDeals();
+            _customerService.ShowCart();
 
             var input = Console.ReadKey(true).Key;
             bool isValidChoice = false;

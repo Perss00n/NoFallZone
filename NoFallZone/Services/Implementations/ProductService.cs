@@ -130,7 +130,21 @@ public class ProductService : IProductService
             switch (input)
             {
                 case ConsoleKey.D1:
-                    OutputHelper.ShowSuccess("Product added to cart!");
+                    int quantity = InputHelper.PromptInt("Enter quantity to add to cart", 1, product.Stock,
+                        $"Please enter a number from 1 to {product.Stock}");
+
+                    var existingItem = Session.Cart.FirstOrDefault(cart => cart.Product.Id == product.Id);
+
+                    if (existingItem != null)
+                    {
+                        existingItem.Quantity += quantity;
+                    }
+                    else
+                    {
+                        Session.Cart.Add(new CartItem { Product = product, Quantity = quantity });
+                    }
+
+                    OutputHelper.ShowSuccess($"{quantity} x {product.Name} added to cart!");
                     waitingForValidInput = false;
                     break;
 
@@ -158,15 +172,15 @@ public class ProductService : IProductService
         {
             var deal = deals.ElementAtOrDefault(i);
             int fromLeft = i == 0 ? 0 : i == 1 ? 40 : 78;
-            int fromTop = 15;
+            int fromTop = 20;
             string dealBuyKeyMessage = i == 0 ? "Press X to buy" : i == 1 ? "Press A to buy" : "Press Z to buy";
 
             if (deal != null)
             {
                 GUI.DrawWindow($"Deal {i + 1}", fromLeft, fromTop, new List<string>
             {
-                deal.Name!,
-                deal.Description!,
+                deal.Name,
+                deal.Description,
                 $"{deal.Price:C}",
                 $"{deal.Stock} pieces left in stock!",
                 "",

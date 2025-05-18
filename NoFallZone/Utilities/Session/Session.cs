@@ -5,6 +5,7 @@ namespace NoFallZone.Utilities.Session;
 public static class Session
 {
     public static Customer? LoggedInUser { get; set; }
+    public static List<CartItem> Cart { get; } = new List<CartItem>();
 
     public static bool IsAdmin => LoggedInUser?.Role == Role.Admin;
     public static bool IsUser => LoggedInUser?.Role == Role.User;
@@ -13,6 +14,7 @@ public static class Session
     public static void Logout()
     {
         LoggedInUser = null;
+        Cart.Clear();
     }
     public static string GetDisplayNameAndRole() =>
     IsLoggedIn ? $"{LoggedInUser!.Username} ({LoggedInUser.Role})" : "Guest";

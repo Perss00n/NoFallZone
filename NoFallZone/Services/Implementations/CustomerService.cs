@@ -189,6 +189,34 @@ public class CustomerService : ICustomerService
         }
     }
 
+    public void ShowCart()
+    {
+        if (Session.Cart.Count == 0)
+        {
+            GUI.DrawWindow("Your Cart", 88, 8, new List<string>
+            {
+                "Your cart is empty."
+            });
+            return;
+        }
+
+        decimal total = 0;
+        var lines = new List<string>();
+
+        for (int i = 0; i < Session.Cart.Count; i++)
+        {
+            var item = Session.Cart[i];
+            decimal itemTotal = item.Product.Price * item.Quantity;
+            total += itemTotal;
+
+            lines.Add($"{item.Quantity} x {item.Product.Name} = {itemTotal:C}");
+        }
+
+        lines.Add("------------------------");
+        lines.Add($"Total: {total:C}");
+        GUI.DrawWindow("Your Cart", 68, 8, lines, maxLineWidth: 50);
+    }
+
     private bool RequireAdminAccess()
     {
         if (!Session.IsAdmin)

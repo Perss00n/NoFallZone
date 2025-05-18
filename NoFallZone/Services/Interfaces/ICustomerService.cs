@@ -5,4 +5,5 @@ public interface ICustomerService
     void AddCustomer();
     void EditCustomer();
     void DeleteCustomer();
+    void ShowCart();
 }
