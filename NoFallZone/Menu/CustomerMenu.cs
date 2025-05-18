@@ -59,7 +59,7 @@ namespace NoFallZone.Menu
 
                 lines.Add("------------------------");
                 lines.Add($"Total: {total:C}");
-                GUI.DrawWindow("Your Cart", 5, 8, lines, maxLineWidth: 50);
+                GUI.DrawWindow("Your Cart", 1, 1, lines, maxLineWidth: 50);
 
                 Console.WriteLine();
                 Console.WriteLine("Options:");

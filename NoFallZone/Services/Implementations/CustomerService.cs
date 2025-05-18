@@ -124,7 +124,7 @@ public class CustomerService : ICustomerService
         string? newEmail = CustomerValidator.PromptOptionalEmail(db, customer.Email);
         if (!string.IsNullOrWhiteSpace(newEmail)) customer.Email = newEmail;
 
-        string? newPhone = CustomerValidator.PromptOptionalPhone(customer.Phone);
+        string? newPhone = CustomerValidator.PromptOptionalPhone(customer.Phone!);
         if (!string.IsNullOrWhiteSpace(newPhone)) customer.Phone = newPhone;
 
         string? newAddress = CustomerValidator.PromptOptionalAddress(customer.Address);
@@ -193,7 +193,7 @@ public class CustomerService : ICustomerService
     {
         if (Session.Cart.Count == 0)
         {
-            GUI.DrawWindow("Your Cart", 88, 8, new List<string>
+            GUI.DrawWindow("Your Cart", 78, 1, new List<string>
             {
                 "Your cart is empty."
             });
@@ -209,12 +209,13 @@ public class CustomerService : ICustomerService
             decimal itemTotal = item.Product.Price * item.Quantity;
             total += itemTotal;
 
-            lines.Add($"{item.Quantity} x {item.Product.Name} = {itemTotal:C}");
+            lines.Add($"{item.Quantity} x {item.Product.Name}");
         }
 
         lines.Add("------------------------");
         lines.Add($"Total: {total:C}");
-        GUI.DrawWindow("Your Cart", 68, 8, lines, maxLineWidth: 50);
+        lines.Add("Press 'K' to checkout");
+        GUI.DrawWindow("Your Cart", 78, 1, lines, maxLineWidth: 50);
     }
 
     private bool RequireAdminAccess()

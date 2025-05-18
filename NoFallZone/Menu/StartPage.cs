@@ -30,7 +30,7 @@ public class StartPage
         {
             Console.Clear();
 
-            GUI.DrawWindow("=== NoFallZone ===", 43, 0, new List<string> {
+            GUI.DrawWindow("=== NoFallZone ===", 13, 1, new List<string> {
             "Your #1 Source Of Climbing Gear!",
             "",
             $"Welcome back, {Session.GetDisplayNameAndRole()}",
@@ -38,7 +38,7 @@ public class StartPage
         });
 
             if (_customerMenu != null)
-                GUI.DrawWindow("Customer Menu", 0, 8, _customerMenu.GetMenuItems());
+                GUI.DrawWindow("Customer Menu", 2, 8, _customerMenu.GetMenuItems());
 
             if (Session.IsAdmin && _adminMenu != null)
                 GUI.DrawWindow("Admin Menu", 35, 8, _adminMenu.GetMenuItems());
@@ -77,6 +77,12 @@ public class StartPage
                 OutputHelper.ShowInfo("You have been logged out.");
                 Thread.Sleep(1000);
                 return;
+            }
+
+            if (input == ConsoleKey.K && Session.Cart.Count > 0 && _customerMenu != null)
+            {
+                _customerMenu.OpenCart();
+                isValidChoice = true;
             }
 
             if (!isValidChoice)

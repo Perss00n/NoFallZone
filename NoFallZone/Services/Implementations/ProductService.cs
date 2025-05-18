@@ -172,7 +172,7 @@ public class ProductService : IProductService
         {
             var deal = deals.ElementAtOrDefault(i);
             int fromLeft = i == 0 ? 0 : i == 1 ? 40 : 78;
-            int fromTop = 20;
+            int fromTop = 17;
             string dealBuyKeyMessage = i == 0 ? "Press X to buy" : i == 1 ? "Press A to buy" : "Press Z to buy";
 
             if (deal != null)
