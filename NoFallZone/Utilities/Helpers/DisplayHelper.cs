@@ -64,7 +64,7 @@ public static class DisplayHelper
     private static void ShowCartOverview()
     {
         string header = "Your Cart";
-        int fromLeft = 78;
+        int fromLeft = 73;
         int fromTop = 1;
 
         if (Session.Cart.Count == 0)
@@ -76,20 +76,17 @@ public static class DisplayHelper
             return;
         }
 
-        decimal total = 0;
         var lines = new List<string>();
 
         for (int i = 0; i < Session.Cart.Count; i++)
         {
             var item = Session.Cart[i];
-            decimal itemTotal = item.Product.Price * item.Quantity;
-            total += itemTotal;
 
-            lines.Add($"{item.Quantity} x {item.Product.Name}");
+            lines.Add($"{item.Quantity} x {item.Product.Name} ({item.Product.Price} Each)");
         }
 
         lines.Add("------------------------");
-        lines.Add($"Total: {total:C}");
+        lines.Add($"Total: {Session.GetCartTotal():C}");
         lines.Add("Press 'K' to checkout");
 
         GUI.DrawWindow(header, fromLeft, fromTop, lines, maxLineWidth: 50);

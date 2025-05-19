@@ -44,22 +44,20 @@ namespace NoFallZone.Menu
             while (inCartMenu)
             {
                 Console.Clear();
-                decimal total = 0;
                 var lines = new List<string>();
 
                 for (int i = 0; i < Session.Cart.Count; i++)
                 {
                     var item = Session.Cart[i];
                     decimal itemTotal = item.Product.Price * item.Quantity;
-                    total += itemTotal;
 
-                    lines.Add($"{i + 1}. {item.Quantity} x {item.Product.Name} = {itemTotal:C}");
+                    lines.Add($"{i + 1}. {item.Quantity} x {item.Product.Name} ({item.Product.Price} Each) = {itemTotal:C}");
                 }
 
                 lines.Add("------------------------");
-                lines.Add($"Total: {total:C}");
+                lines.Add($"Total: {Session.GetCartTotal():C}");
 
-                GUI.DrawWindow("Your Cart", 1, 1, lines, maxLineWidth: 50);
+                GUI.DrawWindow("Your Cart", 1, 1, lines, maxLineWidth: 100);
 
                 GUI.DrawWindow("Options", 1, lines.Count + 3, new List<string>
                 {
