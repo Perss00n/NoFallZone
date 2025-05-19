@@ -144,9 +144,18 @@ public class ProductService : IProductService
                 case ConsoleKey.D1:
                     int available = CartHelper.GetAvailableQuantityToAdd(product);
 
-                    if (available == 0)
+                    if (product.Stock <= 0)
+                    {
+                        Console.Clear();
+                        OutputHelper.ShowError("Sorry, the product is out of stock!");
+                        waitingForValidInput = false;
+                        break;
+                    }
+
+                    if (available <= 0)
                     {
                         OutputHelper.ShowError("You've already added the maximum available stock.");
+                        waitingForValidInput = false;
                         break;
                     }
 
@@ -218,15 +227,16 @@ public class ProductService : IProductService
         {
             ConsoleKey.X => 0,
             ConsoleKey.A => 1,
-            ConsoleKey.Z => 2
+            ConsoleKey.Z => 2,
+            _ => -1
         };
 
         var featuredProducts = db.Products
-            .Where(p => p.IsFeatured == true)
+            .Where(p => p.IsFeatured)
             .Take(3)
             .ToList();
 
-        if (dealIndex >= featuredProducts.Count)
+        if (dealIndex < 0 || dealIndex >= featuredProducts.Count)
         {
             Console.Clear();
             OutputHelper.ShowError("No product available for that deal.");
@@ -234,32 +244,34 @@ public class ProductService : IProductService
         }
 
         var selectedDeal = featuredProducts[dealIndex];
+        int available = CartHelper.GetAvailableQuantityToAdd(selectedDeal);
 
-        if (selectedDeal.Stock == 0)
+        if (selectedDeal.Stock < 1)
         {
             Console.Clear();
-            OutputHelper.ShowError("Sorry, this product is out of stock.");
+            OutputHelper.ShowError("Sorry, the product is out of stock!");
             return;
         }
 
-        var existingItem = Session.Cart.FirstOrDefault(c => c.Product.Id == selectedDeal.Id);
-        int currentCartQuantity = existingItem?.Quantity ?? 0;
-
-        if (currentCartQuantity + 1 > selectedDeal.Stock)
+        if (available <= 0)
         {
             Console.Clear();
             OutputHelper.ShowError("You can't add more than the available stock.");
             return;
         }
 
-        if (existingItem != null)
-            existingItem.Quantity += 1;
+        if (CartHelper.TryAddToCart(selectedDeal, 1))
+        {
+            Console.Clear();
+            OutputHelper.ShowSuccess($"1 x {selectedDeal.Name} added to cart!");
+        }
         else
-            Session.Cart.Add(new CartItem { Product = selectedDeal, Quantity = 1 });
-
-        Console.Clear();
-        OutputHelper.ShowSuccess($"1 x {selectedDeal.Name} added to cart!");
+        {
+            Console.Clear();
+            OutputHelper.ShowError($"Cannot add {selectedDeal.Name} to cart! You already have the max quantity of the avaible stock.");
+        }
     }
+
 
     public void AddProduct()
     {

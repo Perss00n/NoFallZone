@@ -14,7 +14,7 @@ public class CartHelper
     public static int GetAvailableQuantityToAdd(Product product)
     {
         int inCart = GetQuantityInCart(product);
-        return Math.Max(0, product.Stock - inCart);
+        return product.Stock - inCart;
     }
 
 
