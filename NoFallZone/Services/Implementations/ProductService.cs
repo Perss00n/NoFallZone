@@ -142,22 +142,25 @@ public class ProductService : IProductService
             switch (input)
             {
                 case ConsoleKey.D1:
-                    int quantity = InputHelper.PromptInt("Enter quantity to add to cart", 1, product.Stock,
-                        $"Please enter a number from 1 to {product.Stock}");
+                    int available = CartHelper.GetAvailableQuantityToAdd(product);
 
-                    var existingItem = Session.Cart.FirstOrDefault(cart => cart.Product.Id == product.Id);
-
-                    if (existingItem != null)
+                    if (available == 0)
                     {
-                        existingItem.Quantity += quantity;
+                        OutputHelper.ShowError("You've already added the maximum available stock.");
+                        break;
+                    }
+
+                    int quantity = InputHelper.PromptInt($"Enter quantity to add to cart", 1, available, $"Please enter a number from 1 to {available}");
+
+                    if (CartHelper.TryAddToCart(product, quantity))
+                    {
+                        OutputHelper.ShowSuccess($"{quantity} x {product.Name} added to cart!");
+                        waitingForValidInput = false;
                     }
                     else
                     {
-                        Session.Cart.Add(new CartItem { Product = product, Quantity = quantity });
+                        OutputHelper.ShowError($"Cannot add {quantity} of {product.Name}! Only {available} available.");
                     }
-
-                    OutputHelper.ShowSuccess($"{quantity} x {product.Name} added to cart!");
-                    waitingForValidInput = false;
                     break;
 
                 case ConsoleKey.D2:
