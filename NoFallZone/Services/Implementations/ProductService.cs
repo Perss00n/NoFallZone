@@ -215,16 +215,8 @@ public class ProductService : IProductService
         {
             ConsoleKey.X => 0,
             ConsoleKey.A => 1,
-            ConsoleKey.Z => 2,
-            _ => -1
+            ConsoleKey.Z => 2
         };
-
-        if (dealIndex == -1)
-        {
-            Console.Clear();
-            OutputHelper.ShowError("Invalid deal key!");
-            return;
-        }
 
         var featuredProducts = db.Products
             .Where(p => p.IsFeatured == true)
