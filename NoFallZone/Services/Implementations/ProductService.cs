@@ -185,7 +185,7 @@ public class ProductService : IProductService
             var deal = deals.ElementAtOrDefault(i);
             int fromLeft = i == 0 ? 0 : i == 1 ? 40 : 78;
             int fromTop = 17;
-            string dealBuyKeyMessage = i == 0 ? "Press X to buy" : i == 1 ? "Press A to buy" : "Press Z to buy";
+            string dealBuyKeyMessage = deal?.Stock > 0 ? (i == 0 ? "Press X to buy" : i == 1 ? "Press A to buy" : "Press Z to buy") : "Out of stock!";
 
             if (deal != null)
             {
@@ -211,15 +211,38 @@ public class ProductService : IProductService
 
     public void AddDealToCart(ConsoleKey dealKey)
     {
+        int dealIndex = dealKey switch
+        {
+            ConsoleKey.X => 0,
+            ConsoleKey.A => 1,
+            ConsoleKey.Z => 2,
+            _ => -1
+        };
+
+        if (dealIndex == -1)
+        {
+            Console.Clear();
+            OutputHelper.ShowError("Invalid deal key!");
+            return;
+        }
+
         var featuredProducts = db.Products
             .Where(p => p.IsFeatured == true)
             .Take(3)
             .ToList();
 
-        var selectedDeal = featuredProducts[dealKey == ConsoleKey.X ? 0 : dealKey == ConsoleKey.A ? 1 : 2];
+        if (dealIndex >= featuredProducts.Count)
+        {
+            Console.Clear();
+            OutputHelper.ShowError("No product available for that deal.");
+            return;
+        }
+
+        var selectedDeal = featuredProducts[dealIndex];
 
         if (selectedDeal.Stock == 0)
         {
+            Console.Clear();
             OutputHelper.ShowError("Sorry, this product is out of stock.");
             return;
         }
@@ -230,7 +253,6 @@ public class ProductService : IProductService
         else
             Session.Cart.Add(new CartItem { Product = selectedDeal, Quantity = 1 });
 
-        Console.Clear();
         OutputHelper.ShowSuccess($"1 x {selectedDeal.Name} added to cart!");
     }
 
