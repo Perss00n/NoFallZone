@@ -248,11 +248,21 @@ public class ProductService : IProductService
         }
 
         var existingItem = Session.Cart.FirstOrDefault(c => c.Product.Id == selectedDeal.Id);
+        int currentCartQuantity = existingItem?.Quantity ?? 0;
+
+        if (currentCartQuantity + 1 > selectedDeal.Stock)
+        {
+            Console.Clear();
+            OutputHelper.ShowError("You can't add more than the available stock.");
+            return;
+        }
+
         if (existingItem != null)
             existingItem.Quantity += 1;
         else
             Session.Cart.Add(new CartItem { Product = selectedDeal, Quantity = 1 });
 
+        Console.Clear();
         OutputHelper.ShowSuccess($"1 x {selectedDeal.Name} added to cart!");
     }
 
