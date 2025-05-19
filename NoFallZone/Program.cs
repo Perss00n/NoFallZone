@@ -27,14 +27,7 @@ namespace NoFallZone
 
             while (running)
             {
-                Console.Clear();
-                GUI.DrawWindow("Welcome to NoFallZone", 40, 2, new List<string>
-                {
-                    "[1] Log in To The Shop",
-                    "[2] Register New Account",
-                    "[3] Exit"
-                });
-
+                DisplayHelper.ShowStartPage();
                 Console.CursorVisible = false;
                 var choice = Console.ReadKey(true).Key;
 

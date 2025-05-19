@@ -10,6 +10,22 @@ using NoFallZone.Utilities.SessionManagement;
 namespace NoFallZone.Utilities.Helpers;
 public static class DisplayHelper
 {
+
+    public static void ShowStartPage()
+    {
+        string header = "=== NoFallZone ===";
+        int fromLeft = 40;
+        int fromTop = 2;
+        List<string> lines = new List<string> {
+          "[1] Log in To The Shop",
+          "[2] Register New Account",
+          "[3] Exit"
+        };
+
+        Console.Clear();
+        GUI.DrawWindow(header, fromLeft, fromTop, lines);
+    }
+
     public static void ShowWelcomeBanner()
     {
         string header = "=== NoFallZone ===";
