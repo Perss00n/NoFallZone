@@ -1,4 +1,5 @@
-﻿using NoFallZone.Services.Interfaces;
+﻿using NoFallZone.Models.Entities;
+using NoFallZone.Services.Interfaces;
 using NoFallZone.Utilities.Helpers;
 using NoFallZone.Utilities.SessionManagement;
 
@@ -125,5 +126,6 @@ namespace NoFallZone.Menu
         {
             _productService.SearchProducts();
         }
+
     }
 }

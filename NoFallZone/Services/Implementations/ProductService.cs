@@ -209,6 +209,31 @@ public class ProductService : IProductService
         }
     }
 
+    public void AddDealToCart(ConsoleKey dealKey)
+    {
+        var featuredProducts = db.Products
+            .Where(p => p.IsFeatured == true)
+            .Take(3)
+            .ToList();
+
+        var selectedDeal = featuredProducts[dealKey == ConsoleKey.X ? 0 : dealKey == ConsoleKey.A ? 1 : 2];
+
+        if (selectedDeal.Stock == 0)
+        {
+            OutputHelper.ShowError("Sorry, this product is out of stock.");
+            return;
+        }
+
+        var existingItem = Session.Cart.FirstOrDefault(c => c.Product.Id == selectedDeal.Id);
+        if (existingItem != null)
+            existingItem.Quantity += 1;
+        else
+            Session.Cart.Add(new CartItem { Product = selectedDeal, Quantity = 1 });
+
+        Console.Clear();
+        OutputHelper.ShowSuccess($"1 x {selectedDeal.Name} added to cart!");
+    }
+
     public void AddProduct()
     {
         if (!RequireAdminAccess()) return;

@@ -44,6 +44,7 @@ public class StartPage
 
             if (input == ConsoleKey.Q)
             {
+                Console.Clear();
                 Session.Logout();
                 OutputHelper.ShowInfo("You have been logged out.");
                 Thread.Sleep(1000);
@@ -53,7 +54,10 @@ public class StartPage
             bool isValidChoice = HandleCustomerInput(input) || HandleAdminInput(input);
 
             if (!isValidChoice)
+            {
+                Console.Clear() ;
                 OutputHelper.ShowError("Invalid choice!");
+            }
 
             OutputHelper.ShowInfo("Press any key to continue...");
             Console.ReadKey();
@@ -70,8 +74,11 @@ public class StartPage
             case ConsoleKey.E: _customerMenu.ShowShop(); return true;
             case ConsoleKey.C: _customerMenu.OpenCart(); return true;
             case ConsoleKey.S: _customerMenu.Search(); return true;
-            case ConsoleKey.K when Session.Cart.Count > 0:
-                _customerMenu.OpenCart(); return true;
+            case ConsoleKey.X:
+            case ConsoleKey.A:
+            case ConsoleKey.Z:
+            _productService.AddDealToCart(input);return true;
+            case ConsoleKey.K when Session.Cart.Count > 0: _customerMenu.OpenCart(); return true;
             default: return false;
         }
     }
