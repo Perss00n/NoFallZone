@@ -59,6 +59,18 @@ public class ProductService : IProductService
         }
     }
 
+    public void ShowShopProducts()
+    {
+        Console.Clear();
+        var category = CategorySelector.ChooseCategory(db);
+        if (category == null) return;
+
+        var product = ProductSelector.ChooseProductFromCategory(category, db);
+        if (product == null) return;
+
+        ShowProductDetails(product);
+    }
+
     public void SearchProducts()
     {
         Console.Clear();

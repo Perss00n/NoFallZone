@@ -17,7 +17,6 @@ namespace NoFallZone.Menu
         {
             return new List<string>
             {
-                "[H] Home Page",
                 "[E] Enter Shop",
                 "[C] Cart",
                 "[S] Search"
@@ -26,8 +25,7 @@ namespace NoFallZone.Menu
 
         public void ShowShop()
         {
-            Console.Clear();
-            _productService.ShowProducts();
+        _productService.ShowShopProducts();
         }
 
         public void OpenCart()
@@ -121,12 +119,6 @@ namespace NoFallZone.Menu
                     Console.ReadKey();
                 }
             }
-        }
-
-        public void GoHome()
-        {
-            Console.Clear();
-            Console.WriteLine("Home Page not implemented yet...");
         }
 
         public void Search()

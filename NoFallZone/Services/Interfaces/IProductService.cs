@@ -5,6 +5,7 @@ namespace NoFallZone.Services.Interfaces
     public interface IProductService
     {
         void ShowProducts();
+        void ShowShopProducts();
         void SearchProducts();
         void ShowProductDetails(Product product);
         void ShowDeals();

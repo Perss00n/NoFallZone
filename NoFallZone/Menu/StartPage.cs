@@ -67,7 +67,6 @@ public class StartPage
 
         switch (input)
         {
-            case ConsoleKey.H: _customerMenu.GoHome(); return true;
             case ConsoleKey.E: _customerMenu.ShowShop(); return true;
             case ConsoleKey.C: _customerMenu.OpenCart(); return true;
             case ConsoleKey.S: _customerMenu.Search(); return true;
