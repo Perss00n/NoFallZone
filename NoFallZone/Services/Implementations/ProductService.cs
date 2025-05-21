@@ -12,10 +12,12 @@ namespace NoFallZone.Services.Implementations;
 public class ProductService : IProductService
 {
     private readonly NoFallZoneContext db;
+    private readonly ICartService _cartService;
 
-    public ProductService(NoFallZoneContext context)
+    public ProductService(NoFallZoneContext context, ICartService cartService)
     {
         db = context;
+        _cartService = cartService;
     }
 
     public void ShowProducts()
@@ -154,7 +156,7 @@ public class ProductService : IProductService
                         break;
                     }
 
-                    int available = CartHelper.GetAvailableQuantityToAdd(product);
+                    int available = _cartService.GetAvailableToAdd(product);
 
                     if (available <= 0)
                     {
@@ -165,7 +167,7 @@ public class ProductService : IProductService
 
                     int quantity = InputHelper.PromptInt($"Enter quantity to add to cart", 1, available, $"Please enter a number from 1 to {available}");
 
-                    if (CartHelper.TryAddToCart(product, quantity, out string message))
+                    if (_cartService.TryAddToCart(product, quantity, out string message))
                     {
                         OutputHelper.ShowSuccess(message);
                         waitingForValidInput = false;
@@ -255,7 +257,7 @@ public class ProductService : IProductService
             return;
         }
 
-        if (CartHelper.TryAddToCart(selectedDeal, 1, out string message))
+        if (_cartService.TryAddToCart(selectedDeal, 1, out string message))
         {
             Console.Clear();
             OutputHelper.ShowSuccess(message);

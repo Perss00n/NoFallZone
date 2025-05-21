@@ -16,6 +16,8 @@ public static class ServiceConfigurator
         services.AddScoped<ICustomerService, CustomerService>();
         services.AddScoped<ICategoryService, CategoryService>();
         services.AddScoped<ISupplierService, SupplierService>();
+        services.AddScoped<ICartService, CartService>();
+
 
         services.AddScoped<AdminMenu>();
         services.AddScoped<CustomerMenu>();

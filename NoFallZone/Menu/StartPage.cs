@@ -6,14 +6,16 @@ namespace NoFallZone.Menu;
 public class StartPage
 {
     private readonly IProductService _productService;
+    private readonly ICartService _cartService;
     private readonly CustomerMenu? _customerMenu;
     private readonly AdminMenu? _adminMenu;
 
-    public StartPage(IProductService productService, CustomerMenu customerMenu, AdminMenu adminMenu)
+    public StartPage(IProductService productService, ICartService cartService, CustomerMenu customerMenu, AdminMenu adminMenu)
     {
         _productService = productService;
         _customerMenu = customerMenu;
         _adminMenu = adminMenu;
+        _cartService = cartService;
     }
 
     public void Show()
@@ -32,7 +34,7 @@ public class StartPage
             if (Session.IsAdmin)
                 DisplayHelper.ShowAdminMenu(_adminMenu!);
 
-            DisplayHelper.ShowCustomerDashboard(_productService);
+            DisplayHelper.ShowCustomerDashboard(_productService, _cartService);
 
             var input = Console.ReadKey(true).Key;
 

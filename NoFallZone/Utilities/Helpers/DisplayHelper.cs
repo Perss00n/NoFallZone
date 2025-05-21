@@ -36,10 +36,10 @@ public static class DisplayHelper
         GUI.DrawWindow(header, fromLeft, fromTop, lines);
     }
 
-    public static void ShowCustomerDashboard(IProductService productService)
+    public static void ShowCustomerDashboard(IProductService productService, ICartService cartService)
     {
         productService.ShowDeals();
-        ShowCartOverview();
+        cartService.ShowCartOverview();
     }
 
     public static void ShowCustomerMenu(CustomerMenu customerMenu)
@@ -58,36 +58,5 @@ public static class DisplayHelper
         int fromTop = 8;
 
         GUI.DrawWindow(header, fromLeft, fromTop, adminMenu.GetMenuItems());
-    }
-
-    private static void ShowCartOverview()
-    {
-        string header = "Your Cart";
-        int fromLeft = 73;
-        int fromTop = 1;
-
-        if (Session.Cart.Count == 0)
-        {
-            GUI.DrawWindow(header, fromLeft, fromTop, new List<string>
-            {
-                "Your cart is empty."
-            });
-            return;
-        }
-
-        var lines = new List<string>();
-
-        for (int i = 0; i < Session.Cart.Count; i++)
-        {
-            var item = Session.Cart[i];
-
-            lines.Add($"{item.Quantity} x {item.Product.Name} ({item.Product.Price} Each)");
-        }
-
-        lines.Add("------------------------");
-        lines.Add($"Total: {Session.GetCartTotal():C}");
-        lines.Add("Press 'K' to checkout");
-
-        GUI.DrawWindow(header, fromLeft, fromTop, lines, maxLineWidth: 50);
     }
 }
