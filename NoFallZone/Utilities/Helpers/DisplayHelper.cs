@@ -5,7 +5,6 @@ using NoFallZone.Utilities.SessionManagement;
 namespace NoFallZone.Utilities.Helpers;
 public static class DisplayHelper
 {
-
     public static void ShowStartPage()
     {
         string header = "=== NoFallZone ===";
@@ -37,7 +36,7 @@ public static class DisplayHelper
         GUI.DrawWindow(header, fromLeft, fromTop, lines);
     }
 
-    public static void ShowCustomerDashboard(IProductService productService, ICustomerService customerService)
+    public static void ShowCustomerDashboard(IProductService productService)
     {
         productService.ShowDeals();
         ShowCartOverview();

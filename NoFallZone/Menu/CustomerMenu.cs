@@ -23,10 +23,8 @@ namespace NoFallZone.Menu
             };
         }
 
-        public void ShowShop()
-        {
-            _productService.ShowShopProducts();
-        }
+        public void ShowShop() => _productService.ShowShopProducts();
+        public void Search() => _productService.SearchProducts();
 
         public void OpenCart()
         {
@@ -79,11 +77,6 @@ namespace NoFallZone.Menu
                     Console.ReadKey();
                 }
             }
-        }
-
-        public void Search()
-        {
-            _productService.SearchProducts();
         }
 
     }
