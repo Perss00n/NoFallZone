@@ -142,7 +142,6 @@ public class ProductService : IProductService
             switch (input)
             {
                 case ConsoleKey.D1:
-                    int available = CartHelper.GetAvailableQuantityToAdd(product);
 
                     if (product.Stock <= 0)
                     {
@@ -151,6 +150,8 @@ public class ProductService : IProductService
                         waitingForValidInput = false;
                         break;
                     }
+
+                    int available = CartHelper.GetAvailableQuantityToAdd(product);
 
                     if (available <= 0)
                     {
@@ -161,14 +162,14 @@ public class ProductService : IProductService
 
                     int quantity = InputHelper.PromptInt($"Enter quantity to add to cart", 1, available, $"Please enter a number from 1 to {available}");
 
-                    if (CartHelper.TryAddToCart(product, quantity))
+                    if (CartHelper.TryAddToCart(product, quantity, out string message))
                     {
-                        OutputHelper.ShowSuccess($"{quantity} x {product.Name} added to cart!");
+                        OutputHelper.ShowSuccess(message);
                         waitingForValidInput = false;
                     }
                     else
                     {
-                        OutputHelper.ShowError($"Cannot add {quantity} of {product.Name}! Only {available} available.");
+                        OutputHelper.ShowError(message);
                     }
                     break;
 
@@ -244,31 +245,23 @@ public class ProductService : IProductService
         }
 
         var selectedDeal = featuredProducts[dealIndex];
-        int available = CartHelper.GetAvailableQuantityToAdd(selectedDeal);
 
-        if (selectedDeal.Stock < 1)
+        if (selectedDeal.Stock <= 0)
         {
             Console.Clear();
             OutputHelper.ShowError("Sorry, the product is out of stock!");
             return;
         }
 
-        if (available <= 0)
+        if (CartHelper.TryAddToCart(selectedDeal, 1, out string message))
         {
             Console.Clear();
-            OutputHelper.ShowError("You can't add more than the available stock.");
-            return;
-        }
-
-        if (CartHelper.TryAddToCart(selectedDeal, 1))
-        {
-            Console.Clear();
-            OutputHelper.ShowSuccess($"1 x {selectedDeal.Name} added to cart!");
+            OutputHelper.ShowSuccess(message);
         }
         else
         {
             Console.Clear();
-            OutputHelper.ShowError($"Cannot add {selectedDeal.Name} to cart! You already have the max quantity of the avaible stock.");
+            OutputHelper.ShowError(message);
         }
     }
 
