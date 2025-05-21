@@ -31,134 +31,215 @@ namespace NoFallZone.Menu
 
         public void ShowProductAdminMenu()
         {
-            Console.Clear();
-            GUI.DrawWindow("Product Menu", 0, 0, new List<string>{
-                "1. Show products",
-                "2. Add product",
-                "3. Edit product",
-                "4. Delete product"
-            });
+            bool inMenu = true;
 
-            var key = Console.ReadKey(true).Key;
-
-            switch (key)
+            while (inMenu)
             {
-                case ConsoleKey.D1:
-                    _productService.ShowProducts();
-                    break;
-                case ConsoleKey.D2:
-                    _productService.AddProduct();
-                    break;
-                case ConsoleKey.D3:
-                    _productService.EditProduct();
-                    break;
-                case ConsoleKey.D4:
-                    _productService.DeleteProduct();
-                    break;
-                default:
-                    OutputHelper.ShowError("Invalid choice! Please try again...");
-                    break;
+                Console.Clear();
+                GUI.DrawWindow("Product Menu", 0, 0, new List<string> {
+                    "1. Show products",
+                    "2. Add product",
+                    "3. Edit product",
+                    "4. Delete product",
+                    "5. Return to Admin Menu"
+                });
+
+                var input = Console.ReadKey(true).Key;
+
+                if (input == ConsoleKey.D5)
+                {
+                    inMenu = false;
+                    continue;
+                }
+
+                bool isValidChoice = HandleProductInputs(input);
+
+                if (!isValidChoice)
+                {
+                    Console.Clear();
+                    OutputHelper.ShowError("Invalid choice!");
+                }
+
+                OutputHelper.ShowInfo("Press any key to continue...");
+                Console.ReadKey();
             }
         }
 
         public void ShowCategoryAdminMenu()
         {
-            Console.Clear();
-            GUI.DrawWindow("Category Administration", 0, 0, new List<string>{
+            bool inMenu = true;
+
+            while (inMenu)
+            {
+                Console.Clear();
+                GUI.DrawWindow("Category Administration", 0, 0, new List<string>{
                 "1. Show categories",
                 "2. Add category",
                 "3. Edit category",
-                "4. Delete category"
+                "4. Delete category",
+                "5. Return to Admin Menu"
             });
 
+                var input = Console.ReadKey(true).Key;
 
-            var key = Console.ReadKey(true).Key;
+                if (input == ConsoleKey.D5)
+                {
+                    inMenu = false;
+                    continue;
+                }
 
-            switch (key)
-            {
-                case ConsoleKey.D1:
-                    _categoryService.ShowAllCategories();
-                    break;
-                case ConsoleKey.D2:
-                    _categoryService.AddCategory();
-                    break;
-                case ConsoleKey.D3:
-                    _categoryService.EditCategory();
-                    break;
-                case ConsoleKey.D4:
-                    _categoryService.DeleteCategory();
-                    break;
-                default:
-                    OutputHelper.ShowError("Invalid choice! Please try again...");
-                    break;
+                bool isValidChoice = HandleCategoryInputs(input);
+
+                if (!isValidChoice)
+                {
+                    Console.Clear();
+                    OutputHelper.ShowError("Invalid choice!");
+                }
+
+                OutputHelper.ShowInfo("Press any key to continue...");
+                Console.ReadKey();
             }
         }
 
         public void ShowCustomerAdminMenu()
         {
-            Console.Clear();
-            GUI.DrawWindow("Customer Administration", 0, 0, new List<string>
+            bool inMenu = true;
+
+            while (inMenu)
+            {
+                Console.Clear();
+                GUI.DrawWindow("Customer Administration", 0, 0, new List<string>
 {
                 "1. Show customers",
                 "2. Add customer",
                 "3. Edit customer",
-                "4. Delete customer"
+                "4. Delete customer",
+                "5. Return to Admin Menu"
             });
 
+                var input = Console.ReadKey(true).Key;
 
-            var key = Console.ReadKey(true).Key;
+                if (input == ConsoleKey.D5)
+                {
+                    inMenu = false;
+                    continue;
+                }
 
-            switch (key)
-            {
-                case ConsoleKey.D1:
-                    _customerService.ShowAllCustomers();
-                    break;
-                case ConsoleKey.D2:
-                    _customerService.AddCustomer();
-                    break;
-                case ConsoleKey.D3:
-                    _customerService.EditCustomer();
-                    break;
-                case ConsoleKey.D4:
-                    _customerService.DeleteCustomer();
-                    break;
-                default:
-                    OutputHelper.ShowError("Invalid choice! Please try again...");
-                    break;
+                bool isValidChoice = HandleCustomerInputs(input);
+
+                if (!isValidChoice)
+                {
+                    Console.Clear();
+                    OutputHelper.ShowError("Invalid choice!");
+                }
+
+                OutputHelper.ShowInfo("Press any key to continue...");
+                Console.ReadKey();
             }
         }
 
+
         public void ShowSupplierAdminMenu()
         {
-            Console.Clear();
-            GUI.DrawWindow("Supplier Administration", 0, 0, new List<string>
+            bool inMenu = true;
+
+            while (inMenu)
+            {
+                Console.Clear();
+                GUI.DrawWindow("Supplier Administration", 0, 0, new List<string>
             {
                 "1. Show all suppliers",
                 "2. Add Supplier",
                 "3. Edit Supplier",
-                "4. Delete Supplier"
+                "4. Delete Supplier",
+                "5. Return to Admin Menu"
             });
 
-            var key = Console.ReadKey(true).Key;
+                var input = Console.ReadKey(true).Key;
 
-            switch (key)
-            {
-                case ConsoleKey.D1:
-                    _supplierService.ShowAllSuppliers();
-                    break;
-                case ConsoleKey.D2:
-                    _supplierService.AddSupplier();
-                    break;
-                case ConsoleKey.D3:
-                    _supplierService.EditSupplier();
-                    break;
-                case ConsoleKey.D4:
-                    _supplierService.DeleteSupplier();
-                    break;
-                default:
-                    OutputHelper.ShowError("Invalid choice! Please try again...");
-                    break;
+                if (input == ConsoleKey.D5)
+                {
+                    inMenu = false;
+                    continue;
+                }
+
+                bool isValidChoice = HandleSupplierInputs(input);
+
+                if (!isValidChoice)
+                {
+                    Console.Clear();
+                    OutputHelper.ShowError("Invalid choice!");
+                }
+
+                OutputHelper.ShowInfo("Press any key to continue...");
+                Console.ReadKey();
             }
         }
+
+
+        private bool HandleProductInputs(ConsoleKey input)
+        {
+            switch (input)
+            {
+                case ConsoleKey.D1:
+                    _productService.ShowProducts(); return true;
+                case ConsoleKey.D2:
+                    _productService.AddProduct(); return true;
+                case ConsoleKey.D3:
+                    _productService.EditProduct(); return true;
+                case ConsoleKey.D4:
+                    _productService.DeleteProduct(); return true;
+                default: return false;
+            }
+        }
+
+        private bool HandleCategoryInputs(ConsoleKey input)
+        {
+            switch (input)
+            {
+                case ConsoleKey.D1:
+                    _categoryService.ShowAllCategories(); return true;
+                case ConsoleKey.D2:
+                    _categoryService.AddCategory(); return true;
+                case ConsoleKey.D3:
+                    _categoryService.EditCategory(); return true;
+                case ConsoleKey.D4:
+                    _categoryService.DeleteCategory(); return true;
+                default: return false;
+            }
+        }
+
+        private bool HandleCustomerInputs(ConsoleKey input)
+        {
+            switch (input)
+            {
+                case ConsoleKey.D1:
+                    _customerService.ShowAllCustomers(); return true;
+                case ConsoleKey.D2:
+                    _customerService.AddCustomer(); return true;
+                case ConsoleKey.D3:
+                    _customerService.EditCustomer(); return true;
+                case ConsoleKey.D4:
+                    _customerService.DeleteCustomer(); return true;
+                default: return false;
+            }
+        }
+
+        private bool HandleSupplierInputs(ConsoleKey input)
+        {
+            switch (input)
+            {
+                case ConsoleKey.D1:
+                    _supplierService.ShowAllSuppliers(); return true;
+                case ConsoleKey.D2:
+                    _supplierService.AddSupplier(); return true;
+                case ConsoleKey.D3:
+                    _supplierService.EditSupplier(); return true;
+                case ConsoleKey.D4:
+                    _supplierService.DeleteSupplier(); return true;
+                default: return false;
+            }
+        }
+
     }
 }
