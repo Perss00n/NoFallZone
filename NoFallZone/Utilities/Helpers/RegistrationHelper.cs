@@ -10,6 +10,7 @@ public static class RegistrationHelper
     public static void RegisterNewCustomer(NoFallZoneContext db)
     {
         Console.Clear();
+        Console.CursorVisible = true;
         Console.WriteLine("=== Register New Account ===");
 
         string name = CustomerValidator.PromptName();

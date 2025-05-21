@@ -62,6 +62,7 @@ public class ProductService : IProductService
     public void ShowShopProducts()
     {
         Console.Clear();
+        Console.CursorVisible = true;
         var category = CategorySelector.ChooseCategory(db);
         if (category == null) return;
 
@@ -74,10 +75,11 @@ public class ProductService : IProductService
     public void SearchProducts()
     {
         Console.Clear();
-        Console.Write("Enter a keyword to search for (or 'Q' to cancel): ");
+        Console.CursorVisible = true;
+        Console.Write("Enter a keyword to search for (Leave empty to cancel): ");
         string keyword = Console.ReadLine()!.Trim().ToLower();
 
-        if (string.IsNullOrWhiteSpace(keyword) || keyword == "q")
+        if (string.IsNullOrWhiteSpace(keyword))
         {
             OutputHelper.ShowInfo("Search cancelled!");
             return;
@@ -116,6 +118,7 @@ public class ProductService : IProductService
     public void ShowProductDetails(Product product)
     {
         Console.Clear();
+        Console.CursorVisible = false;
 
         var outputData = new List<string>
     {
@@ -142,7 +145,7 @@ public class ProductService : IProductService
             switch (input)
             {
                 case ConsoleKey.D1:
-
+                    Console.CursorVisible = true;
                     if (product.Stock <= 0)
                     {
                         Console.Clear();
@@ -187,7 +190,6 @@ public class ProductService : IProductService
 
     public void ShowDeals()
     {
-
         var deals = db.Products
         .Where(product => product.IsFeatured == true)
         .Take(3)

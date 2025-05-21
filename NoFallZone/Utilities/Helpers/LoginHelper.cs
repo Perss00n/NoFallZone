@@ -8,6 +8,7 @@ public static class LoginHelper
     public static Customer? LoginUser(NoFallZoneContext db)
     {
         Console.Clear();
+        Console.CursorVisible = true;
         Console.WriteLine("=== Login ===");
 
         Console.Write("Username: ");

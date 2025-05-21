@@ -30,6 +30,8 @@ public class StartPage
         {
             Console.Clear();
 
+            Console.CursorVisible = false;
+
             DisplayHelper.ShowWelcomeBanner();
 
             if (_customerMenu != null)

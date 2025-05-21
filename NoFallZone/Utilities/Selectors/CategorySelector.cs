@@ -8,6 +8,7 @@ public static class CategorySelector
 {
     public static Category? ChooseCategory(NoFallZoneContext db)
     {
+        Console.CursorVisible = true;
         var categories = db.Categories
             .Include(c => c.Products)
             .ToList();
@@ -22,7 +23,7 @@ public static class CategorySelector
         for (int i = 0; i < categories.Count; i++)
             Console.WriteLine($"{i + 1}. {categories[i].Name}");
 
-        int index = InputHelper.PromptInt("Enter category number", 1, categories.Count,
+        int index = InputHelper.PromptInt("\nEnter category number", 1, categories.Count,
             $"Please enter a number from 1 to {categories.Count}");
 
         return categories[index - 1];

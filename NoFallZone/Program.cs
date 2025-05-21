@@ -27,8 +27,8 @@ namespace NoFallZone
 
             while (running)
             {
-                DisplayHelper.ShowStartPage();
                 Console.CursorVisible = false;
+                DisplayHelper.ShowStartPage();
                 var choice = Console.ReadKey(true).Key;
 
                 switch (choice)

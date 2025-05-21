@@ -7,6 +7,7 @@ public static class SupplierSelector
 {
     public static Supplier? ChooseSupplier(NoFallZoneContext db)
     {
+        Console.CursorVisible = true;
         var suppliers = db.Suppliers.ToList();
 
         if (suppliers.Count == 0)

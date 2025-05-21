@@ -9,6 +9,7 @@ public static class ProductSelector
     public static Product? ChooseProductFromCategory(Category category, NoFallZoneContext db)
     {
         Console.Clear();
+        Console.CursorVisible = true;
         var products = db.Products
             .Where(p => p.CategoryId == category.Id)
             .Include(p => p.Category)
@@ -25,7 +26,7 @@ public static class ProductSelector
         for (int i = 0; i < products.Count; i++)
             Console.WriteLine($"{i + 1}. {products[i].Name}");
 
-        int productIndex = InputHelper.PromptInt("Enter product number", 1, products.Count,
+        int productIndex = InputHelper.PromptInt("\nEnter product number", 1, products.Count,
             $"Please select a valid number from 1 to {products.Count}");
 
         return products[productIndex - 1];

@@ -54,9 +54,14 @@ namespace NoFallZone.Menu
 
                     case ConsoleKey.R:
                         if (CartHelper.DeleteItemFromCart(out string message))
+                        {
                             OutputHelper.ShowSuccess(message);
+                            inCartMenu = Session.Cart.Count <= 0 ? false : true;
+                        }
                         else
+                        {
                             OutputHelper.ShowError(message);
+                        }
                         break;
 
                     case ConsoleKey.Q:

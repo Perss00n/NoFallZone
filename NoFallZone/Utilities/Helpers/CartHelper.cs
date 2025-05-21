@@ -73,7 +73,7 @@ public class CartHelper
     public static void ChangeCartQuantity()
     {
         int indexToChange = InputHelper.PromptInt("\nEnter item number to change quantity", 1, Session.Cart.Count,
-    $"Choose a number between 1 and {Session.Cart.Count}") - 1;
+            $"Choose a number between 1 and {Session.Cart.Count}") - 1;
 
         var itemToChange = Session.Cart[indexToChange];
         int newQty = InputHelper.PromptInt($"\nEnter new quantity for {itemToChange.Product.Name}", 1, itemToChange.Product.Stock,
@@ -87,7 +87,7 @@ public class CartHelper
     public static bool DeleteItemFromCart(out string message)
     {
         int itemIndex = InputHelper.PromptInt("\nEnter item number to remove", 1, Session.Cart.Count,
-    $"Choose a number between 1 and {Session.Cart.Count}") - 1;
+            $"Choose a number between 1 and {Session.Cart.Count}") - 1;
 
         var item = Session.Cart[itemIndex];
         bool confirmed = InputHelper.PromptYesNo(

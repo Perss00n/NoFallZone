@@ -7,6 +7,7 @@ public static class CustomerSelector
 {
     public static Customer? ChooseCustomer(NoFallZoneContext db)
     {
+        Console.CursorVisible = true;
         var customers = db.Customers.ToList();
 
         if (customers.Count == 0)
