@@ -71,7 +71,7 @@ public class StartPage
             case ConsoleKey.X:
             case ConsoleKey.A:
             case ConsoleKey.Z:
-                _productService.AddDealToCart(input); return true;
+                _cartService.AddDealToCart(input); return true;
             case ConsoleKey.K when Session.Cart.Count > 0: _customerMenu!.OpenCart(); return true;
             default: return false;
         }

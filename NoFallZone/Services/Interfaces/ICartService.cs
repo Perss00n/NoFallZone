@@ -12,4 +12,5 @@ public interface ICartService
     bool ChangeQuantity(int index, int newQty, out string message);
     void OpenCartMenu();
     void ShowCartOverview();
+    void AddDealToCart(ConsoleKey dealKey);
 }

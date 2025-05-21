@@ -127,6 +127,49 @@ public void OpenCartMenu()
         GUI.DrawWindow(header, fromLeft, fromTop, lines, maxLineWidth: 50);
     }
 
+    public void AddDealToCart(ConsoleKey dealKey)
+    {
+        int dealIndex = dealKey switch
+        {
+            ConsoleKey.X => 0,
+            ConsoleKey.A => 1,
+            ConsoleKey.Z => 2,
+            _ => -1
+        };
+
+        var featuredProducts = _db.Products
+            .Where(p => p.IsFeatured)
+            .Take(3)
+            .ToList();
+
+        if (dealIndex < 0 || dealIndex >= featuredProducts.Count)
+        {
+            Console.Clear();
+            OutputHelper.ShowError("No product available for that deal.");
+            return;
+        }
+
+        var selectedDeal = featuredProducts[dealIndex];
+
+        if (selectedDeal.Stock <= 0)
+        {
+            Console.Clear();
+            OutputHelper.ShowError("Sorry, the product is out of stock!");
+            return;
+        }
+
+        if (TryAddToCart(selectedDeal, 1, out string message))
+        {
+            Console.Clear();
+            OutputHelper.ShowSuccess(message);
+        }
+        else
+        {
+            Console.Clear();
+            OutputHelper.ShowError(message);
+        }
+    }
+
     public decimal GetCartTotal()
     {
         return Session.Cart.Sum(item => item.Product.Price * item.Quantity);
