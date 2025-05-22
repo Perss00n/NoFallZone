@@ -1,4 +1,5 @@
 ﻿using NoFallZone.Data;
+using NoFallZone.Menu;
 using NoFallZone.Models.Entities;
 using NoFallZone.Services.Interfaces;
 using NoFallZone.Utilities.SessionManagement;
@@ -79,7 +80,35 @@ public class OrderService : IOrderService
         db.SaveChanges();
 
         Session.Cart.Clear();
-        message = $"Your order has been placed! Total (incl. shipping): {order.TotalPrice:C}";
+        ShowReceipt(order);
+
+        message = "Order completed successfully!";
         return true;
+    }
+
+    private void ShowReceipt(Order order)
+    {
+        Console.Clear();
+        var lines = new List<string>
+    {
+        $"Thank you for your order, {Session.LoggedInUser!.Username}!",
+        $"Order Date: {order.OrderDate:G}",
+        $"Payment Method: {order.PaymentMethod}",
+        $"Shipping: {order.ShippingCost:C} via {db.ShippingOptions.First(s => s.Id == order.ShippingOptionId).Name}",
+        $"------------------------------"
+    };
+
+        foreach (var item in order.OrderItems)
+        {
+            var product = db.Products.First(p => p.Id == item.ProductId);
+            decimal lineTotal = item.PricePerUnit * item.Quantity;
+
+            lines.Add($"{item.Quantity} x {product.Name} ({item.PricePerUnit:C} each) = {lineTotal:C}");
+        }
+
+        lines.Add($"------------------------------");
+        lines.Add($"Total: {order.TotalPrice:C}");
+
+        GUI.DrawWindow("Order Receipt", 1, 1, lines, maxLineWidth: 80);
     }
 }
