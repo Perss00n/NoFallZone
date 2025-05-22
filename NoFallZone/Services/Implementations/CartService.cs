@@ -3,6 +3,7 @@ using NoFallZone.Menu;
 using NoFallZone.Models.Entities;
 using NoFallZone.Services.Interfaces;
 using NoFallZone.Utilities.Helpers;
+using NoFallZone.Utilities.Selectors;
 using NoFallZone.Utilities.SessionManagement;
 
 namespace NoFallZone.Services.Implementations;
@@ -10,13 +11,15 @@ namespace NoFallZone.Services.Implementations;
 public class CartService : ICartService
 {
     private readonly NoFallZoneContext _db;
+    private readonly IOrderService _orderService;
 
-    public CartService(NoFallZoneContext db)
+    public CartService(NoFallZoneContext db, IOrderService orderService)
     {
         _db = db;
+        _orderService = orderService;
     }
 
-public void OpenCartMenu()
+    public void OpenCartMenu()
 {
     if (Session.Cart.Count == 0)
     {
@@ -45,16 +48,17 @@ public void OpenCartMenu()
         GUI.DrawWindow("Your Cart", 1, 1, lines, maxLineWidth: 100);
         GUI.DrawWindow("Options", 1, lines.Count + 3, new List<string>
         {
-            "[C] Change quantity",
-            "[R] Remove product",
-            "[Q] Return to menu"
+            "1. Change quantity",
+            "2. Remove product",
+            "3. Checkout",
+            "4. Return to menu"
         });
 
         var input = Console.ReadKey(true).Key;
 
         switch (input)
         {
-            case ConsoleKey.C:
+            case ConsoleKey.D1:
                 int changeIndex = InputHelper.PromptInt("\nEnter item number to change quantity", 1, Session.Cart.Count, $"Enter a valid number from 1 to {Session.Cart.Count}") - 1;
                 var item = Session.Cart[changeIndex];
                 int newQty = InputHelper.PromptInt($"Enter new quantity for {item.Product.Name}", 1, item.Product.Stock, $"Enter a valid number from 1 to {item.Product.Stock}");
@@ -65,7 +69,7 @@ public void OpenCartMenu()
                     OutputHelper.ShowError(changeMsg);
                 break;
 
-            case ConsoleKey.R:
+            case ConsoleKey.D2:
                 int removeIndex = InputHelper.PromptInt("\nEnter item number to remove", 1, Session.Cart.Count, $"Enter a valid number from 1 to {Session.Cart.Count}") - 1;
                 if (InputHelper.PromptYesNo($"Are you sure you want to delete '{Session.Cart[removeIndex].Product.Name}'?", "Answer only 'Y' for yes or 'N' for no!"))
                 {
@@ -80,9 +84,27 @@ public void OpenCartMenu()
                     OutputHelper.ShowInfo("Cancelled.");
                 break;
 
-            case ConsoleKey.Q:
-                inCart = false;
-                break;
+                case ConsoleKey.D3:
+                    Console.Clear();
+                    var selectedShipping = ShippingSelector.ChooseShipping(_db);
+                    int shippingId = selectedShipping!.Id;
+
+                    Console.Write("\nSelect PaymentMethod: ");
+
+                    string paymentMethod = Console.ReadLine()!;
+
+                    if (_orderService.PlaceOrder(shippingId, paymentMethod, out string msg))
+                    {
+                        OutputHelper.ShowSuccess(msg);
+                        inCart = false;
+                    }
+                    else
+                        OutputHelper.ShowError(msg);
+                    break;
+
+                case ConsoleKey.D4:
+                    inCart = false;
+                    break;
 
             default:
                 OutputHelper.ShowError("Invalid option.");

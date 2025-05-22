@@ -17,7 +17,7 @@ public static class CategorySelector
 
         if (categories.Count == 0)
         {
-            OutputHelper.ShowError("No categories found! Returning to main menu...");
+            OutputHelper.ShowError("No categories found!");
             return null;
         }
 

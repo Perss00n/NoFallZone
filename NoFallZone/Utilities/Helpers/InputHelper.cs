@@ -6,21 +6,6 @@ namespace NoFallZone.Utilities.Helpers
 {
     public static class InputHelper
     {
-        public static string Prompt(string label, Func<string, bool> isValid, string errorMsg)
-        {
-            string input;
-            do
-            {
-                Console.Write($"{label}: ");
-                input = Console.ReadLine()!;
-                if (!isValid(input))
-                {
-                    OutputHelper.ShowError(errorMsg);
-                }
-            } while (!isValid(input));
-            return input;
-        }
-
         public static int PromptInt(string label, int min, int max, string errorMsg)
         {
             int value;

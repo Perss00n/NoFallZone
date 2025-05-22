@@ -14,7 +14,7 @@ public static class SupplierSelector
 
         if (suppliers.Count == 0)
         {
-            OutputHelper.ShowError("No suppliers found! Returning to main menu...");
+            OutputHelper.ShowError("No suppliers found!");
             return null;
         }
         var lines = new List<string>();

@@ -19,4 +19,6 @@ public static class Session
     public static string GetDisplayNameAndRole() =>
     IsLoggedIn ? $"{LoggedInUser!.Username} ({LoggedInUser.Role})" : "Guest";
 
+    public static decimal GetCartTotal() => Cart.Sum(i => i.Product.Price * i.Quantity);
+
 }
