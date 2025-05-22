@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NoFallZone.Data;
+using NoFallZone.Menu;
 using NoFallZone.Models.Entities;
 using NoFallZone.Utilities.Helpers;
 
@@ -22,9 +23,12 @@ public static class ProductSelector
             return null;
         }
 
-        Console.WriteLine($"\nSelect a product from category '{category.Name}':");
+        var lines = new List<string>();
+
         for (int i = 0; i < products.Count; i++)
-            Console.WriteLine($"{i + 1}. {products[i].Name}");
+            lines.Add($"{i + 1}. {products[i].Name} || Price: {products[i].Price}");
+
+        GUI.DrawWindow($"Select a product from category '{category.Name}'", 1, 1, lines, maxLineWidth: 100);
 
         int productIndex = InputHelper.PromptInt("\nEnter product number", 1, products.Count,
             $"Please select a valid number from 1 to {products.Count}");

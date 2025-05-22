@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NoFallZone.Data;
+using NoFallZone.Menu;
 using NoFallZone.Models.Entities;
 using NoFallZone.Utilities.Helpers;
 
@@ -8,6 +9,7 @@ public static class CategorySelector
 {
     public static Category? ChooseCategory(NoFallZoneContext db)
     {
+        Console.Clear();
         Console.CursorVisible = true;
         var categories = db.Categories
             .Include(c => c.Products)
@@ -19,9 +21,11 @@ public static class CategorySelector
             return null;
         }
 
-        Console.WriteLine("\nChoose a category:");
+        var lines = new List<string>();
         for (int i = 0; i < categories.Count; i++)
-            Console.WriteLine($"{i + 1}. {categories[i].Name}");
+            lines.Add($"{i + 1}. {categories[i].Name}");
+
+        GUI.DrawWindow("Choose a category", 1, 1, lines, maxLineWidth: 100);
 
         int index = InputHelper.PromptInt("\nEnter category number", 1, categories.Count,
             $"Please enter a number from 1 to {categories.Count}");

@@ -100,7 +100,7 @@ public void OpenCartMenu()
     public void ShowCartOverview()
     {
         string header = "Your Cart";
-        int fromLeft = 73;
+        int fromLeft = 65;
         int fromTop = 1;
 
         if (Session.Cart.Count == 0)
@@ -117,7 +117,7 @@ public void OpenCartMenu()
         for (int i = 0; i < Session.Cart.Count; i++)
         {
             var item = Session.Cart[i];
-            lines.Add($"{item.Quantity} x {item.Product.Name} ({item.Product.Price} Each)");
+            lines.Add($"{item.Quantity} x {item.Product.Name} ({item.Product.Price:C} Each)");
         }
 
         lines.Add("------------------------");
