@@ -76,8 +76,7 @@ public class CartService : ICartService
                     if (RemoveFromCart(removeIndex, out var removeMsg))
                     {
                         OutputHelper.ShowSuccess(removeMsg);
-                        if (Session.Cart.Count == 0)
-                            inCart = false;
+                        inCart = Session.Cart.Count == 0 ? false : true;
                     }
                 }
                 else
@@ -94,13 +93,24 @@ public class CartService : ICartService
                     if (selectedPayment == null) return;
                     int paymentId = selectedPayment.Id;
 
-                    if (_orderService.PlaceOrder(shippingId, paymentId, out string msg))
+                    _orderService.ShowOrderPreview(selectedShipping, selectedPayment);
+
+                    if (InputHelper.PromptYesNo("\nAre you sure you want to place this order?", "Enter Y for Yes or N for No"))
                     {
-                        OutputHelper.ShowSuccess(msg);
-                        inCart = false;
+                        if (_orderService.PlaceOrder(selectedShipping.Id, selectedPayment.Id, out string msg))
+                        {
+                            OutputHelper.ShowSuccess(msg);
+                            inCart = false;
+                        }
+                        else
+                        {
+                            OutputHelper.ShowError(msg);
+                        }
                     }
                     else
-                        OutputHelper.ShowError(msg);
+                    {
+                        OutputHelper.ShowInfo("Order cancelled!");
+                    }
                     break;
 
                 case ConsoleKey.D4:

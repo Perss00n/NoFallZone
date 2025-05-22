@@ -88,6 +88,39 @@ public class OrderService : IOrderService
         return true;
     }
 
+    public void ShowOrderPreview(ShippingOption shipping, PaymentOption payment)
+    {
+        Console.Clear();
+
+        var lines = new List<string>
+    {
+        $"Customer:  {Session.LoggedInUser!.Username}",
+        $"Shipping:  {shipping.Name} ({shipping.Price:C})",
+        $"Payment:   {payment.Name} (Fee: {payment.Fee:C})",
+        $"------------------------------"
+    };
+
+        foreach (var item in Session.Cart)
+        {
+            var product = item.Product;
+            decimal lineTotal = product.Price * item.Quantity;
+
+            lines.Add($"{item.Quantity} x {product.Name} ({product.Price:C} each) = {lineTotal:C}");
+        }
+
+        decimal subtotal = Session.GetCartTotal();
+        decimal total = subtotal + shipping.Price + (payment.Fee ?? 0);
+
+        lines.Add($"------------------------------");
+        lines.Add($"Subtotal: {subtotal:C}");
+        lines.Add($"Shipping: {shipping.Price:C}");
+        lines.Add($"Payment Fee: {(payment.Fee ?? 0):C}");
+        lines.Add($"------------------------------");
+        lines.Add($"Total: {total:C}");
+
+        GUI.DrawWindow("Order Summary (Preview)", 1, 1, lines, maxLineWidth: 80);
+    }
+
     private void ShowReceipt(Order order)
     {
         Console.Clear();
