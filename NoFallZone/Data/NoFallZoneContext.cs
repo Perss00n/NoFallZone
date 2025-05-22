@@ -7,14 +7,14 @@ public class NoFallZoneContext : DbContext
 {
 
 
-    public DbSet<Product> Products { get; set; }
-    public DbSet<Order> Orders { get; set; }
-    public DbSet<Customer> Customers { get; set; }
-    public DbSet<Supplier> Suppliers { get; set; }
-    public DbSet<Category> Categories { get; set; }
-    public DbSet<ShippingOption> ShippingOptions { get; set; }
-    public DbSet<OrderItem> OrderItems { get; set; }
-
+    public DbSet<Product> Products { get; set; } = null!;
+    public DbSet<Order> Orders { get; set; } = null!;
+    public DbSet<Customer> Customers { get; set; } = null!;
+    public DbSet<Supplier> Suppliers { get; set; } = null!;
+    public DbSet<Category> Categories { get; set; } = null!;
+    public DbSet<ShippingOption> ShippingOptions { get; set; } = null!;
+    public DbSet<OrderItem> OrderItems { get; set; } = null!;
+    public DbSet<PaymentOption> PaymentOptions { get; set; } = null!;
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -119,6 +119,22 @@ public class NoFallZoneContext : DbContext
         modelBuilder.Entity<ShippingOption>()
             .Property(so => so.Name)
             .IsRequired();
+
+        // PaymentOption
+        modelBuilder.Entity<PaymentOption>()
+            .Property(p => p.Name)
+            .IsRequired();
+        modelBuilder.Entity<PaymentOption>()
+            .HasIndex(p => p.Name)
+            .IsUnique();
+        modelBuilder.Entity<PaymentOption>()
+            .Property(p => p.Fee)
+            .HasPrecision(18, 2);
+        modelBuilder.Entity<Order>()
+            .HasOne(o => o.PaymentOption)
+            .WithMany(p => p.Orders)
+            .HasForeignKey(o => o.PaymentOptionId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         // Category
         modelBuilder.Entity<Category>()

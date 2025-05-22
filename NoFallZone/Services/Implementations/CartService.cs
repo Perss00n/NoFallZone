@@ -87,13 +87,14 @@ public class CartService : ICartService
                 case ConsoleKey.D3:
                     Console.Clear();
                     var selectedShipping = ShippingSelector.ChooseShipping(_db);
-                    int shippingId = selectedShipping!.Id;
+                    if (selectedShipping == null) return;
+                    int shippingId = selectedShipping.Id;
 
-                    Console.Write("\nSelect PaymentMethod: ");
+                    var selectedPayment = PaymentSelector.ChoosePaymentOption(_db);
+                    if (selectedPayment == null) return;
+                    int paymentId = selectedPayment.Id;
 
-                    string paymentMethod = Console.ReadLine()!;
-
-                    if (_orderService.PlaceOrder(shippingId, paymentMethod, out string msg))
+                    if (_orderService.PlaceOrder(shippingId, paymentId, out string msg))
                     {
                         OutputHelper.ShowSuccess(msg);
                         inCart = false;

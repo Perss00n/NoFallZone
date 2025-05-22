@@ -14,30 +14,31 @@ public class OrderService : IOrderService
         db = context;
     }
 
-    public bool PlaceOrder(int shippingOptionId, string paymentMethod, out string message)
+    public bool PlaceOrder(int shippingOptionId, int paymentMethodId, out string message)
     {
         if (!Session.IsLoggedIn)
         {
-            message = "You must be logged in to place an order.";
+            message = "You must be logged in to place an order!";
             return false;
         }
 
         if (Session.Cart.Count == 0)
         {
-            message = "Your cart is empty.";
-            return false;
-        }
-
-        if (String.IsNullOrEmpty(paymentMethod))
-        {
-            message = "Invalid payment metod.";
+            message = "Your cart is empty!";
             return false;
         }
 
         var shipping = db.ShippingOptions.FirstOrDefault(s => s.Id == shippingOptionId);
         if (shipping == null)
         {
-            message = "Invalid shipping option.";
+            message = "Invalid shipping option!";
+            return false;
+        }
+
+        var payment = db.PaymentOptions.FirstOrDefault(p => p.Id == paymentMethodId);
+        if (payment == null)
+        {
+            message = "Invalid payment option!";
             return false;
         }
 
@@ -57,8 +58,9 @@ public class OrderService : IOrderService
             OrderDate = DateTime.Now,
             ShippingOptionId = shippingOptionId,
             ShippingCost = shipping.Price,
-            PaymentMethod = paymentMethod,
-            TotalPrice = Session.GetCartTotal() + shipping.Price,
+            PaymentOptionId = paymentMethodId,
+            PaymentOptionName = payment.Name ?? "Unknown",
+            TotalPrice = Session.GetCartTotal() + shipping.Price + (payment.Fee ?? 0),
             OrderItems = new List<OrderItem>()
         };
 
@@ -93,7 +95,7 @@ public class OrderService : IOrderService
     {
         $"Thank you for your order, {Session.LoggedInUser!.Username}!",
         $"Order Date: {order.OrderDate:G}",
-        $"Payment Method: {order.PaymentMethod}",
+        $"Payment: {order.PaymentOption?.Name} (Fee: {order.PaymentOption?.Fee:C})",
         $"Shipping: {order.ShippingCost:C} via {db.ShippingOptions.First(s => s.Id == order.ShippingOptionId).Name}",
         $"------------------------------"
     };

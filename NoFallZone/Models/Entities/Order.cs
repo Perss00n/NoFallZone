@@ -6,7 +6,10 @@ public class Order
     public DateTime OrderDate { get; set; } = DateTime.UtcNow;
     public decimal TotalPrice { get; set; } = 0m;
     public decimal ShippingCost { get; set; } = 0m;
-    public string PaymentMethod { get; set; } = "Unknown";
+    public int? PaymentOptionId { get; set; }
+
+    public string? PaymentOptionName { get; set; }
+    public PaymentOption? PaymentOption { get; set; }
 
     public int CustomerId { get; set; }
     public Customer Customer { get; set; } = null!;
