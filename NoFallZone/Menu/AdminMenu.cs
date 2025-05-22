@@ -9,13 +9,15 @@ namespace NoFallZone.Menu
         private readonly ICustomerService _customerService;
         private readonly ICategoryService _categoryService;
         private readonly ISupplierService _supplierService;
+        private readonly IShippingOptionService _shippingOptionService;
 
-        public AdminMenu(IProductService productService, ICustomerService customerService, ICategoryService categoryService, ISupplierService supplierService)
+        public AdminMenu(IProductService productService, ICustomerService customerService, ICategoryService categoryService, ISupplierService supplierService, IShippingOptionService shippingOptionService)
         {
             _productService = productService;
             _customerService = customerService;
             _categoryService = categoryService;
             _supplierService = supplierService;
+            _shippingOptionService = shippingOptionService;
         }
 
         public List<string> GetMenuItems()
@@ -26,6 +28,7 @@ namespace NoFallZone.Menu
                 "2. Manage categories",
                 "3. Manage customers",
                 "4. Manage suppliers",
+                "5. Manage Shipping Options"
         };
         }
 
@@ -177,6 +180,44 @@ namespace NoFallZone.Menu
         }
 
 
+        public void ShowShippingOptionsAdminMenu()
+        {
+            bool inMenu = true;
+
+            while (inMenu)
+            {
+                Console.Clear();
+                GUI.DrawWindow("Shipping Options Administration", 0, 0, new List<string>
+            {
+                "1. Show all shipping options",
+                "2. Add new shipping option",
+                "3. Edit shipping option",
+                "4. Delete shipping option",
+                "5. Return to Admin Menu"
+            });
+
+                var input = Console.ReadKey(true).Key;
+
+                if (input == ConsoleKey.D5)
+                {
+                    inMenu = false;
+                    continue;
+                }
+
+                bool isValidChoice = HandleShippingOptionsInputs(input);
+
+                if (!isValidChoice)
+                {
+                    Console.Clear();
+                    OutputHelper.ShowError("Invalid choice!");
+                }
+
+                OutputHelper.ShowInfo("Press any key to continue...");
+                Console.ReadKey();
+            }
+        }
+
+
         private bool HandleProductInputs(ConsoleKey input)
         {
             switch (input)
@@ -237,6 +278,22 @@ namespace NoFallZone.Menu
                     _supplierService.EditSupplier(); return true;
                 case ConsoleKey.D4:
                     _supplierService.DeleteSupplier(); return true;
+                default: return false;
+            }
+        }
+
+        private bool HandleShippingOptionsInputs(ConsoleKey input)
+        {
+            switch (input)
+            {
+                case ConsoleKey.D1:
+                    _shippingOptionService.ShowAllShippingOptions(); return true;
+                case ConsoleKey.D2:
+                    _shippingOptionService.AddShippingOption(); return true;
+                case ConsoleKey.D3:
+                    _shippingOptionService.EditShippingOption(); return true;
+                case ConsoleKey.D4:
+                    _shippingOptionService.DeleteShippingOption(); return true;
                 default: return false;
             }
         }
