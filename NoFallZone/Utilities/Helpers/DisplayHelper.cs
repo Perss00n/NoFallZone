@@ -5,18 +5,33 @@ using NoFallZone.Utilities.SessionManagement;
 namespace NoFallZone.Utilities.Helpers;
 public static class DisplayHelper
 {
+
+
+    public static string ShowLogo()
+    {
+        return @"
+                ███╗   ██╗ ██████╗ ███████╗ █████╗ ██╗     ██╗     ███████╗ ██████╗ ███╗   ██╗███████╗
+                ████╗  ██║██╔═══██╗██╔════╝██╔══██╗██║     ██║     ╚══███╔╝██╔═══██╗████╗  ██║██╔════╝
+                ██╔██╗ ██║██║   ██║█████╗  ███████║██║     ██║       ███╔╝ ██║   ██║██╔██╗ ██║█████╗  
+                ██║╚██╗██║██║   ██║██╔══╝  ██╔══██║██║     ██║      ███╔╝  ██║   ██║██║╚██╗██║██╔══╝  
+                ██║ ╚████║╚██████╔╝██║     ██║  ██║███████╗███████╗███████╗╚██████╔╝██║ ╚████║███████╗
+                ╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
+                                           CREATED BY MARCUS LEHM";
+    }
+
     public static void ShowStartPage()
     {
-        string header = "=== NoFallZone ===";
+        string header = "=== Welcome To The Shop ===";
         int fromLeft = 40;
-        int fromTop = 2;
+        int fromTop = 10;
         List<string> lines = new List<string> {
-          "[1] Log in To The Shop",
+          "[1] Log In",
           "[2] Register New Account",
           "[3] Exit"
         };
 
         Console.Clear();
+        Console.WriteLine(ShowLogo());
         GUI.DrawWindow(header, fromLeft, fromTop, lines);
     }
 

@@ -39,10 +39,10 @@ public class CartService : ICartService
             switch (input)
             {
                 case ConsoleKey.D1:
-                    ChangeQuantity();
+                    PromptChangeQuantity();
                     break;
                 case ConsoleKey.D2:
-                    inCart = RemoveProduct();
+                    inCart = PromptRemoveProduct();
                     break;
                 case ConsoleKey.D3:
                     inCart = HandleCheckout();
@@ -136,16 +136,6 @@ public class CartService : ICartService
         }
     }
 
-    public decimal GetCartTotal()
-    {
-        return Session.Cart.Sum(item => item.Product.Price * item.Quantity);
-    }
-
-    public int GetQuantityInCart(Product product)
-    {
-        return Session.Cart.FirstOrDefault(i => i.Product.Id == product.Id)?.Quantity ?? 0;
-    }
-
     public int GetAvailableToAdd(Product product)
     {
         return product.Stock - GetQuantityInCart(product);
@@ -182,7 +172,17 @@ public class CartService : ICartService
         return true;
     }
 
-    public bool RemoveFromCart(int index, out string message)
+    private decimal GetCartTotal()
+    {
+        return Session.Cart.Sum(item => item.Product.Price * item.Quantity);
+    }
+
+    private int GetQuantityInCart(Product product)
+    {
+        return Session.Cart.FirstOrDefault(i => i.Product.Id == product.Id)?.Quantity ?? 0;
+    }
+
+    private bool RemoveFromCart(int index, out string message)
     {
         if (index < 0 || index >= Session.Cart.Count)
         {
@@ -196,7 +196,7 @@ public class CartService : ICartService
         return true;
     }
 
-    public bool ChangeQuantity(int index, int newQty, out string message)
+    private bool ChangeQuantity(int index, int newQty, out string message)
     {
         if (index < 0 || index >= Session.Cart.Count)
         {
@@ -215,7 +215,6 @@ public class CartService : ICartService
         message = $"{item.Product.Name} quantity updated to {newQty}.";
         return true;
     }
-
 
     private void PrintCartWindow()
     {
@@ -242,8 +241,7 @@ public class CartService : ICartService
     });
     }
 
-
-    private void ChangeQuantity()
+    private void PromptChangeQuantity()
     {
         int index = InputHelper.PromptInt("\nEnter item number to change quantity", 1, Session.Cart.Count, $"Enter a valid number from 1 to {Session.Cart.Count}") - 1;
         var item = Session.Cart[index];
@@ -256,8 +254,7 @@ public class CartService : ICartService
             OutputHelper.ShowError(msg);
     }
 
-
-    private bool RemoveProduct()
+    private bool PromptRemoveProduct()
     {
         int index = InputHelper.PromptInt("\nEnter item number to remove", 1, Session.Cart.Count, $"Enter a valid number from 1 to {Session.Cart.Count}") - 1;
 
@@ -276,7 +273,6 @@ public class CartService : ICartService
 
         return true;
     }
-
 
     private bool HandleCheckout()
     {
