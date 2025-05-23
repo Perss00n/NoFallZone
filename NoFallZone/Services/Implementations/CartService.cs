@@ -20,117 +20,50 @@ public class CartService : ICartService
     }
 
     public void OpenCartMenu()
-{
-    if (Session.Cart.Count == 0)
     {
-        Console.Clear();
-        OutputHelper.ShowInfo("Your cart is empty!");
-        return;
-    }
-
-    bool inCart = true;
-
-    while (inCart)
-    {
-        Console.Clear();
-        var lines = new List<string>();
-
-        for (int i = 0; i < Session.Cart.Count; i++)
+        if (Session.Cart.Count == 0)
         {
-            var item = Session.Cart[i];
-            decimal total = item.Product.Price * item.Quantity;
-            lines.Add($"{i + 1}. {item.Quantity} x {item.Product.Name} ({item.Product.Price:C} each) = {total:C}");
+            Console.Clear();
+            OutputHelper.ShowInfo("Your cart is empty!");
+            return;
         }
 
-        lines.Add("------------------------");
-        lines.Add($"Total: {GetCartTotal():C}");
+        bool inCart = true;
 
-        GUI.DrawWindow("Your Cart", 1, 1, lines, maxLineWidth: 100);
-        GUI.DrawWindow("Options", 1, lines.Count + 3, new List<string>
+        while (inCart)
         {
-            "1. Change quantity",
-            "2. Remove product",
-            "3. Checkout",
-            "4. Return to menu"
-        });
+            PrintCartWindow();
 
-        var input = Console.ReadKey(true).Key;
+            var input = Console.ReadKey(true).Key;
 
-        switch (input)
-        {
-            case ConsoleKey.D1:
-                int changeIndex = InputHelper.PromptInt("\nEnter item number to change quantity", 1, Session.Cart.Count, $"Enter a valid number from 1 to {Session.Cart.Count}") - 1;
-                var item = Session.Cart[changeIndex];
-                int newQty = InputHelper.PromptInt($"Enter new quantity for {item.Product.Name}", 1, item.Product.Stock, $"Enter a valid number from 1 to {item.Product.Stock}");
-
-                if (ChangeQuantity(changeIndex, newQty, out var changeMsg))
-                    OutputHelper.ShowSuccess(changeMsg);
-                else
-                    OutputHelper.ShowError(changeMsg);
-                break;
-
-            case ConsoleKey.D2:
-                int removeIndex = InputHelper.PromptInt("\nEnter item number to remove", 1, Session.Cart.Count, $"Enter a valid number from 1 to {Session.Cart.Count}") - 1;
-                if (InputHelper.PromptYesNo($"Are you sure you want to delete '{Session.Cart[removeIndex].Product.Name}'?", "Answer only 'Y' for yes or 'N' for no!"))
-                {
-                    if (RemoveFromCart(removeIndex, out var removeMsg))
-                    {
-                        OutputHelper.ShowSuccess(removeMsg);
-                        inCart = Session.Cart.Count == 0 ? false : true;
-                    }
-                }
-                else
-                    OutputHelper.ShowInfo("Cancelled.");
-                break;
-
-                case ConsoleKey.D3:
-                    Console.Clear();
-                    var selectedShipping = ShippingSelector.ChooseShipping(_db);
-                    if (selectedShipping == null) return;
-                    int shippingId = selectedShipping.Id;
-
-                    var selectedPayment = PaymentSelector.ChoosePaymentOption(_db);
-                    if (selectedPayment == null) return;
-                    int paymentId = selectedPayment.Id;
-
-                    _orderService.ShowOrderPreview(selectedShipping, selectedPayment);
-
-                    if (InputHelper.PromptYesNo("\nAre you sure you want to place this order?", "Enter Y for Yes or N for No"))
-                    {
-                        if (_orderService.PlaceOrder(selectedShipping.Id, selectedPayment.Id, out string msg))
-                        {
-                            OutputHelper.ShowSuccess(msg);
-                            inCart = false;
-                        }
-                        else
-                        {
-                            OutputHelper.ShowError(msg);
-                        }
-                    }
-                    else
-                    {
-                        OutputHelper.ShowInfo("Order cancelled!");
-                    }
+            switch (input)
+            {
+                case ConsoleKey.D1:
+                    ChangeQuantity();
                     break;
-
+                case ConsoleKey.D2:
+                    inCart = RemoveProduct();
+                    break;
+                case ConsoleKey.D3:
+                    inCart = HandleCheckout();
+                    break;
                 case ConsoleKey.D4:
                     inCart = false;
                     break;
+                default:
+                    OutputHelper.ShowError("Invalid option.");
+                    break;
+            }
 
-            default:
-                OutputHelper.ShowError("Invalid option.");
-                break;
-        }
-
-        if (inCart)
-        {
-            OutputHelper.ShowInfo("Press any key to continue...");
-            Console.ReadKey();
+            if (inCart)
+            {
+                OutputHelper.ShowInfo("Press any key to continue...");
+                Console.ReadKey();
+            }
         }
     }
-}
 
-    public void ShowCartOverview()
+    public void ShowStartPageCartOverview()
     {
         string header = "Your Cart";
         int fromLeft = 65;
@@ -282,4 +215,99 @@ public class CartService : ICartService
         message = $"{item.Product.Name} quantity updated to {newQty}.";
         return true;
     }
+
+
+    private void PrintCartWindow()
+    {
+        Console.Clear();
+        var lines = new List<string>();
+
+        for (int i = 0; i < Session.Cart.Count; i++)
+        {
+            var item = Session.Cart[i];
+            decimal total = item.Product.Price * item.Quantity;
+            lines.Add($"{i + 1}. {item.Quantity} x {item.Product.Name} ({item.Product.Price:C} each) = {total:C}");
+        }
+
+        lines.Add("------------------------");
+        lines.Add($"Total: {GetCartTotal():C}");
+
+        GUI.DrawWindow("Your Cart", 1, 1, lines, maxLineWidth: 100);
+        GUI.DrawWindow("Options", 1, lines.Count + 3, new List<string>
+    {
+        "1. Change quantity",
+        "2. Remove product",
+        "3. Checkout",
+        "4. Return to menu"
+    });
+    }
+
+
+    private void ChangeQuantity()
+    {
+        int index = InputHelper.PromptInt("\nEnter item number to change quantity", 1, Session.Cart.Count, $"Enter a valid number from 1 to {Session.Cart.Count}") - 1;
+        var item = Session.Cart[index];
+
+        int newQty = InputHelper.PromptInt($"Enter new quantity for {item.Product.Name}", 1, item.Product.Stock, $"Enter a valid number from 1 to {item.Product.Stock}");
+
+        if (ChangeQuantity(index, newQty, out var msg))
+            OutputHelper.ShowSuccess(msg);
+        else
+            OutputHelper.ShowError(msg);
+    }
+
+
+    private bool RemoveProduct()
+    {
+        int index = InputHelper.PromptInt("\nEnter item number to remove", 1, Session.Cart.Count, $"Enter a valid number from 1 to {Session.Cart.Count}") - 1;
+
+        if (InputHelper.PromptYesNo($"Are you sure you want to delete '{Session.Cart[index].Product.Name}'?", "Answer only 'Y' for yes or 'N' for no!"))
+        {
+            if (RemoveFromCart(index, out var msg))
+            {
+                OutputHelper.ShowSuccess(msg);
+                return Session.Cart.Count > 0;
+            }
+        }
+        else
+        {
+            OutputHelper.ShowInfo("Cancelled.");
+        }
+
+        return true;
+    }
+
+
+    private bool HandleCheckout()
+    {
+        Console.Clear();
+
+        var selectedShipping = ShippingSelector.ChooseShipping(_db);
+        if (selectedShipping == null) return true;
+
+        var selectedPayment = PaymentSelector.ChoosePaymentOption(_db);
+        if (selectedPayment == null) return true;
+
+        _orderService.ShowOrderPreview(selectedShipping, selectedPayment);
+
+        if (InputHelper.PromptYesNo("\nAre you sure you want to place this order?", "Enter Y for Yes or N for No"))
+        {
+            if (_orderService.PlaceOrder(selectedShipping.Id, selectedPayment.Id, out var msg))
+            {
+                OutputHelper.ShowSuccess(msg);
+                return false;
+            }
+            else
+            {
+                OutputHelper.ShowError(msg);
+            }
+        }
+        else
+        {
+            OutputHelper.ShowInfo("Order cancelled!");
+        }
+
+        return true;
+    }
+
 }

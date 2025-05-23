@@ -11,6 +11,6 @@ public interface ICartService
     bool RemoveFromCart(int index, out string message);
     bool ChangeQuantity(int index, int newQty, out string message);
     void OpenCartMenu();
-    void ShowCartOverview();
+    void ShowStartPageCartOverview();
     void AddDealToCart(ConsoleKey dealKey);
 }

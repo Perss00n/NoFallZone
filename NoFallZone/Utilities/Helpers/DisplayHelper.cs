@@ -39,7 +39,7 @@ public static class DisplayHelper
     public static void ShowCustomerDashboard(IProductService productService, ICartService cartService)
     {
         productService.ShowDeals();
-        cartService.ShowCartOverview();
+        cartService.ShowStartPageCartOverview();
     }
 
     public static void ShowCustomerMenu(CustomerMenu customerMenu)
@@ -54,7 +54,7 @@ public static class DisplayHelper
     public static void ShowAdminMenu(AdminMenu adminMenu)
     {
         string header = "Admin Menu";
-        int fromLeft = 35;
+        int fromLeft = 30;
         int fromTop = 8;
 
         GUI.DrawWindow(header, fromLeft, fromTop, adminMenu.GetMenuItems());
