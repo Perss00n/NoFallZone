@@ -72,6 +72,7 @@ public class ShippingOptionService : IShippingOptionService
 
         if (shippingOption == null) return;
 
+        Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
 
         string? newShippingName = ShippingOptionValidator.PromptOptionalName(shippingOption.Name!);
