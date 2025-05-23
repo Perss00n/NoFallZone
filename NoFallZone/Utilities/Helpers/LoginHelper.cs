@@ -24,6 +24,7 @@ public static class LoginHelper
         if (customer == null)
         {
             Console.Clear();
+            Console.WriteLine(DisplayHelper.ShowLogo());
             OutputHelper.ShowError("Login failed! Incorrect username or password");
             Thread.Sleep(1500);
             return null;

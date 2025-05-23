@@ -38,6 +38,7 @@ public class NoFallZoneApp
             if (!isValidChoice)
             {
                 Console.Clear();
+                Console.WriteLine(DisplayHelper.ShowLogo());
                 OutputHelper.ShowError("Invalid choice!");
             }
 

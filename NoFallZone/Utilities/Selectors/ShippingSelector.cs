@@ -9,6 +9,7 @@ public class ShippingSelector
     public static ShippingOption? ChooseShipping(NoFallZoneContext db)
     {
         Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
         Console.CursorVisible = true;
         var shippingOptions = db.ShippingOptions.ToList();
 
@@ -23,7 +24,7 @@ public class ShippingSelector
         for (int i = 0; i < shippingOptions.Count; i++)
             lines.Add($"{i + 1}. {shippingOptions[i].Name} || Price: {shippingOptions[i].Price}");
 
-        GUI.DrawWindow("Choose a shipping option", 1, 1, lines, 100);
+        GUI.DrawWindow("Choose a shipping option", 1, 10, lines, 100);
 
         int index = InputHelper.PromptInt("\nEnter option number", 1, shippingOptions.Count,
             $"Please enter a number from 1 to {shippingOptions.Count}");

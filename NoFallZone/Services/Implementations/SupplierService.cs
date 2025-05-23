@@ -23,13 +23,13 @@ namespace NoFallZone.Services.Implementations
             if (!RequireAdminAccess()) return;
 
             Console.Clear();
-            Console.WriteLine("=== All Suppliers ===\n");
+            Console.WriteLine(DisplayHelper.ShowLogo());
 
             var suppliers = db.Suppliers.ToList();
 
             if (suppliers.Count == 0)
             {
-                GUI.DrawWindow("Suppliers", 1, 2, new List<string>
+                GUI.DrawWindow("Suppliers", 1, 10, new List<string>
                 {
                     "No suppliers found in the database."
                 });
@@ -38,7 +38,7 @@ namespace NoFallZone.Services.Implementations
 
             List<string> outputData = suppliers.Select(s => $"Id: {s.Id} | Name: {s.Name}").ToList();
 
-            GUI.DrawWindow("Suppliers", 1, 2, outputData, 60);
+            GUI.DrawWindow("Suppliers", 1, 10, outputData, 60);
         }
 
         public void AddSupplier()
@@ -46,6 +46,7 @@ namespace NoFallZone.Services.Implementations
             if (!RequireAdminAccess()) return;
 
             Console.Clear();
+            Console.WriteLine(DisplayHelper.ShowLogo());
             Console.WriteLine("=== Add a new supplier ===");
 
             string supplierName = SupplierValidator.PromptName();
@@ -87,8 +88,6 @@ namespace NoFallZone.Services.Implementations
 
             var supplier = SupplierSelector.ChooseSupplier(db);
             if (supplier == null) return;
-
-            Console.Clear();
 
             Console.WriteLine($"Are you sure you want to delete the supplier '{supplier.Name}'?");
             bool confirm = SupplierValidator.PromptConfirmation();

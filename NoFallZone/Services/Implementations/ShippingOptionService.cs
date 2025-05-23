@@ -22,12 +22,13 @@ public class ShippingOptionService : IShippingOptionService
         if (!RequireAdminAccess()) return;
 
         Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
 
         var shippingOptions = db.ShippingOptions.ToList();
 
         if (shippingOptions.Count == 0)
         {
-            GUI.DrawWindow("Shipping Options", 1, 2, new List<string>
+            GUI.DrawWindow("Shipping Options", 1, 10, new List<string>
                 {
                     "No shipping options found in the database!"
                 });
@@ -36,7 +37,9 @@ public class ShippingOptionService : IShippingOptionService
 
         List<string> outputData = shippingOptions.Select(s => $"Id: {s.Id} || Name: {s.Name} || Price: {s.Price:C}").ToList();
 
-        GUI.DrawWindow("Shipping Options", 1, 2, outputData, 100);
+        Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
+        GUI.DrawWindow("Shipping Options", 1, 10, outputData, 100);
     }
 
     public void AddShippingOption()
@@ -44,7 +47,7 @@ public class ShippingOptionService : IShippingOptionService
         if (!RequireAdminAccess()) return;
 
         Console.Clear();
-        Console.WriteLine("=== Add a new shipping option ===");
+        Console.WriteLine(DisplayHelper.ShowLogo());
 
         string shippingName = ShippingOptionValidator.PromptName();
         decimal shippingPrice = ShippingOptionValidator.PromptPrice();
@@ -69,6 +72,8 @@ public class ShippingOptionService : IShippingOptionService
 
         if (shippingOption == null) return;
 
+        Console.WriteLine(DisplayHelper.ShowLogo());
+
         string? newShippingName = ShippingOptionValidator.PromptOptionalName(shippingOption.Name!);
         if (!string.IsNullOrWhiteSpace(newShippingName))
             shippingOption.Name = newShippingName;
@@ -86,14 +91,12 @@ public class ShippingOptionService : IShippingOptionService
     {
         if (!RequireAdminAccess()) return;
 
-        Console.Clear();
-        Console.WriteLine("=== Delete a shipping option ===");
-
         var shippingOption = ShippingSelector.ChooseShipping(db);
         if (shippingOption == null) return;
 
-        Console.Clear();
 
+        Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
         Console.WriteLine($"Are you sure you want to delete the shipping option '{shippingOption.Name}'?");
         bool confirm = ShippingOptionValidator.PromptConfirmation();
 

@@ -23,13 +23,13 @@ public class CategoryService : ICategoryService
         if (!RequireAdminAccess()) return;
 
         Console.Clear();
-        Console.WriteLine("=== All Categories ===\n");
+        Console.WriteLine(DisplayHelper.ShowLogo());
 
         var categories = db.Categories.ToList();
 
         if (categories.Count == 0)
         {
-            GUI.DrawWindow("Categories", 1, 2, new List<string>
+            GUI.DrawWindow("Categories", 1, 10, new List<string>
         {
             "No categories found in the database."
         });
@@ -38,7 +38,7 @@ public class CategoryService : ICategoryService
 
         List<string> outputData = categories.Select(c => $"Id: {c.Id} | Name: {c.Name}").ToList();
 
-        GUI.DrawWindow("Categories", 1, 2, outputData, 60);
+        GUI.DrawWindow("Categories", 1, 10, outputData, 60);
     }
 
     public void AddCategory()
@@ -46,6 +46,7 @@ public class CategoryService : ICategoryService
         if (!RequireAdminAccess()) return;
 
         Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
         Console.WriteLine("=== Add a new category ===");
 
         string categoryName = CategoryValidator.PromptName();
@@ -80,13 +81,10 @@ public class CategoryService : ICategoryService
     {
         if (!RequireAdminAccess()) return;
 
-        Console.Clear();
         Console.WriteLine("=== Delete a category ===");
 
         var category = CategorySelector.ChooseCategory(db);
         if (category == null) return;
-
-        Console.Clear();
 
         Console.WriteLine($"Are you sure you want to delete the category '{category.Name}'?");
 

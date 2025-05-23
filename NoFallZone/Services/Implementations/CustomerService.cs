@@ -65,6 +65,7 @@ public class CustomerService : ICustomerService
         if (!RequireAdminAccess()) return;
 
         Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
         Console.WriteLine("=== Add a new customer ===");
 
         string name = CustomerValidator.PromptName();
@@ -105,8 +106,6 @@ public class CustomerService : ICustomerService
         if (!RequireAdminAccess()) return;
 
         Console.Clear();
-        Console.WriteLine("=== Edit Customer ===");
-
         var customer = CustomerSelector.ChooseCustomer(db);
         if (customer == null)
         {
@@ -116,7 +115,8 @@ public class CustomerService : ICustomerService
         }
 
         Console.Clear();
-        Console.WriteLine($"=== Editing customer: {customer.FullName} ===");
+        Console.WriteLine(DisplayHelper.ShowLogo());
+        Console.WriteLine($"=== Editing customer: {customer.FullName} ===\n");
 
         string? newName = CustomerValidator.PromptOptionalName(customer.FullName);
         if (!string.IsNullOrWhiteSpace(newName)) customer.FullName = newName;
@@ -162,8 +162,6 @@ public class CustomerService : ICustomerService
         if (!RequireAdminAccess()) return;
 
         Console.Clear();
-        Console.WriteLine("=== Delete a customer ===");
-
         var customer = CustomerSelector.ChooseCustomer(db);
 
         if (customer == null)
@@ -173,7 +171,8 @@ public class CustomerService : ICustomerService
         }
 
         Console.Clear();
-        Console.WriteLine($"Are you sure you want to delete the user '{customer.FullName}'?");
+        Console.WriteLine(DisplayHelper.ShowLogo());
+        Console.WriteLine($"\nAre you sure you want to delete the user '{customer.FullName}'?");
         bool confirm = CustomerValidator.PromptConfirmation();
 
         if (confirm)
@@ -185,7 +184,7 @@ public class CustomerService : ICustomerService
         }
         else
         {
-            OutputHelper.ShowError("Deletion cancelled! Returning to main menu...");
+            OutputHelper.ShowError("Deletion cancelled!");
         }
     }
 

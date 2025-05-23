@@ -25,11 +25,11 @@ public static class DisplayHelper
         string header = "=== Welcome To The Shop ===";
         int fromLeft = 40;
         int fromTop = 10;
-        List<string> lines = new List<string> {
+        List<string> lines = [
           "[1] Log In",
           "[2] Register New Account",
           "[3] Exit"
-        };
+        ];
 
         Console.Clear();
         Console.WriteLine(ShowLogo());
@@ -45,7 +45,6 @@ public static class DisplayHelper
     public static void ShowCustomerMenu(CustomerMenu customerMenu)
     {
         string header = "Customer Menu";
-        //int fromLeft = 2;
         int fromLeft = Session.IsUser ? 15 : 2;
         int fromTop = 10;
 

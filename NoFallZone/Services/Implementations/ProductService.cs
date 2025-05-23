@@ -77,8 +77,9 @@ public class ProductService : IProductService
     public void SearchProducts()
     {
         Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
         Console.CursorVisible = true;
-        Console.Write("Enter a keyword to search for (Leave empty to cancel): ");
+        Console.Write("\nEnter a keyword to search for (Leave empty to cancel): ");
         string keyword = Console.ReadLine()!.Trim().ToLower();
 
         if (string.IsNullOrWhiteSpace(keyword))
@@ -108,7 +109,8 @@ public class ProductService : IProductService
             .Select((p, i) => $"{i + 1}. {p.Name} || {p.Category.Name} || {p.Price:C}")
             .ToList();
 
-        GUI.DrawWindow("Matching products", 0, 0, outputData, 60);
+        Console.WriteLine(DisplayHelper.ShowLogo());
+        GUI.DrawWindow("Matching products", 0, 10, outputData, 60);
 
         int index = InputHelper.PromptInt("\nEnter the number of the product you want to view the details of", 1, results.Count,
             $"Please enter a number from 1 to {results.Count}");
@@ -120,6 +122,7 @@ public class ProductService : IProductService
     public void ShowProductDetails(Product product)
     {
         Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
         Console.CursorVisible = false;
 
         var outputData = new List<string>
@@ -132,7 +135,7 @@ public class ProductService : IProductService
         $"Supplier:    {product.Supplier.Name}"
     };
 
-        GUI.DrawWindow("Product Details", 15, 1, outputData, 80);
+        GUI.DrawWindow("Product Details", 20, 10, outputData, 80);
 
         bool waitingForValidInput = true;
 
@@ -232,7 +235,7 @@ public class ProductService : IProductService
         if (!RequireAdminAccess()) return;
 
         Console.Clear();
-        Console.WriteLine("=== Add a new product ===");
+        Console.WriteLine(DisplayHelper.ShowLogo());
 
         var category = CategorySelector.ChooseCategory(db);
         if (category == null) return;
@@ -273,14 +276,12 @@ public class ProductService : IProductService
     {
         if (!RequireAdminAccess()) return;
 
-        Console.Clear();
-        Console.WriteLine("=== Edit Product ===");
-
         var product = ProductSelector.ChooseProductFromCategory(db);
         if (product == null) return;
 
         Console.Clear();
-        Console.WriteLine($"=== Editing '{product.Name}' ===");
+        Console.WriteLine(DisplayHelper.ShowLogo());
+        Console.WriteLine($"\n=== Editing '{product.Name}' ===\n");
 
         string? newName = ProductValidator.PromptOptionalName(product.Name);
         if (!string.IsNullOrWhiteSpace(newName))
@@ -311,14 +312,12 @@ public class ProductService : IProductService
     {
         if (!RequireAdminAccess()) return;
 
-        Console.Clear();
-        Console.WriteLine("=== Delete Product ===");
-
         var product = ProductSelector.ChooseProductFromCategory(db);
         if (product == null) return;
 
         Console.Clear();
-        Console.WriteLine($"Are you sure you want to delete '{product.Name}'?");
+        Console.WriteLine(DisplayHelper.ShowLogo());
+        Console.WriteLine($"\nAre you sure you want to delete '{product.Name}'?");
 
         bool confirm = ProductValidator.PromptConfirmation();
 
