@@ -10,6 +10,7 @@ public static class RegistrationHelper
     public static void RegisterNewCustomer(NoFallZoneContext db)
     {
         Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
         Console.CursorVisible = true;
         Console.WriteLine("=== Register New Account ===");
 
@@ -43,7 +44,7 @@ public static class RegistrationHelper
         db.SaveChanges();
 
         Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
         OutputHelper.ShowSuccess("Account created successfully! You may now log in on the homepage");
-        Thread.Sleep(2000);
     }
 }

@@ -29,9 +29,10 @@ public static class LoginHelper
             return null;
         }
 
-        //Console.Clear();
-        //OutputHelper.ShowInfo($"Welcome back, {customer.FullName}! You are now logged in as a {customer.Role}");
-        //Thread.Sleep(2500);
+        Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
+        OutputHelper.ShowInfo($"Welcome back, {customer.FullName}! You are now logged in as a {customer.Role}");
+        Thread.Sleep(2000);
         return customer;
     }
 }
