@@ -46,6 +46,7 @@ public class NoFallZoneApp
         }
 
         Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
         OutputHelper.ShowInfo("Thank you for visiting NoFallZone! L8terZ!");
     }
 
@@ -63,6 +64,8 @@ public class NoFallZoneApp
 
             case ConsoleKey.D2:
                 RegistrationHelper.RegisterNewCustomer(_db);
+                if (Session.IsLoggedIn)
+                    _startPage.Show();
                 return true;
 
             default:

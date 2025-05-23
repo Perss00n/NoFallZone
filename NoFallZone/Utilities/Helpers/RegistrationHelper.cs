@@ -1,6 +1,7 @@
 ﻿using NoFallZone.Data;
 using NoFallZone.Models.Entities;
 using NoFallZone.Models.Enums;
+using NoFallZone.Utilities.SessionManagement;
 using NoFallZone.Utilities.Validators;
 
 namespace NoFallZone.Utilities.Helpers;
@@ -44,7 +45,10 @@ public static class RegistrationHelper
         db.SaveChanges();
 
         Console.Clear();
+        db.Entry(customer).Reload();
+        Session.LoggedInUser = customer;
         Console.WriteLine(DisplayHelper.ShowLogo());
-        OutputHelper.ShowSuccess("Account created successfully! You may now log in on the homepage");
+        OutputHelper.ShowInfo("Account created successfully! You are now logged in and redirected to the homepage. Happy Shopping!");
+        Console.ReadKey();
     }
 }
