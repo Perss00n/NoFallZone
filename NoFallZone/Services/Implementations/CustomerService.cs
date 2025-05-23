@@ -33,7 +33,7 @@ public class CustomerService : ICustomerService
             GUI.DrawWindow("Customers", 1, 2, new List<string>
         {
             "No customers found in the database."
-        }, maxLineWidth: 70);
+        }, 70);
             return;
         }
 
@@ -53,7 +53,7 @@ public class CustomerService : ICustomerService
             $"Age:        {c.Age}",
             $"Username:   {c.Username}",
             $"Role:       {c.Role}"
-        }, maxLineWidth: 70);
+        }, 70);
 
             fromTop += 13;
         }

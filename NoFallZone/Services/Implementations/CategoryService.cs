@@ -38,7 +38,7 @@ public class CategoryService : ICategoryService
 
         List<string> outputData = categories.Select(c => $"Id: {c.Id} | Name: {c.Name}").ToList();
 
-        GUI.DrawWindow("Categories", 1, 2, outputData, maxLineWidth: 60);
+        GUI.DrawWindow("Categories", 1, 2, outputData, 60);
     }
 
     public void AddCategory()

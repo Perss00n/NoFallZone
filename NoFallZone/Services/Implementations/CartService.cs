@@ -24,6 +24,7 @@ public class CartService : ICartService
         if (Session.Cart.Count == 0)
         {
             Console.Clear();
+            Console.WriteLine(DisplayHelper.ShowLogo());
             OutputHelper.ShowInfo("Your cart is empty!");
             return;
         }
@@ -90,7 +91,7 @@ public class CartService : ICartService
         lines.Add($"Total: {GetCartTotal():C}");
         lines.Add("Press 'K' to checkout");
 
-        GUI.DrawWindow(header, fromLeft, fromTop, lines, maxLineWidth: 50);
+        GUI.DrawWindow(header, fromLeft, fromTop, lines);
     }
 
     public void AddDealToCart(ConsoleKey dealKey)
@@ -111,6 +112,7 @@ public class CartService : ICartService
         if (dealIndex < 0 || dealIndex >= featuredProducts.Count)
         {
             Console.Clear();
+            Console.WriteLine(DisplayHelper.ShowLogo());
             OutputHelper.ShowError("No product available for that deal.");
             return;
         }
@@ -120,6 +122,7 @@ public class CartService : ICartService
         if (selectedDeal.Stock <= 0)
         {
             Console.Clear();
+            Console.WriteLine(DisplayHelper.ShowLogo());
             OutputHelper.ShowError("Sorry, the product is out of stock!");
             return;
         }
@@ -127,11 +130,13 @@ public class CartService : ICartService
         if (TryAddToCart(selectedDeal, 1, out string message))
         {
             Console.Clear();
+            Console.WriteLine(DisplayHelper.ShowLogo());
             OutputHelper.ShowSuccess(message);
         }
         else
         {
             Console.Clear();
+            Console.WriteLine(DisplayHelper.ShowLogo());
             OutputHelper.ShowError(message);
         }
     }
@@ -219,6 +224,7 @@ public class CartService : ICartService
     private void PrintCartWindow()
     {
         Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
         var lines = new List<string>();
 
         for (int i = 0; i < Session.Cart.Count; i++)
@@ -231,8 +237,8 @@ public class CartService : ICartService
         lines.Add("------------------------");
         lines.Add($"Total: {GetCartTotal():C}");
 
-        GUI.DrawWindow("Your Cart", 1, 1, lines, maxLineWidth: 100);
-        GUI.DrawWindow("Options", 1, lines.Count + 3, new List<string>
+        GUI.DrawWindow("Your Cart", 1, 10, lines, 100);
+        GUI.DrawWindow("Options", 1, lines.Count + 12, new List<string>
     {
         "1. Change quantity",
         "2. Remove product",

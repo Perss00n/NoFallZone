@@ -38,7 +38,7 @@ namespace NoFallZone.Services.Implementations
 
             List<string> outputData = suppliers.Select(s => $"Id: {s.Id} | Name: {s.Name}").ToList();
 
-            GUI.DrawWindow("Suppliers", 1, 2, outputData, maxLineWidth: 60);
+            GUI.DrawWindow("Suppliers", 1, 2, outputData, 60);
         }
 
         public void AddSupplier()

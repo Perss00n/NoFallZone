@@ -39,7 +39,7 @@ public class ProductService : IProductService
         {
             GUI.DrawWindow($"Products in {category.Name}", 1, 2,
                 new List<string> { "No products available in this category." },
-                maxLineWidth: 70);
+                70);
             return;
         }
 
@@ -55,7 +55,7 @@ public class ProductService : IProductService
             $"Category:  {category.Name}",
             $"Supplier:  {p.Supplier.Name}",
             $"Featured:  {(p.IsFeatured == true ? "Yes" : "No")}"
-        }, maxLineWidth: 70);
+        }, 70);
 
             fromTop += 10;
         }
@@ -108,7 +108,7 @@ public class ProductService : IProductService
             .Select((p, i) => $"{i + 1}. {p.Name} || {p.Category.Name} || {p.Price:C}")
             .ToList();
 
-        GUI.DrawWindow("Matching products", 0, 0, outputData, maxLineWidth: 60);
+        GUI.DrawWindow("Matching products", 0, 0, outputData, 60);
 
         int index = InputHelper.PromptInt("\nEnter the number of the product you want to view the details of", 1, results.Count,
             $"Please enter a number from 1 to {results.Count}");
@@ -132,7 +132,7 @@ public class ProductService : IProductService
         $"Supplier:    {product.Supplier.Name}"
     };
 
-        GUI.DrawWindow("Product Details", 15, 1, outputData, maxLineWidth: 80);
+        GUI.DrawWindow("Product Details", 15, 1, outputData, 80);
 
         bool waitingForValidInput = true;
 
@@ -200,8 +200,9 @@ public class ProductService : IProductService
         for (int i = 0; i < 3; i++)
         {
             var deal = deals.ElementAtOrDefault(i);
-            int fromLeft = i == 0 ? 0 : i == 1 ? 40 : 78;
+            int fromLeft = i == 0 ? 1 : i == 1 ? 41 : 81;
             int fromTop = 19;
+            int maxWidth = 35;
             string dealBuyKeyMessage = deal?.Stock > 0 ? (i == 0 ? "Press X to buy" : i == 1 ? "Press A to buy" : "Press Z to buy") : "Out of stock!";
 
             if (deal != null)
@@ -214,7 +215,7 @@ public class ProductService : IProductService
                 $"{deal.Stock} pieces left in stock!",
                 "",
                 dealBuyKeyMessage
-            }, maxLineWidth: 33);
+            }, maxWidth);
             }
             else
             {

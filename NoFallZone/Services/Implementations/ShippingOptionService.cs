@@ -36,7 +36,7 @@ public class ShippingOptionService : IShippingOptionService
 
         List<string> outputData = shippingOptions.Select(s => $"Id: {s.Id} || Name: {s.Name} || Price: {s.Price:C}").ToList();
 
-        GUI.DrawWindow("Shipping Options", 1, 2, outputData, maxLineWidth: 100);
+        GUI.DrawWindow("Shipping Options", 1, 2, outputData, 100);
     }
 
     public void AddShippingOption()

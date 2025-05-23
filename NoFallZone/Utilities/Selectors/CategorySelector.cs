@@ -25,7 +25,7 @@ public static class CategorySelector
         for (int i = 0; i < categories.Count; i++)
             lines.Add($"{i + 1}. {categories[i].Name}");
 
-        GUI.DrawWindow("Choose a category", 1, 1, lines, maxLineWidth: 100);
+        GUI.DrawWindow("Choose a category", 1, 1, lines, 100);
 
         int index = InputHelper.PromptInt("\nEnter category number", 1, categories.Count,
             $"Please enter a number from 1 to {categories.Count}");

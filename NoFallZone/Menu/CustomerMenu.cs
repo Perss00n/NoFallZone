@@ -1,5 +1,4 @@
-﻿using NoFallZone.Services.Implementations;
-using NoFallZone.Services.Interfaces;
+﻿using NoFallZone.Services.Interfaces;
 
 namespace NoFallZone.Menu
 {
@@ -16,13 +15,13 @@ namespace NoFallZone.Menu
 
         public List<string> GetMenuItems()
         {
-            return new List<string>
-            {
+            return
+            [
                 "[E] Enter Shop",
                 "[C] Cart",
                 "[S] Search",
                 "[Q] Logout"
-            };
+            ];
         }
 
         public void ShowShop() => _productService.ShowShopProducts();

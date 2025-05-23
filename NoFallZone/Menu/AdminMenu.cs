@@ -22,14 +22,14 @@ namespace NoFallZone.Menu
 
         public List<string> GetMenuItems()
         {
-            return new List<string>
-        {
+            return
+        [
                 "1. Manage products",
                 "2. Manage categories",
                 "3. Manage customers",
                 "4. Manage suppliers",
                 "5. Manage Shipping Options"
-        };
+        ];
         }
 
         public void ShowProductAdminMenu()
@@ -38,14 +38,19 @@ namespace NoFallZone.Menu
 
             while (inMenu)
             {
-                Console.Clear();
-                GUI.DrawWindow("Product Menu", 0, 0, new List<string> {
+                int fromLeft = 0;
+                int fromTop = 10;
+                string header = "Product Menu";
+                List<string> lines = [
                     "1. Show products",
                     "2. Add product",
                     "3. Edit product",
                     "4. Delete product",
                     "5. Return to Admin Menu"
-                });
+                ];
+                Console.Clear();
+                Console.WriteLine(DisplayHelper.ShowLogo());
+                GUI.DrawWindow(header, fromLeft, fromTop, lines);
 
                 var input = Console.ReadKey(true).Key;
 
@@ -74,14 +79,20 @@ namespace NoFallZone.Menu
 
             while (inMenu)
             {
+                int fromLeft = 0;
+                int fromTop = 10;
+                string header = "Category Menu";
+                List<string> lines = [
+                    "1. Show categories",
+                    "2. Add category",
+                    "3. Edit category",
+                    "4. Delete category",
+                    "5. Return to Admin Menu"
+                ];
+
                 Console.Clear();
-                GUI.DrawWindow("Category Administration", 0, 0, new List<string>{
-                "1. Show categories",
-                "2. Add category",
-                "3. Edit category",
-                "4. Delete category",
-                "5. Return to Admin Menu"
-            });
+                Console.WriteLine(DisplayHelper.ShowLogo());
+                GUI.DrawWindow(header, fromLeft, fromTop, lines);
 
                 var input = Console.ReadKey(true).Key;
 
@@ -110,15 +121,20 @@ namespace NoFallZone.Menu
 
             while (inMenu)
             {
+                int fromLeft = 0;
+                int fromTop = 10;
+                string header = "Customer Menu";
+                List<string> lines = [
+                    "1. Show customers",
+                    "2. Add customer",
+                    "3. Edit customer",
+                    "4. Delete customer",
+                    "5. Return to Admin Menu"
+                 ];
+
                 Console.Clear();
-                GUI.DrawWindow("Customer Administration", 0, 0, new List<string>
-{
-                "1. Show customers",
-                "2. Add customer",
-                "3. Edit customer",
-                "4. Delete customer",
-                "5. Return to Admin Menu"
-            });
+                Console.WriteLine(DisplayHelper.ShowLogo());
+                GUI.DrawWindow(header, fromLeft, fromTop, lines);
 
                 var input = Console.ReadKey(true).Key;
 
@@ -141,22 +157,26 @@ namespace NoFallZone.Menu
             }
         }
 
-
         public void ShowSupplierAdminMenu()
         {
             bool inMenu = true;
 
             while (inMenu)
             {
+                int fromLeft = 0;
+                int fromTop = 10;
+                string header = "Supplier Menu";
+                List<string> lines = [
+                    "1. Show all suppliers",
+                    "2. Add supplier",
+                    "3. Edit supplier",
+                    "4. Delete supplier",
+                    "5. Return to Admin Menu"
+                ];
+
                 Console.Clear();
-                GUI.DrawWindow("Supplier Administration", 0, 0, new List<string>
-            {
-                "1. Show all suppliers",
-                "2. Add Supplier",
-                "3. Edit Supplier",
-                "4. Delete Supplier",
-                "5. Return to Admin Menu"
-            });
+                Console.WriteLine(DisplayHelper.ShowLogo());
+                GUI.DrawWindow(header, fromLeft, fromTop, lines);
 
                 var input = Console.ReadKey(true).Key;
 
@@ -179,22 +199,26 @@ namespace NoFallZone.Menu
             }
         }
 
-
         public void ShowShippingOptionsAdminMenu()
         {
             bool inMenu = true;
 
             while (inMenu)
             {
+                int fromLeft = 0;
+                int fromTop = 10;
+                string header = "Shipping Options Menu";
+                List<string> lines = [
+                    "1. Show all shipping options",
+                    "2. Add new shipping option",
+                    "3. Edit shipping option",
+                    "4. Delete shipping option",
+                    "5. Return to Admin Menu"
+                ];
+
                 Console.Clear();
-                GUI.DrawWindow("Shipping Options Administration", 0, 0, new List<string>
-            {
-                "1. Show all shipping options",
-                "2. Add new shipping option",
-                "3. Edit shipping option",
-                "4. Delete shipping option",
-                "5. Return to Admin Menu"
-            });
+                Console.WriteLine(DisplayHelper.ShowLogo());
+                GUI.DrawWindow(header, fromLeft, fromTop, lines);
 
                 var input = Console.ReadKey(true).Key;
 

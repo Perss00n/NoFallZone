@@ -2,6 +2,7 @@
 using NoFallZone.Menu;
 using NoFallZone.Models.Entities;
 using NoFallZone.Services.Interfaces;
+using NoFallZone.Utilities.Helpers;
 using NoFallZone.Utilities.SessionManagement;
 
 namespace NoFallZone.Services.Implementations;
@@ -91,6 +92,7 @@ public class OrderService : IOrderService
     public void ShowOrderPreview(ShippingOption shipping, PaymentOption payment)
     {
         Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
 
         var lines = new List<string>
     {
@@ -118,12 +120,13 @@ public class OrderService : IOrderService
         lines.Add($"------------------------------");
         lines.Add($"Total: {total:C}");
 
-        GUI.DrawWindow("Order Summary (Preview)", 1, 1, lines, maxLineWidth: 80);
+        GUI.DrawWindow("Order Summary (Preview)", 1, 10, lines, 80);
     }
 
     private void ShowReceipt(Order order)
     {
         Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
         var lines = new List<string>
     {
         $"Thank you for your order, {Session.LoggedInUser!.Username}!",
@@ -144,6 +147,6 @@ public class OrderService : IOrderService
         lines.Add($"------------------------------");
         lines.Add($"Total: {order.TotalPrice:C}");
 
-        GUI.DrawWindow("Order Receipt", 1, 1, lines, maxLineWidth: 80);
+        GUI.DrawWindow("Order Receipt", 1, 10, lines, 80);
     }
 }
