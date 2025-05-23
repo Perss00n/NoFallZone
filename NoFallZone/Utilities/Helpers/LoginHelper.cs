@@ -31,7 +31,7 @@ public static class LoginHelper
 
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
-        OutputHelper.ShowInfo($"Welcome back, {customer.FullName}! You are now logged in as a {customer.Role}");
+        OutputHelper.ShowInfo("".PadLeft(25) + $"Welcome back {customer.FullName}! You are now logged in as a {customer.Role}");
         Thread.Sleep(2000);
         return customer;
     }

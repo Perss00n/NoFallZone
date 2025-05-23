@@ -201,7 +201,7 @@ public class ProductService : IProductService
         {
             var deal = deals.ElementAtOrDefault(i);
             int fromLeft = i == 0 ? 0 : i == 1 ? 40 : 78;
-            int fromTop = 17;
+            int fromTop = 19;
             string dealBuyKeyMessage = deal?.Stock > 0 ? (i == 0 ? "Press X to buy" : i == 1 ? "Press A to buy" : "Press Z to buy") : "Out of stock!";
 
             if (deal != null)

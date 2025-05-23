@@ -20,7 +20,8 @@ namespace NoFallZone.Menu
             {
                 "[E] Enter Shop",
                 "[C] Cart",
-                "[S] Search"
+                "[S] Search",
+                "[Q] Logout"
             };
         }
 

@@ -48,7 +48,7 @@ public static class RegistrationHelper
         db.Entry(customer).Reload();
         Session.LoggedInUser = customer;
         Console.WriteLine(DisplayHelper.ShowLogo());
-        OutputHelper.ShowInfo("Account created successfully! You are now logged in and redirected to the homepage. Happy Shopping!");
+        OutputHelper.ShowInfo("".PadRight(15) + "Account created successfully! You are now logged in and redirected to the homepage. Happy Shopping!");
         Console.ReadKey();
     }
 }

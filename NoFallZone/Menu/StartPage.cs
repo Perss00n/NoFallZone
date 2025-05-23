@@ -28,7 +28,7 @@ public class StartPage
 
             Console.CursorVisible = false;
 
-            DisplayHelper.ShowWelcomeBanner();
+            Console.WriteLine(DisplayHelper.ShowLogo());
             DisplayHelper.ShowCustomerMenu(_customerMenu!);
 
             if (Session.IsAdmin)
@@ -42,7 +42,8 @@ public class StartPage
             {
                 Console.Clear();
                 Session.Logout();
-                OutputHelper.ShowInfo("You have been logged out.");
+                Console.WriteLine(DisplayHelper.ShowLogo());
+                OutputHelper.ShowInfo("".PadRight(40) + "You have been logged out!");
                 Thread.Sleep(1000);
                 return;
             }

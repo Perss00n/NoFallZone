@@ -66,8 +66,8 @@ public class CartService : ICartService
     public void ShowStartPageCartOverview()
     {
         string header = "Your Cart";
-        int fromLeft = 65;
-        int fromTop = 1;
+        int fromLeft = Session.IsUser ? 45 : 65;
+        int fromTop = 10;
 
         if (Session.Cart.Count == 0)
         {

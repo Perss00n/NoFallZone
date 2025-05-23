@@ -47,7 +47,7 @@ public class NoFallZoneApp
 
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
-        OutputHelper.ShowInfo("Thank you for visiting NoFallZone! L8terZ!");
+        OutputHelper.ShowInfo("".PadRight(35) + "Thank you for visiting NoFallZone! L8terZ!");
     }
 
     private bool HandleInputs(ConsoleKey input)

@@ -15,8 +15,9 @@ public static class DisplayHelper
                 ██╔██╗ ██║██║   ██║█████╗  ███████║██║     ██║       ███╔╝ ██║   ██║██╔██╗ ██║█████╗  
                 ██║╚██╗██║██║   ██║██╔══╝  ██╔══██║██║     ██║      ███╔╝  ██║   ██║██║╚██╗██║██╔══╝  
                 ██║ ╚████║╚██████╔╝██║     ██║  ██║███████╗███████╗███████╗╚██████╔╝██║ ╚████║███████╗
-                ╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝
-                                           CREATED BY MARCUS LEHM";
+                ╚═╝  ╚═══╝ ╚═════╝ ╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝╚══════╝" +
+                (Session.IsLoggedIn ? "".PadRight(57) + $"YOUR #1 SOURCE FOR CLIMBING GEAR" + "".PadRight(90) + $"Welcome Back, {Session.GetDisplayNameAndRole()}"
+                : "".PadRight(65) + "CREATED BY MARCUS LEHM");
     }
 
     public static void ShowStartPage()
@@ -35,22 +36,6 @@ public static class DisplayHelper
         GUI.DrawWindow(header, fromLeft, fromTop, lines);
     }
 
-    public static void ShowWelcomeBanner()
-    {
-        string header = "=== NoFallZone ===";
-        int fromLeft = 13;
-        int fromTop = 1;
-
-        List<String> lines = new List<String> {
-            "Your #1 Source Of Climbing Gear!",
-            "",
-            $"Welcome back, {Session.GetDisplayNameAndRole()}",
-            "To Logout Press 'Q'"
-        };
-
-        GUI.DrawWindow(header, fromLeft, fromTop, lines);
-    }
-
     public static void ShowCustomerDashboard(IProductService productService, ICartService cartService)
     {
         productService.ShowDeals();
@@ -60,8 +45,9 @@ public static class DisplayHelper
     public static void ShowCustomerMenu(CustomerMenu customerMenu)
     {
         string header = "Customer Menu";
-        int fromLeft = 2;
-        int fromTop = 8;
+        //int fromLeft = 2;
+        int fromLeft = Session.IsUser ? 15 : 2;
+        int fromTop = 10;
 
         GUI.DrawWindow(header, fromLeft, fromTop, customerMenu.GetMenuItems());
     }
@@ -70,7 +56,7 @@ public static class DisplayHelper
     {
         string header = "Admin Menu";
         int fromLeft = 30;
-        int fromTop = 8;
+        int fromTop = 10;
 
         GUI.DrawWindow(header, fromLeft, fromTop, adminMenu.GetMenuItems());
     }
