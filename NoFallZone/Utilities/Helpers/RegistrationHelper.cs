@@ -1,19 +1,17 @@
 ﻿using NoFallZone.Data;
 using NoFallZone.Models.Entities;
 using NoFallZone.Models.Enums;
+using NoFallZone.Utilities.Helpers;
 using NoFallZone.Utilities.SessionManagement;
 using NoFallZone.Utilities.Validators;
 
-namespace NoFallZone.Utilities.Helpers;
-
 public static class RegistrationHelper
 {
-    public static void RegisterNewCustomer(NoFallZoneContext db)
+    public static async Task RegisterNewCustomerAsync(NoFallZoneContext db)
     {
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
-        Console.CursorVisible = true;
-        Console.WriteLine("=== Register New Account ===");
+        Console.WriteLine("=== Register New Customer ===");
 
         string name = CustomerValidator.PromptName();
         string email = CustomerValidator.PromptEmail(db);
@@ -25,6 +23,7 @@ public static class RegistrationHelper
         int age = CustomerValidator.PromptAge();
         string username = CustomerValidator.PromptUsername(db);
         string password = CustomerValidator.PromptPassword();
+        Role role = Role.User;
 
         var customer = new Customer
         {
@@ -38,17 +37,14 @@ public static class RegistrationHelper
             Age = age,
             Username = username,
             Password = password,
-            Role = Role.User
+            Role = role
         };
 
-        db.Customers.Add(customer);
-        db.SaveChanges();
-
-        Console.Clear();
-        db.Entry(customer).Reload();
-        Session.LoggedInUser = customer;
-        Console.WriteLine(DisplayHelper.ShowLogo());
-        OutputHelper.ShowInfo("".PadRight(15) + "Account created successfully! You are now logged in and redirected to the homepage. Happy Shopping!");
-        Console.ReadKey();
+        await db.Customers.AddAsync(customer);
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
+        {
+            OutputHelper.ShowSuccess("Account created successfully!");
+            Session.LoggedInUser = customer;
+        }
     }
 }

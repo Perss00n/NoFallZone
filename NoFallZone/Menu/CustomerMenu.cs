@@ -24,9 +24,9 @@ namespace NoFallZone.Menu
             ];
         }
 
-        public void ShowShop() => _productService.ShowShopProducts();
-        public void Search() => _productService.SearchProducts();
-        public void OpenCart() => _cartService.OpenCartMenu();
+        public async Task ShowShopAsync() => await _productService.ShowShopProductsAsync();
+        public async Task SearchAsync() => await _productService.SearchProductsAsync();
+        public async Task OpenCartAsync() => await _cartService.OpenCartMenuAsync();
 
     }
 }

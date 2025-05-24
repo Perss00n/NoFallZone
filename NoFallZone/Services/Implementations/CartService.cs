@@ -1,4 +1,5 @@
-﻿using NoFallZone.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using NoFallZone.Data;
 using NoFallZone.Menu;
 using NoFallZone.Models.Entities;
 using NoFallZone.Services.Interfaces;
@@ -19,7 +20,7 @@ public class CartService : ICartService
         _orderService = orderService;
     }
 
-    public void OpenCartMenu()
+    public async Task OpenCartMenuAsync()
     {
         if (Session.Cart.Count == 0)
         {
@@ -46,7 +47,7 @@ public class CartService : ICartService
                     inCart = PromptRemoveProduct();
                     break;
                 case ConsoleKey.D3:
-                    inCart = HandleCheckout();
+                    inCart = await HandleCheckoutAsync();
                     break;
                 case ConsoleKey.D4:
                     inCart = false;
@@ -94,8 +95,11 @@ public class CartService : ICartService
         GUI.DrawWindow(header, fromLeft, fromTop, lines);
     }
 
-    public void AddDealToCart(ConsoleKey dealKey)
+    public async Task AddDealToCartAsync(ConsoleKey dealKey)
     {
+        Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
+
         int dealIndex = dealKey switch
         {
             ConsoleKey.X => 0,
@@ -104,15 +108,13 @@ public class CartService : ICartService
             _ => -1
         };
 
-        var featuredProducts = _db.Products
+        var featuredProducts = await _db.Products
             .Where(p => p.IsFeatured)
             .Take(3)
-            .ToList();
+            .ToListAsync();
 
         if (dealIndex < 0 || dealIndex >= featuredProducts.Count)
         {
-            Console.Clear();
-            Console.WriteLine(DisplayHelper.ShowLogo());
             OutputHelper.ShowError("No product available for that deal.");
             return;
         }
@@ -121,24 +123,14 @@ public class CartService : ICartService
 
         if (selectedDeal.Stock <= 0)
         {
-            Console.Clear();
-            Console.WriteLine(DisplayHelper.ShowLogo());
             OutputHelper.ShowError("Sorry, the product is out of stock!");
             return;
         }
 
         if (TryAddToCart(selectedDeal, 1, out string message))
-        {
-            Console.Clear();
-            Console.WriteLine(DisplayHelper.ShowLogo());
             OutputHelper.ShowSuccess(message);
-        }
         else
-        {
-            Console.Clear();
-            Console.WriteLine(DisplayHelper.ShowLogo());
             OutputHelper.ShowError(message);
-        }
     }
 
     public int GetAvailableToAdd(Product product)
@@ -280,28 +272,30 @@ public class CartService : ICartService
         return true;
     }
 
-    private bool HandleCheckout()
+    private async Task<bool> HandleCheckoutAsync()
     {
         Console.Clear();
 
-        var selectedShipping = ShippingSelector.ChooseShipping(_db);
+        var selectedShipping = await ShippingSelector.ChooseShippingAsync(_db);
         if (selectedShipping == null) return true;
 
-        var selectedPayment = PaymentSelector.ChoosePaymentOption(_db);
+        var selectedPayment = await PaymentSelector.ChoosePaymentOptionAsync(_db);
         if (selectedPayment == null) return true;
 
         _orderService.ShowOrderPreview(selectedShipping, selectedPayment);
 
         if (InputHelper.PromptYesNo("\nAre you sure you want to place this order?", "Enter Y for Yes or N for No"))
         {
-            if (_orderService.PlaceOrder(selectedShipping.Id, selectedPayment.Id, out var msg))
+            bool success = await _orderService.PlaceOrderAsync(selectedShipping.Id, selectedPayment.Id);
+
+            if (success)
             {
-                OutputHelper.ShowSuccess(msg);
+                OutputHelper.ShowSuccess("Order placed successfully!");
                 return false;
             }
             else
             {
-                OutputHelper.ShowError(msg);
+                return true;
             }
         }
         else

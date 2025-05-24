@@ -1,4 +1,5 @@
-﻿using NoFallZone.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using NoFallZone.Data;
 using NoFallZone.Menu;
 using NoFallZone.Models.Entities;
 using NoFallZone.Services.Interfaces;
@@ -18,36 +19,35 @@ namespace NoFallZone.Services.Implementations
             db = context;
         }
 
-        public void ShowAllSuppliers()
+        public async Task ShowAllSuppliersAsync()
         {
             if (!RequireAdminAccess()) return;
 
             Console.Clear();
             Console.WriteLine(DisplayHelper.ShowLogo());
 
-            if (!db.Suppliers.Any())
+            var suppliers = await db.Suppliers.ToListAsync();
+
+            if (suppliers.Count == 0)
             {
                 GUI.DrawWindow("Suppliers", 1, 10, new List<string>
-                {
-                    "No suppliers found in the database."
-                });
+        {
+            "No suppliers found in the database."
+        });
                 return;
             }
 
-            var suppliers = db.Suppliers.ToList();
-
-            List<string> outputData = suppliers.Select(s => $"Id: {s.Id} | Name: {s.Name}").ToList();
-
+            var outputData = suppliers.Select(s => $"Id: {s.Id} | Name: {s.Name}").ToList();
             GUI.DrawWindow("Suppliers", 1, 10, outputData, 60);
         }
 
-        public void AddSupplier()
+        public async Task AddSupplierAsync()
         {
             if (!RequireAdminAccess()) return;
 
             Console.Clear();
             Console.WriteLine(DisplayHelper.ShowLogo());
-            Console.WriteLine("=== Add a new supplier ===");
+            OutputHelper.ShowInfo("=== Add a new supplier ===");
 
             string supplierName = SupplierValidator.PromptName();
 
@@ -56,19 +56,18 @@ namespace NoFallZone.Services.Implementations
                 Name = supplierName
             };
 
-            db.Suppliers.Add(newSupplier);
+           await db.Suppliers.AddAsync(newSupplier);
 
-            if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+            if (await DatabaseHelper.TryToSaveToDbAsync(db))
                 OutputHelper.ShowSuccess("The Supplier has been added to the database!");
-            else
-                OutputHelper.ShowError(errorMsg);
+
         }
 
-        public void EditSupplier()
+        public async Task EditSupplierAsync()
         {
             if (!RequireAdminAccess()) return;
 
-            var supplier = SupplierSelector.ChooseSupplier(db);
+            var supplier = await SupplierSelector.ChooseSupplierAsync(db);
 
             if (supplier == null) return;
 
@@ -76,21 +75,19 @@ namespace NoFallZone.Services.Implementations
             if (!string.IsNullOrWhiteSpace(newSupplierName))
                 supplier.Name = newSupplierName;
 
-            if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+            if (await DatabaseHelper.TryToSaveToDbAsync(db))
                 OutputHelper.ShowSuccess("Supplier updated successfully!");
-            else
-                OutputHelper.ShowError(errorMsg);
 
         }
 
-        public void DeleteSupplier()
+        public async Task DeleteSupplierAsync()
         {
             if (!RequireAdminAccess()) return;
 
             Console.Clear();
             Console.WriteLine("=== Delete a supplier ===");
 
-            var supplier = SupplierSelector.ChooseSupplier(db);
+            var supplier = await SupplierSelector.ChooseSupplierAsync(db);
             if (supplier == null) return;
 
             Console.WriteLine($"Are you sure you want to delete '{supplier.Name}'?");
@@ -102,10 +99,8 @@ namespace NoFallZone.Services.Implementations
 
             db.Suppliers.Remove(supplier);
 
-            if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+            if (await DatabaseHelper.TryToSaveToDbAsync(db))
                 OutputHelper.ShowSuccess("Supplier deleted successfully!");
-            else
-                OutputHelper.ShowError(errorMsg);
         }
 
 

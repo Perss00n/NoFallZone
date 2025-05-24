@@ -7,23 +7,24 @@ using NoFallZone.Utilities.Helpers;
 namespace NoFallZone.Utilities.Selectors;
 public static class ProductSelector
 {
-    public static Product? ChooseProductFromCategory(Category category, NoFallZoneContext db)
+    public static async Task<Product?> ChooseProductFromCategoryAsync(Category category, NoFallZoneContext db)
     {
-        Console.Clear();
-        Console.WriteLine(DisplayHelper.ShowLogo());
         Console.CursorVisible = true;
-        var products = db.Products
+        var products = await db.Products
             .Where(p => p.CategoryId == category.Id)
             .Include(p => p.Category)
             .Include(p => p.Supplier)
-            .ToList();
+            .ToListAsync();
 
         if (products.Count == 0)
         {
+            Console.Clear();
             OutputHelper.ShowError("No products found in this category!");
             return null;
         }
 
+        Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
         var lines = new List<string>();
 
         for (int i = 0; i < products.Count; i++)
@@ -37,16 +38,12 @@ public static class ProductSelector
         return products[productIndex - 1];
     }
 
-    public static Product? ChooseProductFromCategory(NoFallZoneContext db)
+    public static async Task<Product?> ChooseProductFromCategoryAsync(NoFallZoneContext db)
     {
         Console.Clear();
-        var category = CategorySelector.ChooseCategory(db);
+        var category = await CategorySelector.ChooseCategoryAsync(db);
         if (category == null) return null;
 
-        return ChooseProductFromCategory(category, db);
+        return await ChooseProductFromCategoryAsync(category, db);
     }
-
-
-
-
 }

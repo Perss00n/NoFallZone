@@ -1,4 +1,5 @@
-﻿using NoFallZone.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using NoFallZone.Data;
 using NoFallZone.Menu;
 using NoFallZone.Models.Entities;
 using NoFallZone.Services.Interfaces;
@@ -17,32 +18,37 @@ public class PaymentOptionService : IPaymentOptionService
         db = context;
     }
 
-    public void ShowAllPaymentOptions()
+    public async Task ShowAllPaymentOptionsAsync()
     {
         if (!RequireAdminAccess()) return;
 
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
 
-        if (!db.PaymentOptions.Any())
+        var paymentOptions = await db.PaymentOptions.ToListAsync();
+
+        List<string> outputData;
+
+        if (paymentOptions.Count == 0)
         {
-            GUI.DrawWindow("Payment Options", 1, 10, new List<string>
-                {
-                    "No payment options found in the database!"
-                });
-            return;
+            outputData = new List<string>
+        {
+            "No payment options found in the database!"
+        };
         }
-
-        var paymentOptions = db.PaymentOptions.ToList();
-
-        List<string> outputData = paymentOptions.Select(p => $"Id: {p.Id} || Name: {p.Name} || Fee: {p.Fee:C}").ToList();
+        else
+        {
+            outputData = paymentOptions.Select(p =>
+                $"Id: {p.Id} || Name: {p.Name} || Fee: {p.Fee:C}"
+            ).ToList();
+        }
 
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
         GUI.DrawWindow("Payment Options", 1, 10, outputData, 100);
     }
 
-    public void AddPaymentOption()
+    public async Task AddPaymentOptionAsync()
     {
         if (!RequireAdminAccess()) return;
 
@@ -58,19 +64,17 @@ public class PaymentOptionService : IPaymentOptionService
             Fee = paymentFee
         };
 
-        db.PaymentOptions.Add(newPaymentOption);
+        await db.PaymentOptions.AddAsync(newPaymentOption);
 
-        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
             OutputHelper.ShowSuccess("The payment option has been added to the database!");
-        else
-            OutputHelper.ShowError(errorMsg);
     }
 
-    public void EditPaymentOption()
+    public async Task EditPaymentOptionAsync()
     {
         if (!RequireAdminAccess()) return;
 
-        var paymentOption = PaymentSelector.ChoosePaymentOption(db);
+        var paymentOption = await PaymentSelector.ChoosePaymentOptionAsync(db);
         if (paymentOption == null) return;
 
         Console.Clear();
@@ -84,17 +88,15 @@ public class PaymentOptionService : IPaymentOptionService
         if (newFee.HasValue)
             paymentOption.Fee = newFee;
 
-        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
             OutputHelper.ShowSuccess("The payment option has been updated successfully!");
-        else
-            OutputHelper.ShowError(errorMsg);
     }
 
-    public void DeletePaymentOption()
+    public async Task DeletePaymentOptionAsync()
     {
         if (!RequireAdminAccess()) return;
 
-        var paymentOption = PaymentSelector.ChoosePaymentOption(db);
+        var paymentOption = await PaymentSelector.ChoosePaymentOptionAsync(db);
         if (paymentOption == null) return;
 
         Console.Clear();
@@ -108,10 +110,8 @@ public class PaymentOptionService : IPaymentOptionService
 
         db.PaymentOptions.Remove(paymentOption);
 
-        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
             OutputHelper.ShowSuccess("The payment option has been deleted successfully!");
-        else
-            OutputHelper.ShowError(errorMsg);
     }
 
     private bool RequireAdminAccess()

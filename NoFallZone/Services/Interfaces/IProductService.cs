@@ -4,13 +4,13 @@ namespace NoFallZone.Services.Interfaces
 {
     public interface IProductService
     {
-        void ShowProducts();
-        void ShowShopProducts();
-        void SearchProducts();
+        Task ShowProductsAsync();
+        Task ShowShopProductsAsync();
+        Task SearchProductsAsync();
         void ShowProductDetails(Product product);
-        void ShowDeals();
-        void AddProduct();
-        void EditProduct();
-        void DeleteProduct();
+        Task ShowDealsAsync();
+        Task AddProductAsync();
+        Task EditProductAsync();
+        Task DeleteProductAsync();
     }
 }

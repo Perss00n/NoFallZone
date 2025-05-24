@@ -1,8 +1,8 @@
 ﻿namespace NoFallZone.Services.Interfaces;
 public interface IShippingOptionService
 {
-    void ShowAllShippingOptions();
-    void AddShippingOption();
-    void EditShippingOption();
-    void DeleteShippingOption();
+    Task ShowAllShippingOptionsAsync();
+    Task AddShippingOptionAsync();
+    Task EditShippingOptionAsync();
+    Task DeleteShippingOptionAsync();
 }

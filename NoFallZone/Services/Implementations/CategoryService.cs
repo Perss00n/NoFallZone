@@ -1,4 +1,5 @@
-﻿using NoFallZone.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using NoFallZone.Data;
 using NoFallZone.Menu;
 using NoFallZone.Models.Entities;
 using NoFallZone.Services.Interfaces;
@@ -18,15 +19,16 @@ public class CategoryService : ICategoryService
         db = context;
     }
 
-    public void ShowAllCategories()
+    public async Task ShowAllCategoriesAsync()
     {
         if (!RequireAdminAccess()) return;
 
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
 
+        var categories = await db.Categories.ToListAsync();
 
-        if (!db.Categories.Any())
+        if (categories.Count == 0)
         {
             GUI.DrawWindow("Categories", 1, 10, new List<string>
         {
@@ -35,20 +37,20 @@ public class CategoryService : ICategoryService
             return;
         }
 
-        var categories = db.Categories.ToList();
-
-        List<string> outputData = categories.Select(c => $"Id: {c.Id} | Name: {c.Name}").ToList();
+        List<string> outputData = categories
+            .Select(c => $"Id: {c.Id} | Name: {c.Name}")
+            .ToList();
 
         GUI.DrawWindow("Categories", 1, 10, outputData, 60);
     }
 
-    public void AddCategory()
+    public async Task AddCategoryAsync()
     {
         if (!RequireAdminAccess()) return;
 
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
-        Console.WriteLine("=== Add a new category ===");
+        OutputHelper.ShowInfo("=== Add a new category ===");
 
         string categoryName = CategoryValidator.PromptName();
 
@@ -57,40 +59,35 @@ public class CategoryService : ICategoryService
             Name = categoryName
         };
 
-        db.Categories.Add(newCategory);
+       await db.Categories.AddAsync(newCategory);
 
-        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
             OutputHelper.ShowSuccess("The category has been added to the database!");
-        else
-            OutputHelper.ShowError(errorMsg);
     }
-    public void EditCategory()
+    public async Task EditCategoryAsync()
     {
         if (!RequireAdminAccess()) return;
 
-        var category = CategorySelector.ChooseCategory(db);
-
+        var category = await CategorySelector.ChooseCategoryAsync(db);
         if (category == null) return;
 
         string? newCategoryName = CategoryValidator.PromptOptionalName(category.Name);
         if (!string.IsNullOrWhiteSpace(newCategoryName))
             category.Name = newCategoryName;
 
-        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
             OutputHelper.ShowSuccess("The category has been updated successfully!");
-        else
-            OutputHelper.ShowError(errorMsg);
     }
-    public void DeleteCategory()
+    public async Task DeleteCategoryAsync()
     {
         if (!RequireAdminAccess()) return;
 
         Console.WriteLine("=== Delete a category ===");
 
-        var category = CategorySelector.ChooseCategory(db);
+        var category = await CategorySelector.ChooseCategoryAsync(db);
         if (category == null) return;
 
-        Console.WriteLine($"Are you sure you want to delete the category '{category.Name}'?");
+        OutputHelper.ShowInfo($"Are you sure you want to delete the category '{category.Name}'?");
 
         if (!CategoryValidator.PromptConfirmation())
         {
@@ -100,10 +97,8 @@ public class CategoryService : ICategoryService
 
         db.Categories.Remove(category);
 
-        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
             OutputHelper.ShowSuccess("The category has been deleted successfully!");
-        else
-            OutputHelper.ShowError(errorMsg);
     }
     private bool RequireAdminAccess()
     {

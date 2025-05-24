@@ -7,20 +7,24 @@ using NoFallZone.Utilities.Helpers;
 namespace NoFallZone.Utilities.Selectors;
 public static class CategorySelector
 {
-    public static Category? ChooseCategory(NoFallZoneContext db)
+    public static async Task<Category?> ChooseCategoryAsync(NoFallZoneContext db)
     {
-        Console.Clear();
-        Console.WriteLine(DisplayHelper.ShowLogo());
         Console.CursorVisible = true;
-        var categories = db.Categories
+
+        var categories = await db.Categories
             .Include(c => c.Products)
-            .ToList();
+            .ToListAsync();
 
         if (categories.Count == 0)
         {
+            Console.Clear();
+            Console.WriteLine(DisplayHelper.ShowLogo());
             OutputHelper.ShowError("No categories found!");
             return null;
         }
+        
+        Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
 
         var lines = new List<string>();
         for (int i = 0; i < categories.Count; i++)
@@ -33,4 +37,5 @@ public static class CategorySelector
 
         return categories[index - 1];
     }
+
 }

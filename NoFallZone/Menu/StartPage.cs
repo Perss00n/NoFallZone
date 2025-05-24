@@ -1,4 +1,5 @@
-﻿using NoFallZone.Services.Interfaces;
+﻿using NoFallZone.Services.Implementations;
+using NoFallZone.Services.Interfaces;
 using NoFallZone.Utilities.Helpers;
 using NoFallZone.Utilities.SessionManagement;
 
@@ -18,14 +19,13 @@ public class StartPage
         _cartService = cartService;
     }
 
-    public void Show()
+    public async Task ShowAsync()
     {
         bool inSession = true;
 
         while (inSession)
         {
             Console.Clear();
-
             Console.CursorVisible = false;
 
             Console.WriteLine(DisplayHelper.ShowLogo());
@@ -34,7 +34,8 @@ public class StartPage
             if (Session.IsAdmin)
                 DisplayHelper.ShowAdminMenu(_adminMenu!);
 
-            DisplayHelper.ShowCustomerDashboard(_productService, _cartService);
+            await _productService.ShowDealsAsync();
+            _cartService.ShowStartPageCartOverview();
 
             var input = Console.ReadKey(true).Key;
 
@@ -48,7 +49,7 @@ public class StartPage
                 return;
             }
 
-            bool isValidChoice = HandleCustomerInput(input) || HandleAdminInput(input);
+            bool isValidChoice = await HandleCustomerInputAsync(input) || await HandleAdminInputAsync(input);
 
             if (!isValidChoice)
             {
@@ -61,37 +62,36 @@ public class StartPage
         }
     }
 
-
-    private bool HandleCustomerInput(ConsoleKey input)
+    private async Task<bool> HandleCustomerInputAsync(ConsoleKey input)
     {
         switch (input)
         {
-            case ConsoleKey.E: _customerMenu!.ShowShop(); return true;
-            case ConsoleKey.C: _customerMenu!.OpenCart(); return true;
-            case ConsoleKey.S: _customerMenu!.Search(); return true;
+            case ConsoleKey.E: await _customerMenu!.ShowShopAsync(); return true;
+            case ConsoleKey.C: await _customerMenu!.OpenCartAsync(); return true;
+            case ConsoleKey.S: await _customerMenu!.SearchAsync(); return true;
             case ConsoleKey.X:
             case ConsoleKey.A:
             case ConsoleKey.Z:
-                _cartService.AddDealToCart(input); return true;
-            case ConsoleKey.K when Session.Cart.Count > 0: _customerMenu!.OpenCart(); return true;
+                await _cartService.AddDealToCartAsync(input); return true;
+            case ConsoleKey.K when Session.Cart.Count > 0:
+                await _customerMenu!.OpenCartAsync(); return true;
             default: return false;
         }
     }
 
-    private bool HandleAdminInput(ConsoleKey input)
+    private async Task<bool> HandleAdminInputAsync(ConsoleKey input)
     {
         if (!Session.IsAdmin) return false;
 
         switch (input)
         {
-            case ConsoleKey.D1: _adminMenu!.ShowProductAdminMenu(); return true;
-            case ConsoleKey.D2: _adminMenu!.ShowCategoryAdminMenu(); return true;
-            case ConsoleKey.D3: _adminMenu!.ShowCustomerAdminMenu(); return true;
-            case ConsoleKey.D4: _adminMenu!.ShowSupplierAdminMenu(); return true;
-            case ConsoleKey.D5: _adminMenu!.ShowShippingOptionsAdminMenu(); return true;
-            case ConsoleKey.D6: _adminMenu!.ShowPaymentOptionsAdminMenu(); return true;
+            case ConsoleKey.D1: await _adminMenu!.ShowProductAdminMenuAsync(); return true;
+            case ConsoleKey.D2: await _adminMenu!.ShowCategoryAdminMenuAsync(); return true;
+            case ConsoleKey.D3: await _adminMenu!.ShowCustomerAdminMenuAsync(); return true;
+            case ConsoleKey.D4: await _adminMenu!.ShowSupplierAdminMenuAsync(); return true;
+            case ConsoleKey.D5: await _adminMenu!.ShowShippingOptionsAdminMenuAsync(); return true;
+            case ConsoleKey.D6: await _adminMenu!.ShowPaymentOptionsAdminMenuAsync(); return true;
             default: return false;
         }
     }
-
 }

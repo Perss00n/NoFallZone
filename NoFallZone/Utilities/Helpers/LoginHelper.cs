@@ -1,11 +1,12 @@
-﻿using NoFallZone.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using NoFallZone.Data;
 using NoFallZone.Models.Entities;
 
 namespace NoFallZone.Utilities.Helpers;
 
 public static class LoginHelper
 {
-    public static Customer? LoginUser(NoFallZoneContext db)
+    public static async Task<Customer?> LoginUserAsync(NoFallZoneContext db)
     {
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
@@ -18,8 +19,8 @@ public static class LoginHelper
         Console.Write("Password: ");
         string password = Console.ReadLine()!.Trim();
 
-        var customer = db.Customers
-            .FirstOrDefault(c => c.Username == username && c.Password == password);
+        var customer = await db.Customers
+            .FirstOrDefaultAsync(c => c.Username == username && c.Password == password);
 
         if (customer == null)
         {

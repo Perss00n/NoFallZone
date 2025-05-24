@@ -3,8 +3,6 @@ using NoFallZone.Menu;
 using NoFallZone.Utilities.Helpers;
 using NoFallZone.Utilities.SessionManagement;
 
-namespace NoFallZone.Setup;
-
 public class NoFallZoneApp
 {
     private readonly NoFallZoneContext _db;
@@ -16,7 +14,7 @@ public class NoFallZoneApp
         _startPage = startPage;
     }
 
-    public void Run()
+    public async Task RunAsync()
     {
         bool running = true;
 
@@ -33,7 +31,7 @@ public class NoFallZoneApp
                 break;
             }
 
-            bool isValidChoice = HandleInputs(choice);
+            bool isValidChoice = await HandleInputsAsync(choice);
 
             if (!isValidChoice)
             {
@@ -51,22 +49,22 @@ public class NoFallZoneApp
         OutputHelper.ShowInfo("".PadRight(35) + "Thank you for visiting NoFallZone! L8terZ!");
     }
 
-    private bool HandleInputs(ConsoleKey input)
+    private async Task<bool> HandleInputsAsync(ConsoleKey input)
     {
         switch (input)
         {
             case ConsoleKey.D1:
-                var user = LoginHelper.LoginUser(_db);
+                var user = await LoginHelper.LoginUserAsync(_db);
                 if (user == null) return false;
 
                 Session.LoggedInUser = user;
-                _startPage.Show();
+                await _startPage.ShowAsync();
                 return true;
 
             case ConsoleKey.D2:
-                RegistrationHelper.RegisterNewCustomer(_db);
+                await RegistrationHelper.RegisterNewCustomerAsync(_db);
                 if (Session.IsLoggedIn)
-                    _startPage.Show();
+                    await _startPage.ShowAsync();
                 return true;
 
             default:

@@ -36,7 +36,7 @@ namespace NoFallZone.Menu
         ];
         }
 
-        public void ShowProductAdminMenu()
+        public async Task ShowProductAdminMenuAsync()
         {
             bool inMenu = true;
 
@@ -64,7 +64,7 @@ namespace NoFallZone.Menu
                     continue;
                 }
 
-                bool isValidChoice = HandleProductInputs(input);
+                bool isValidChoice = await HandleProductInputsAsync(input);
 
                 if (!isValidChoice)
                 {
@@ -77,7 +77,7 @@ namespace NoFallZone.Menu
             }
         }
 
-        public void ShowCategoryAdminMenu()
+        public async Task ShowCategoryAdminMenuAsync()
         {
             bool inMenu = true;
 
@@ -106,7 +106,7 @@ namespace NoFallZone.Menu
                     continue;
                 }
 
-                bool isValidChoice = HandleCategoryInputs(input);
+                bool isValidChoice = await HandleCategoryInputsAsync(input);
 
                 if (!isValidChoice)
                 {
@@ -119,7 +119,7 @@ namespace NoFallZone.Menu
             }
         }
 
-        public void ShowCustomerAdminMenu()
+        public async Task ShowCustomerAdminMenuAsync()
         {
             bool inMenu = true;
 
@@ -148,7 +148,7 @@ namespace NoFallZone.Menu
                     continue;
                 }
 
-                bool isValidChoice = HandleCustomerInputs(input);
+                bool isValidChoice = await HandleCustomerInputsAsync(input);
 
                 if (!isValidChoice)
                 {
@@ -161,7 +161,7 @@ namespace NoFallZone.Menu
             }
         }
 
-        public void ShowSupplierAdminMenu()
+        public async Task ShowSupplierAdminMenuAsync()
         {
             bool inMenu = true;
 
@@ -190,7 +190,7 @@ namespace NoFallZone.Menu
                     continue;
                 }
 
-                bool isValidChoice = HandleSupplierInputs(input);
+                bool isValidChoice = await HandleSupplierInputsAsync(input);
 
                 if (!isValidChoice)
                 {
@@ -203,7 +203,7 @@ namespace NoFallZone.Menu
             }
         }
 
-        public void ShowShippingOptionsAdminMenu()
+        public async Task ShowShippingOptionsAdminMenuAsync()
         {
             bool inMenu = true;
 
@@ -232,7 +232,7 @@ namespace NoFallZone.Menu
                     continue;
                 }
 
-                bool isValidChoice = HandleShippingOptionsInputs(input);
+                bool isValidChoice = await HandleShippingOptionsInputsAsync(input);
 
                 if (!isValidChoice)
                 {
@@ -245,7 +245,7 @@ namespace NoFallZone.Menu
             }
         }
 
-        public void ShowPaymentOptionsAdminMenu()
+        public async Task ShowPaymentOptionsAdminMenuAsync()
         {
             bool inMenu = true;
 
@@ -274,7 +274,7 @@ namespace NoFallZone.Menu
                     continue;
                 }
 
-                bool isValidChoice = HandlePaymentOptionsInputs(input);
+                bool isValidChoice = await HandlePaymentOptionsInputsAsync(input);
 
                 if (!isValidChoice)
                 {
@@ -288,98 +288,98 @@ namespace NoFallZone.Menu
         }
 
 
-        private bool HandleProductInputs(ConsoleKey input)
+        private async Task<bool> HandleProductInputsAsync(ConsoleKey input)
         {
             switch (input)
             {
                 case ConsoleKey.D1:
-                    _productService.ShowProducts(); return true;
+                   await _productService.ShowProductsAsync(); return true;
                 case ConsoleKey.D2:
-                    _productService.AddProduct(); return true;
+                    await _productService.AddProductAsync(); return true;
                 case ConsoleKey.D3:
-                    _productService.EditProduct(); return true;
+                    await _productService.EditProductAsync(); return true;
                 case ConsoleKey.D4:
-                    _productService.DeleteProduct(); return true;
+                    await _productService.DeleteProductAsync(); return true;
                 default: return false;
             }
         }
 
-        private bool HandleCategoryInputs(ConsoleKey input)
+        private async Task<bool> HandleCategoryInputsAsync(ConsoleKey input)
         {
             switch (input)
             {
                 case ConsoleKey.D1:
-                    _categoryService.ShowAllCategories(); return true;
+                    await _categoryService.ShowAllCategoriesAsync(); return true;
                 case ConsoleKey.D2:
-                    _categoryService.AddCategory(); return true;
+                    await _categoryService.AddCategoryAsync(); return true;
                 case ConsoleKey.D3:
-                    _categoryService.EditCategory(); return true;
+                    await _categoryService.EditCategoryAsync(); return true;
                 case ConsoleKey.D4:
-                    _categoryService.DeleteCategory(); return true;
+                    await _categoryService.DeleteCategoryAsync(); return true;
                 default: return false;
             }
         }
 
-        private bool HandleCustomerInputs(ConsoleKey input)
+        private async Task<bool> HandleCustomerInputsAsync(ConsoleKey input)
         {
             switch (input)
             {
                 case ConsoleKey.D1:
-                    _customerService.ShowAllCustomers(); return true;
+                    await _customerService.ShowAllCustomersAsync(); return true;
                 case ConsoleKey.D2:
-                    _customerService.AddCustomer(); return true;
+                    await _customerService.AddCustomerAsync(); return true;
                 case ConsoleKey.D3:
-                    _customerService.EditCustomer(); return true;
+                    await _customerService.EditCustomerAsync(); return true;
                 case ConsoleKey.D4:
-                    _customerService.DeleteCustomer(); return true;
+                    await _customerService.DeleteCustomerAsync(); return true;
                 default: return false;
             }
         }
 
-        private bool HandleSupplierInputs(ConsoleKey input)
+        private async Task<bool> HandleSupplierInputsAsync(ConsoleKey input)
         {
             switch (input)
             {
                 case ConsoleKey.D1:
-                    _supplierService.ShowAllSuppliers(); return true;
+                    await _supplierService.ShowAllSuppliersAsync(); return true;
                 case ConsoleKey.D2:
-                    _supplierService.AddSupplier(); return true;
+                    await _supplierService.AddSupplierAsync(); return true;
                 case ConsoleKey.D3:
-                    _supplierService.EditSupplier(); return true;
+                    await _supplierService.EditSupplierAsync(); return true;
                 case ConsoleKey.D4:
-                    _supplierService.DeleteSupplier(); return true;
+                    await _supplierService.DeleteSupplierAsync(); return true;
                 default: return false;
             }
         }
 
-        private bool HandleShippingOptionsInputs(ConsoleKey input)
+        private async Task<bool> HandleShippingOptionsInputsAsync(ConsoleKey input)
         {
             switch (input)
             {
                 case ConsoleKey.D1:
-                    _shippingOptionService.ShowAllShippingOptions(); return true;
+                    await _shippingOptionService.ShowAllShippingOptionsAsync(); return true;
                 case ConsoleKey.D2:
-                    _shippingOptionService.AddShippingOption(); return true;
+                    await _shippingOptionService.AddShippingOptionAsync(); return true;
                 case ConsoleKey.D3:
-                    _shippingOptionService.EditShippingOption(); return true;
+                    await _shippingOptionService.EditShippingOptionAsync(); return true;
                 case ConsoleKey.D4:
-                    _shippingOptionService.DeleteShippingOption(); return true;
+                    await _shippingOptionService.DeleteShippingOptionAsync(); return true;
                 default: return false;
             }
         }
 
-        private bool HandlePaymentOptionsInputs(ConsoleKey input)
+        private async Task<bool> HandlePaymentOptionsInputsAsync(ConsoleKey input)
         {
             switch (input)
             {
                 case ConsoleKey.D1:
-                    _paymentOptionService.ShowAllPaymentOptions(); return true;
+                    await _paymentOptionService.ShowAllPaymentOptionsAsync(); return true;
                 case ConsoleKey.D2:
-                    _paymentOptionService.AddPaymentOption(); return true;
+                    await _paymentOptionService.AddPaymentOptionAsync(); return true;
                 case ConsoleKey.D3:
-                    _paymentOptionService.EditPaymentOption(); return true;
+                    await _paymentOptionService.EditPaymentOptionAsync(); return true;
                 case ConsoleKey.D4:
-                    _paymentOptionService.DeletePaymentOption(); return true;
+                    await _paymentOptionService.DeletePaymentOptionAsync(); return true;
                 default: return false;
             }
         }

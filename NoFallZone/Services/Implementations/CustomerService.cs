@@ -7,6 +7,7 @@ using NoFallZone.Utilities.Helpers;
 using NoFallZone.Utilities.SessionManagement;
 using NoFallZone.Models.Enums;
 using NoFallZone.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace NoFallZone.Services.Implementations;
 public class CustomerService : ICustomerService
@@ -18,26 +19,26 @@ public class CustomerService : ICustomerService
         db = context;
     }
 
-    public void ShowAllCustomers()
+    public async Task ShowAllCustomersAsync()
     {
         if (!RequireAdminAccess()) return;
 
         Console.Clear();
-        Console.WriteLine("=== All Customers ===\n");
+        Console.WriteLine(DisplayHelper.ShowLogo());
+        OutputHelper.ShowInfo("=== All Customers ===\n");
 
+        var customers = await db.Customers.ToListAsync();
 
-        if (!db.Customers.Any())
+        if (customers.Count == 0)
         {
-            GUI.DrawWindow("Customers", 1, 2, new List<string>
+            GUI.DrawWindow("Customers", 1, 10, new List<string>
         {
             "No customers found in the database."
         }, 70);
             return;
         }
 
-        var customers = db.Customers.ToList();
-
-        int fromTop = 2;
+        int fromTop = 10;
         foreach (var c in customers)
         {
             GUI.DrawWindow($"Customer: {c.FullName}", 1, fromTop, new List<string>
@@ -60,7 +61,7 @@ public class CustomerService : ICustomerService
     }
 
 
-    public void AddCustomer()
+    public async Task AddCustomerAsync()
     {
         if (!RequireAdminAccess()) return;
 
@@ -95,25 +96,23 @@ public class CustomerService : ICustomerService
             Role = role
         };
 
-        db.Customers.Add(customer);
+        await db.Customers.AddAsync(customer);
 
-        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
             OutputHelper.ShowSuccess("The customer has been added to the database!");
-        else
-            OutputHelper.ShowError(errorMsg);
     }
 
-    public void EditCustomer()
+    public async Task EditCustomerAsync()
     {
         if (!RequireAdminAccess()) return;
 
         Console.Clear();
-        var customer = CustomerSelector.ChooseCustomer(db);
+        var customer = await CustomerSelector.ChooseCustomerAsync(db);
         if (customer == null) return;
 
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
-        Console.WriteLine($"=== Editing customer: {customer.FullName} ===\n");
+        OutputHelper.ShowInfo($"=== Editing customer: {customer.FullName} ===\n");
 
         string? newName = CustomerValidator.PromptOptionalName(customer.FullName);
         if (!string.IsNullOrWhiteSpace(newName)) customer.FullName = newName;
@@ -149,18 +148,16 @@ public class CustomerService : ICustomerService
         if (newRole.HasValue) customer.Role = newRole.Value;
 
 
-        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
             OutputHelper.ShowSuccess("Customer updated successfully!");
-        else
-            OutputHelper.ShowError(errorMsg);
     }
 
-    public void DeleteCustomer()
+    public async Task DeleteCustomerAsync()
     {
         if (!RequireAdminAccess()) return;
 
         Console.Clear();
-        var customer = CustomerSelector.ChooseCustomer(db);
+        var customer = await CustomerSelector.ChooseCustomerAsync(db);
 
         if (customer == null) return;
 
@@ -174,10 +171,8 @@ public class CustomerService : ICustomerService
         }
             db.Customers.Remove(customer);
 
-        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
             OutputHelper.ShowSuccess("The customer was deleted successfully!");
-        else
-            OutputHelper.ShowError(errorMsg);
     }
 
     private bool RequireAdminAccess()

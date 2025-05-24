@@ -1,4 +1,5 @@
-﻿using NoFallZone.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using NoFallZone.Data;
 using NoFallZone.Menu;
 using NoFallZone.Models.Entities;
 using NoFallZone.Services.Interfaces;
@@ -17,33 +18,32 @@ public class ShippingOptionService : IShippingOptionService
         db = context;
     }
 
-    public void ShowAllShippingOptions()
+    public async Task ShowAllShippingOptionsAsync()
     {
         if (!RequireAdminAccess()) return;
 
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
 
+        List<string> outputData;
 
-        if (!db.ShippingOptions.Any())
+        var shippingOptions = await db.ShippingOptions.ToListAsync();
+
+        if (shippingOptions.Count == 0)
         {
-            GUI.DrawWindow("Shipping Options", 1, 10, new List<string>
-                {
-                    "No shipping options found in the database!"
-                });
-            return;
+            outputData = new List<string> { "No shipping options found in the database!" };
         }
-
-        var shippingOptions = db.ShippingOptions.ToList();
-
-        List<string> outputData = shippingOptions.Select(s => $"Id: {s.Id} || Name: {s.Name} || Price: {s.Price:C}").ToList();
+        else
+        {
+            outputData = shippingOptions.Select(s => $"Id: {s.Id} || Name: {s.Name} || Price: {s.Price:C}").ToList();
+        }
 
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
         GUI.DrawWindow("Shipping Options", 1, 10, outputData, 100);
     }
 
-    public void AddShippingOption()
+    public async Task AddShippingOptionAsync()
     {
         if (!RequireAdminAccess()) return;
 
@@ -59,19 +59,17 @@ public class ShippingOptionService : IShippingOptionService
             Price = shippingPrice
         };
 
-        db.ShippingOptions.Add(newShippingOption);
+        await db.ShippingOptions.AddAsync(newShippingOption);
 
-        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
             OutputHelper.ShowSuccess("The shipping option has been added to the database!");
-        else
-            OutputHelper.ShowError(errorMsg);
     }
 
-    public void EditShippingOption()
+    public async Task EditShippingOptionAsync()
     {
         if (!RequireAdminAccess()) return;
 
-        var shippingOption = ShippingSelector.ChooseShipping(db);
+        var shippingOption = await ShippingSelector.ChooseShippingAsync(db);
 
         if (shippingOption == null) return;
 
@@ -86,17 +84,15 @@ public class ShippingOptionService : IShippingOptionService
         if (newPrice.HasValue)
             shippingOption.Price = newPrice.Value;
 
-        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
             OutputHelper.ShowSuccess("The shipping option has been updated successfully!");
-        else
-            OutputHelper.ShowError(errorMsg);
     }
 
-    public void DeleteShippingOption()
+    public async Task DeleteShippingOptionAsync()
     {
         if (!RequireAdminAccess()) return;
 
-        var shippingOption = ShippingSelector.ChooseShipping(db);
+        var shippingOption = await ShippingSelector.ChooseShippingAsync(db);
         if (shippingOption == null) return;
 
 
@@ -111,10 +107,8 @@ public class ShippingOptionService : IShippingOptionService
 
         db.ShippingOptions.Remove(shippingOption);
 
-        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
             OutputHelper.ShowSuccess("The shipping option has been deleted successfully!");
-        else
-            OutputHelper.ShowError(errorMsg);
     }
 
     private bool RequireAdminAccess()

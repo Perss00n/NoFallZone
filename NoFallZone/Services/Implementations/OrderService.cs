@@ -1,4 +1,5 @@
-﻿using NoFallZone.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using NoFallZone.Data;
 using NoFallZone.Menu;
 using NoFallZone.Models.Entities;
 using NoFallZone.Services.Interfaces;
@@ -15,44 +16,42 @@ public class OrderService : IOrderService
         db = context;
     }
 
-    public bool PlaceOrder(int shippingOptionId, int paymentMethodId, out string message)
+    public async Task<bool> PlaceOrderAsync(int shippingOptionId, int paymentMethodId)
     {
-        message = string.Empty;
-
         if (!Session.IsLoggedIn)
         {
-            message = "You must be logged in to place an order!";
+            OutputHelper.ShowError("You must be logged in to place an order!");
             return false;
         }
 
         if (Session.Cart.Count == 0)
         {
-            message = "Your cart is empty!";
+            OutputHelper.ShowError("Your cart is empty!");
             return false;
         }
 
         try
         {
-            var shipping = db.ShippingOptions.FirstOrDefault(s => s.Id == shippingOptionId);
+            var shipping = await db.ShippingOptions.FirstOrDefaultAsync(s => s.Id == shippingOptionId);
             if (shipping == null)
             {
-                message = "Invalid shipping option!";
+                OutputHelper.ShowError("Invalid shipping option!");
                 return false;
             }
 
-            var payment = db.PaymentOptions.FirstOrDefault(p => p.Id == paymentMethodId);
+            var payment = await db.PaymentOptions.FirstOrDefaultAsync(p => p.Id == paymentMethodId);
             if (payment == null)
             {
-                message = "Invalid payment option!";
+                OutputHelper.ShowError("Invalid payment option!");
                 return false;
             }
 
             foreach (var item in Session.Cart)
             {
-                var dbProduct = db.Products.FirstOrDefault(p => p.Id == item.Product.Id);
+                var dbProduct = await db.Products.FirstOrDefaultAsync(p => p.Id == item.Product.Id);
                 if (dbProduct == null || dbProduct.Stock < item.Quantity)
                 {
-                    message = $"Not enough stock for {item.Product.Name}. Available: {dbProduct?.Stock ?? 0}";
+                    OutputHelper.ShowError($"Not enough stock for {item.Product.Name}. Available: {dbProduct?.Stock ?? 0}");
                     return false;
                 }
             }
@@ -71,7 +70,7 @@ public class OrderService : IOrderService
 
             foreach (var item in Session.Cart)
             {
-                var product = db.Products.First(p => p.Id == item.Product.Id);
+                var product = await db.Products.FirstAsync(p => p.Id == item.Product.Id);
 
                 order.OrderItems.Add(new OrderItem
                 {
@@ -83,26 +82,18 @@ public class OrderService : IOrderService
                 product.Stock -= item.Quantity;
             }
 
-            db.Orders.Add(order);
-            db.SaveChanges();
+            await db.Orders.AddAsync(order);
+            await db.SaveChangesAsync();
 
             Session.Cart.Clear();
-            ShowReceipt(order);
+            await ShowReceiptAsync(order);
 
-            message = "Order completed successfully!";
             return true;
         }
         catch (Exception ex)
         {
-            message = "An error occurred while placing the order! Please contact a administrator if this issue persists.";
-
-            if (Session.IsAdmin)
-            {
-                message += $"\n\nDetails: {ex.Message}";
-                if (ex.InnerException != null)
-                    message += $"\n\n{ex.InnerException.Message}";
-            }
-
+            OutputHelper.ShowError("An error occurred while placing the order!" +
+                (Session.IsAdmin ? $"\n\nDetails: {ex.Message}" : " Please contact an administrator if this issue persists."));
             return false;
         }
     }
@@ -143,7 +134,7 @@ public class OrderService : IOrderService
         GUI.DrawWindow("Order Summary (Preview)", 1, 10, lines, 80);
     }
 
-    private void ShowReceipt(Order order)
+    private async Task ShowReceiptAsync(Order order)
     {
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
@@ -151,7 +142,7 @@ public class OrderService : IOrderService
         var customerName = Session.LoggedInUser?.Username ?? "Unknown";
         var paymentName = order.PaymentOption?.Name ?? "N/A";
         var paymentFee = order.PaymentOption?.Fee.GetValueOrDefault() ?? 0;
-        var shipping = db.ShippingOptions.FirstOrDefault(s => s.Id == order.ShippingOptionId);
+        var shipping = await db.ShippingOptions.FirstOrDefaultAsync(s => s.Id == order.ShippingOptionId);
         var shippingName = shipping?.Name ?? "Unknown";
         var shippingCost = shipping?.Price ?? order.ShippingCost;
 
@@ -166,7 +157,7 @@ public class OrderService : IOrderService
 
         foreach (var item in order.OrderItems)
         {
-            var product = db.Products.FirstOrDefault(p => p.Id == item.ProductId);
+            var product = await db.Products.FirstOrDefaultAsync(p => p.Id == item.ProductId);
             string productName = product?.Name ?? "Unknown Product";
             decimal lineTotal = item.PricePerUnit * item.Quantity;
 

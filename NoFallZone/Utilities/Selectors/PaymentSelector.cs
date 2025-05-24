@@ -1,4 +1,5 @@
-﻿using NoFallZone.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using NoFallZone.Data;
 using NoFallZone.Menu;
 using NoFallZone.Models.Entities;
 using NoFallZone.Utilities.Helpers;
@@ -6,22 +7,21 @@ using NoFallZone.Utilities.Helpers;
 namespace NoFallZone.Utilities.Selectors;
 public class PaymentSelector
 {
-
-
-    public static PaymentOption? ChoosePaymentOption(NoFallZoneContext db)
+    public static async Task<PaymentOption?> ChoosePaymentOptionAsync(NoFallZoneContext db)
     {
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
         Console.CursorVisible = true;
-        var paymentOptions = db.PaymentOptions.ToList();
+
+        var paymentOptions = await db.PaymentOptions.ToListAsync();
 
         if (paymentOptions.Count == 0)
         {
             OutputHelper.ShowError("No payment options found!");
             return null;
         }
-        var lines = new List<string>();
 
+        var lines = new List<string>();
         for (int i = 0; i < paymentOptions.Count; i++)
             lines.Add($"{i + 1}. {paymentOptions[i].Name} (Fee: {paymentOptions[i].Fee:C})");
 
@@ -32,6 +32,4 @@ public class PaymentSelector
 
         return paymentOptions[index - 1];
     }
-
-
 }

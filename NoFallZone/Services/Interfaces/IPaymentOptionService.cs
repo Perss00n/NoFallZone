@@ -2,9 +2,9 @@
 {
     public interface IPaymentOptionService
     {
-        void ShowAllPaymentOptions();
-        void AddPaymentOption();
-        void EditPaymentOption();
-        void DeletePaymentOption();
+        Task ShowAllPaymentOptionsAsync();
+        Task AddPaymentOptionAsync();
+        Task EditPaymentOptionAsync();
+        Task DeletePaymentOptionAsync();
     }
 }

@@ -3,11 +3,9 @@ using NoFallZone.Data;
 using NoFallZone.Menu;
 using NoFallZone.Setup;
 
-namespace NoFallZone;
-
-public class Program
+class Program
 {
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
         var services = new ServiceCollection();
 
@@ -19,6 +17,6 @@ public class Program
         var startPage = provider.GetRequiredService<StartPage>();
 
         var noFallZoneShop = new NoFallZoneApp(db, startPage);
-        noFallZoneShop.Run();
+        await noFallZoneShop.RunAsync();
     }
 }

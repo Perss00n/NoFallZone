@@ -1,23 +1,25 @@
-﻿using NoFallZone.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using NoFallZone.Data;
 using NoFallZone.Menu;
 using NoFallZone.Models.Entities;
 using NoFallZone.Utilities.Helpers;
 
 namespace NoFallZone.Utilities.Selectors;
 public static class CustomerSelector
-{
-    public static Customer? ChooseCustomer(NoFallZoneContext db)
+{    public static async Task<Customer?> ChooseCustomerAsync(NoFallZoneContext db)
     {
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
         Console.CursorVisible = true;
-        var customers = db.Customers.ToList();
+
+        var customers = await db.Customers.ToListAsync();
 
         if (customers.Count == 0)
         {
             OutputHelper.ShowError("No customers found in the database!");
             return null;
         }
+
         var lines = new List<string>();
 
         for (int i = 0; i < customers.Count; i++)

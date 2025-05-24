@@ -20,18 +20,18 @@ public class ProductService : IProductService
         _cartService = cartService;
     }
 
-    public void ShowProducts()
+    public async Task ShowProductsAsync()
     {
         if (!RequireAdminAccess()) return;
 
         Console.Clear();
-        var category = CategorySelector.ChooseCategory(db);
+        var category =  await CategorySelector.ChooseCategoryAsync(db);
         if (category == null) return;
 
-        var products = db.Products
+        var products = await db.Products
             .Where(p => p.CategoryId == category.Id)
             .Include(p => p.Supplier)
-            .ToList();
+            .ToListAsync();
 
         Console.Clear();
 
@@ -61,20 +61,20 @@ public class ProductService : IProductService
         }
     }
 
-    public void ShowShopProducts()
+    public async Task ShowShopProductsAsync()
     {
         Console.Clear();
         Console.CursorVisible = true;
-        var category = CategorySelector.ChooseCategory(db);
+        var category = await CategorySelector.ChooseCategoryAsync(db);
         if (category == null) return;
 
-        var product = ProductSelector.ChooseProductFromCategory(category, db);
+        var product = await ProductSelector.ChooseProductFromCategoryAsync(category, db);
         if (product == null) return;
 
         ShowProductDetails(product);
     }
 
-    public void SearchProducts()
+    public async Task SearchProductsAsync()
     {
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
@@ -88,14 +88,14 @@ public class ProductService : IProductService
             return;
         }
 
-        var results = db.Products
+        var results = await db.Products
             .Where(p =>
                 p.Name.ToLower().Contains(keyword) ||
                 p.Description.ToLower().Contains(keyword) ||
-                p.Supplier.Name!.ToLower().Contains(keyword))
+                (p.Supplier != null && p.Supplier.Name.ToLower().Contains(keyword)))
             .Include(p => p.Category)
             .Include(p => p.Supplier)
-            .ToList();
+            .ToListAsync();
 
         Console.Clear();
 
@@ -193,12 +193,12 @@ public class ProductService : IProductService
         }
     }
 
-    public void ShowDeals()
+    public async Task ShowDealsAsync()
     {
-        var deals = db.Products
+        var deals = await db.Products
         .Where(product => product.IsFeatured == true)
         .Take(3)
-        .ToList();
+        .ToListAsync();
 
         for (int i = 0; i < 3; i++)
         {
@@ -230,18 +230,18 @@ public class ProductService : IProductService
         }
     }
 
-    public void AddProduct()
+    public async Task AddProductAsync()
     {
         if (!RequireAdminAccess()) return;
 
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
 
-        var category = CategorySelector.ChooseCategory(db);
+        var category = await CategorySelector.ChooseCategoryAsync(db);
         if (category == null) return;
         int categoryId = category.Id;
 
-        var supplier = SupplierSelector.ChooseSupplier(db);
+        var supplier = await SupplierSelector.ChooseSupplierAsync(db);
         if (supplier == null) return;
         int supplierId = supplier.Id;
 
@@ -265,20 +265,18 @@ public class ProductService : IProductService
             IsFeatured = isFeatured
         };
 
-        db.Products.Add(product);
+        await db.Products.AddAsync(product);
 
-        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
-            OutputHelper.ShowSuccess("The product has been added to the database!");
-        else
-            OutputHelper.ShowError(errorMsg);
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
+          OutputHelper.ShowSuccess("The product was added to the database!");
     }
 
 
-    public void EditProduct()
+    public async Task EditProductAsync()
     {
         if (!RequireAdminAccess()) return;
 
-        var product = ProductSelector.ChooseProductFromCategory(db);
+        var product = await ProductSelector.ChooseProductFromCategoryAsync(db);
         if (product == null) return;
 
         Console.Clear();
@@ -305,17 +303,15 @@ public class ProductService : IProductService
         Console.WriteLine($"Currently it {(product.IsFeatured == true ? "IS set to an offer" : "is NOT set to an offer")}");
         product.IsFeatured = ProductValidator.PromptConfirmation();
 
-        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
-            OutputHelper.ShowSuccess("The product has been updated successfully!");
-        else
-            OutputHelper.ShowError(errorMsg);
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
+            OutputHelper.ShowSuccess("The product was updated successfully!");
     }
 
-    public void DeleteProduct()
+    public async Task DeleteProductAsync()
     {
         if (!RequireAdminAccess()) return;
 
-        var product = ProductSelector.ChooseProductFromCategory(db);
+        var product = await ProductSelector.ChooseProductFromCategoryAsync(db);
         if (product == null) return;
 
         Console.Clear();
@@ -330,10 +326,8 @@ public class ProductService : IProductService
 
         db.Products.Remove(product);
 
-        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
-            OutputHelper.ShowSuccess("The product has been deleted successfully!");
-        else
-            OutputHelper.ShowError(errorMsg);
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
+            OutputHelper.ShowSuccess("The product was deleted successfully!");
     }
 
     private bool RequireAdminAccess()

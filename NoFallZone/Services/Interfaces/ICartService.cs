@@ -6,7 +6,7 @@ public interface ICartService
 {
     int GetAvailableToAdd(Product product);
     bool TryAddToCart(Product product, int quantity, out string message);
-    void OpenCartMenu();
+    Task OpenCartMenuAsync();
     void ShowStartPageCartOverview();
-    void AddDealToCart(ConsoleKey dealKey);
+    Task AddDealToCartAsync(ConsoleKey dealKey);
 }

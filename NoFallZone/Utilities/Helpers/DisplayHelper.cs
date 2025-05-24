@@ -36,12 +36,6 @@ public static class DisplayHelper
         GUI.DrawWindow(header, fromLeft, fromTop, lines);
     }
 
-    public static void ShowCustomerDashboard(IProductService productService, ICartService cartService)
-    {
-        productService.ShowDeals();
-        cartService.ShowStartPageCartOverview();
-    }
-
     public static void ShowCustomerMenu(CustomerMenu customerMenu)
     {
         string header = "Customer Menu";
