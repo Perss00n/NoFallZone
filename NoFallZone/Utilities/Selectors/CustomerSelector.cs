@@ -15,7 +15,7 @@ public static class CustomerSelector
 
         if (customers.Count == 0)
         {
-            OutputHelper.ShowError("No customers found in the database");
+            OutputHelper.ShowError("No customers found in the database!");
             return null;
         }
         var lines = new List<string>();

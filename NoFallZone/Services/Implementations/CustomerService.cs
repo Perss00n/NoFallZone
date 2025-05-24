@@ -18,7 +18,6 @@ public class CustomerService : ICustomerService
         db = context;
     }
 
-
     public void ShowAllCustomers()
     {
         if (!RequireAdminAccess()) return;
@@ -26,9 +25,8 @@ public class CustomerService : ICustomerService
         Console.Clear();
         Console.WriteLine("=== All Customers ===\n");
 
-        var customers = db.Customers.ToList();
 
-        if (customers.Count == 0)
+        if (!db.Customers.Any())
         {
             GUI.DrawWindow("Customers", 1, 2, new List<string>
         {
@@ -36,6 +34,8 @@ public class CustomerService : ICustomerService
         }, 70);
             return;
         }
+
+        var customers = db.Customers.ToList();
 
         int fromTop = 2;
         foreach (var c in customers)
@@ -96,9 +96,11 @@ public class CustomerService : ICustomerService
         };
 
         db.Customers.Add(customer);
-        db.SaveChanges();
 
-        OutputHelper.ShowSuccess("Account successfully added to the database!");
+        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+            OutputHelper.ShowSuccess("The customer has been added to the database!");
+        else
+            OutputHelper.ShowError(errorMsg);
     }
 
     public void EditCustomer()
@@ -107,12 +109,7 @@ public class CustomerService : ICustomerService
 
         Console.Clear();
         var customer = CustomerSelector.ChooseCustomer(db);
-        if (customer == null)
-        {
-            OutputHelper.ShowError("No customer selected! Returning to main menu...");
-            Console.ReadKey();
-            return;
-        }
+        if (customer == null) return;
 
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
@@ -152,9 +149,10 @@ public class CustomerService : ICustomerService
         if (newRole.HasValue) customer.Role = newRole.Value;
 
 
-        db.SaveChanges();
-
-        OutputHelper.ShowSuccess("Customer updated successfully!");
+        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+            OutputHelper.ShowSuccess("Customer updated successfully!");
+        else
+            OutputHelper.ShowError(errorMsg);
     }
 
     public void DeleteCustomer()
@@ -164,28 +162,22 @@ public class CustomerService : ICustomerService
         Console.Clear();
         var customer = CustomerSelector.ChooseCustomer(db);
 
-        if (customer == null)
-        {
-            OutputHelper.ShowError("Returning to main menu...");
-            return;
-        }
+        if (customer == null) return;
 
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
         Console.WriteLine($"\nAre you sure you want to delete the user '{customer.FullName}'?");
-        bool confirm = CustomerValidator.PromptConfirmation();
-
-        if (confirm)
+        if (!CustomerValidator.PromptConfirmation())
         {
+            OutputHelper.ShowInfo("Cancelled!");
+            return;
+        }
             db.Customers.Remove(customer);
-            db.SaveChanges();
 
-            OutputHelper.ShowSuccess("User deleted successfully!");
-        }
+        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+            OutputHelper.ShowSuccess("The customer was deleted successfully!");
         else
-        {
-            OutputHelper.ShowError("Deletion cancelled!");
-        }
+            OutputHelper.ShowError(errorMsg);
     }
 
     private bool RequireAdminAccess()

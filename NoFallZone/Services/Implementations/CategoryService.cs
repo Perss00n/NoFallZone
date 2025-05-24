@@ -25,9 +25,8 @@ public class CategoryService : ICategoryService
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
 
-        var categories = db.Categories.ToList();
 
-        if (categories.Count == 0)
+        if (!db.Categories.Any())
         {
             GUI.DrawWindow("Categories", 1, 10, new List<string>
         {
@@ -35,6 +34,8 @@ public class CategoryService : ICategoryService
         });
             return;
         }
+
+        var categories = db.Categories.ToList();
 
         List<string> outputData = categories.Select(c => $"Id: {c.Id} | Name: {c.Name}").ToList();
 
@@ -57,9 +58,11 @@ public class CategoryService : ICategoryService
         };
 
         db.Categories.Add(newCategory);
-        db.SaveChanges();
 
-        OutputHelper.ShowSuccess("The Category has been added to the database!");
+        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+            OutputHelper.ShowSuccess("The category has been added to the database!");
+        else
+            OutputHelper.ShowError(errorMsg);
     }
     public void EditCategory()
     {
@@ -73,9 +76,10 @@ public class CategoryService : ICategoryService
         if (!string.IsNullOrWhiteSpace(newCategoryName))
             category.Name = newCategoryName;
 
-        db.SaveChanges();
-
-        OutputHelper.ShowSuccess("Category updated successfully!");
+        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+            OutputHelper.ShowSuccess("The category has been updated successfully!");
+        else
+            OutputHelper.ShowError(errorMsg);
     }
     public void DeleteCategory()
     {
@@ -88,20 +92,18 @@ public class CategoryService : ICategoryService
 
         Console.WriteLine($"Are you sure you want to delete the category '{category.Name}'?");
 
-        bool confirm = CategoryValidator.PromptConfirmation();
-
-        if (confirm)
+        if (!CategoryValidator.PromptConfirmation())
         {
-            db.Categories.Remove(category);
-            db.SaveChanges();
-
-            OutputHelper.ShowSuccess("Category deleted successfully!");
+            OutputHelper.ShowInfo("Cancelled!");
+            return;
         }
+
+        db.Categories.Remove(category);
+
+        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+            OutputHelper.ShowSuccess("The category has been deleted successfully!");
         else
-        {
-            OutputHelper.ShowError("Deletion cancelled! Returning to main menu...");
-        }
-
+            OutputHelper.ShowError(errorMsg);
     }
     private bool RequireAdminAccess()
     {

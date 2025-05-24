@@ -25,9 +25,7 @@ namespace NoFallZone.Services.Implementations
             Console.Clear();
             Console.WriteLine(DisplayHelper.ShowLogo());
 
-            var suppliers = db.Suppliers.ToList();
-
-            if (suppliers.Count == 0)
+            if (!db.Suppliers.Any())
             {
                 GUI.DrawWindow("Suppliers", 1, 10, new List<string>
                 {
@@ -35,6 +33,8 @@ namespace NoFallZone.Services.Implementations
                 });
                 return;
             }
+
+            var suppliers = db.Suppliers.ToList();
 
             List<string> outputData = suppliers.Select(s => $"Id: {s.Id} | Name: {s.Name}").ToList();
 
@@ -57,9 +57,11 @@ namespace NoFallZone.Services.Implementations
             };
 
             db.Suppliers.Add(newSupplier);
-            db.SaveChanges();
 
-            OutputHelper.ShowSuccess("The Supplier has been added to the database!");
+            if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+                OutputHelper.ShowSuccess("The Supplier has been added to the database!");
+            else
+                OutputHelper.ShowError(errorMsg);
         }
 
         public void EditSupplier()
@@ -74,9 +76,11 @@ namespace NoFallZone.Services.Implementations
             if (!string.IsNullOrWhiteSpace(newSupplierName))
                 supplier.Name = newSupplierName;
 
-            db.SaveChanges();
+            if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+                OutputHelper.ShowSuccess("Supplier updated successfully!");
+            else
+                OutputHelper.ShowError(errorMsg);
 
-            OutputHelper.ShowSuccess("Supplier updated successfully!");
         }
 
         public void DeleteSupplier()
@@ -89,21 +93,22 @@ namespace NoFallZone.Services.Implementations
             var supplier = SupplierSelector.ChooseSupplier(db);
             if (supplier == null) return;
 
-            Console.WriteLine($"Are you sure you want to delete the supplier '{supplier.Name}'?");
-            bool confirm = SupplierValidator.PromptConfirmation();
-
-            if (confirm)
+            Console.WriteLine($"Are you sure you want to delete '{supplier.Name}'?");
+            if (!SupplierValidator.PromptConfirmation())
             {
-                db.Suppliers.Remove(supplier);
-                db.SaveChanges();
+                OutputHelper.ShowInfo("Cancelled.");
+                return;
+            }
 
+            db.Suppliers.Remove(supplier);
+
+            if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
                 OutputHelper.ShowSuccess("Supplier deleted successfully!");
-            }
             else
-            {
-                OutputHelper.ShowError("Deletion cancelled! Returning to main menu...");
-            }
+                OutputHelper.ShowError(errorMsg);
         }
+
+
         private bool RequireAdminAccess()
         {
             if (!Session.IsAdmin)

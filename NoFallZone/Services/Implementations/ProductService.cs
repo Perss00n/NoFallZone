@@ -3,10 +3,10 @@ using NoFallZone.Data;
 using NoFallZone.Menu;
 using NoFallZone.Models.Entities;
 using NoFallZone.Services.Interfaces;
-using NoFallZone.Utilities.Validators;
-using NoFallZone.Utilities.Selectors;
 using NoFallZone.Utilities.Helpers;
+using NoFallZone.Utilities.Selectors;
 using NoFallZone.Utilities.SessionManagement;
+using NoFallZone.Utilities.Validators;
 
 namespace NoFallZone.Services.Implementations;
 public class ProductService : IProductService
@@ -266,9 +266,11 @@ public class ProductService : IProductService
         };
 
         db.Products.Add(product);
-        db.SaveChanges();
 
-        OutputHelper.ShowSuccess("The product has been added to the database!");
+        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+            OutputHelper.ShowSuccess("The product has been added to the database!");
+        else
+            OutputHelper.ShowError(errorMsg);
     }
 
 
@@ -303,9 +305,10 @@ public class ProductService : IProductService
         Console.WriteLine($"Currently it {(product.IsFeatured == true ? "IS set to an offer" : "is NOT set to an offer")}");
         product.IsFeatured = ProductValidator.PromptConfirmation();
 
-        db.SaveChanges();
-
-        OutputHelper.ShowSuccess("Product updated successfully!");
+        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+            OutputHelper.ShowSuccess("The product has been updated successfully!");
+        else
+            OutputHelper.ShowError(errorMsg);
     }
 
     public void DeleteProduct()
@@ -319,19 +322,18 @@ public class ProductService : IProductService
         Console.WriteLine(DisplayHelper.ShowLogo());
         Console.WriteLine($"\nAre you sure you want to delete '{product.Name}'?");
 
-        bool confirm = ProductValidator.PromptConfirmation();
-
-        if (confirm)
+        if (!ProductValidator.PromptConfirmation())
         {
-            db.Products.Remove(product);
-            db.SaveChanges();
-
-            OutputHelper.ShowSuccess("Product deleted successfully!");
+            OutputHelper.ShowInfo("Cancelled!");
+            return;
         }
+
+        db.Products.Remove(product);
+
+        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+            OutputHelper.ShowSuccess("The product has been deleted successfully!");
         else
-        {
-            OutputHelper.ShowError("Deletion cancelled! Returning to main menu...");
-        }
+            OutputHelper.ShowError(errorMsg);
     }
 
     private bool RequireAdminAccess()

@@ -24,9 +24,8 @@ public class ShippingOptionService : IShippingOptionService
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
 
-        var shippingOptions = db.ShippingOptions.ToList();
 
-        if (shippingOptions.Count == 0)
+        if (!db.ShippingOptions.Any())
         {
             GUI.DrawWindow("Shipping Options", 1, 10, new List<string>
                 {
@@ -34,6 +33,8 @@ public class ShippingOptionService : IShippingOptionService
                 });
             return;
         }
+
+        var shippingOptions = db.ShippingOptions.ToList();
 
         List<string> outputData = shippingOptions.Select(s => $"Id: {s.Id} || Name: {s.Name} || Price: {s.Price:C}").ToList();
 
@@ -59,9 +60,11 @@ public class ShippingOptionService : IShippingOptionService
         };
 
         db.ShippingOptions.Add(newShippingOption);
-        db.SaveChanges();
 
-        OutputHelper.ShowSuccess("The Shipping option has been added to the database!");
+        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+            OutputHelper.ShowSuccess("The shipping option has been added to the database!");
+        else
+            OutputHelper.ShowError(errorMsg);
     }
 
     public void EditShippingOption()
@@ -83,9 +86,10 @@ public class ShippingOptionService : IShippingOptionService
         if (newPrice.HasValue)
             shippingOption.Price = newPrice.Value;
 
-        db.SaveChanges();
-
-        OutputHelper.ShowSuccess("Shipping option updated successfully!");
+        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+            OutputHelper.ShowSuccess("The shipping option has been updated successfully!");
+        else
+            OutputHelper.ShowError(errorMsg);
     }
 
     public void DeleteShippingOption()
@@ -99,19 +103,18 @@ public class ShippingOptionService : IShippingOptionService
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
         Console.WriteLine($"Are you sure you want to delete the shipping option '{shippingOption.Name}'?");
-        bool confirm = ShippingOptionValidator.PromptConfirmation();
-
-        if (confirm)
+        if (!ShippingOptionValidator.PromptConfirmation())
         {
-            db.ShippingOptions.Remove(shippingOption);
-            db.SaveChanges();
-
-            OutputHelper.ShowSuccess("Shipping option deleted successfully!");
+            OutputHelper.ShowInfo("Cancelled!");
+            return;
         }
+
+        db.ShippingOptions.Remove(shippingOption);
+
+        if (DatabaseHelper.TryToSaveToDb(db, out string errorMsg))
+            OutputHelper.ShowSuccess("The shipping option has been deleted successfully!");
         else
-        {
-            OutputHelper.ShowError("Deletion cancelled!");
-        }
+            OutputHelper.ShowError(errorMsg);
     }
 
     private bool RequireAdminAccess()
