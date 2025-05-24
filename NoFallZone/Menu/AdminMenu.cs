@@ -1,4 +1,5 @@
-﻿using NoFallZone.Services.Interfaces;
+﻿using NoFallZone.Services.Implementations;
+using NoFallZone.Services.Interfaces;
 using NoFallZone.Utilities.Helpers;
 
 namespace NoFallZone.Menu
@@ -10,14 +11,16 @@ namespace NoFallZone.Menu
         private readonly ICategoryService _categoryService;
         private readonly ISupplierService _supplierService;
         private readonly IShippingOptionService _shippingOptionService;
+        private readonly IPaymentOptionService _paymentOptionService;
 
-        public AdminMenu(IProductService productService, ICustomerService customerService, ICategoryService categoryService, ISupplierService supplierService, IShippingOptionService shippingOptionService)
+        public AdminMenu(IProductService productService, ICustomerService customerService, ICategoryService categoryService, ISupplierService supplierService, IShippingOptionService shippingOptionService, IPaymentOptionService paymentOptionService)
         {
             _productService = productService;
             _customerService = customerService;
             _categoryService = categoryService;
             _supplierService = supplierService;
             _shippingOptionService = shippingOptionService;
+            _paymentOptionService = paymentOptionService;
         }
 
         public List<string> GetMenuItems()
@@ -28,7 +31,8 @@ namespace NoFallZone.Menu
                 "2. Manage categories",
                 "3. Manage customers",
                 "4. Manage suppliers",
-                "5. Manage Shipping Options"
+                "5. Manage Shipping Options",
+                "6. Manage Payment Options"
         ];
         }
 
@@ -241,6 +245,48 @@ namespace NoFallZone.Menu
             }
         }
 
+        public void ShowPaymentOptionsAdminMenu()
+        {
+            bool inMenu = true;
+
+            while (inMenu)
+            {
+                int fromLeft = 0;
+                int fromTop = 10;
+                string header = "Payment Options Menu";
+                List<string> lines = [
+                    "1. Show all Payment options",
+                    "2. Add new Payment option",
+                    "3. Edit Payment option",
+                    "4. Delete Payment option",
+                    "5. Return to Admin Menu"
+                ];
+
+                Console.Clear();
+                Console.WriteLine(DisplayHelper.ShowLogo());
+                GUI.DrawWindow(header, fromLeft, fromTop, lines);
+
+                var input = Console.ReadKey(true).Key;
+
+                if (input == ConsoleKey.D5)
+                {
+                    inMenu = false;
+                    continue;
+                }
+
+                bool isValidChoice = HandlePaymentOptionsInputs(input);
+
+                if (!isValidChoice)
+                {
+                    Console.Clear();
+                    OutputHelper.ShowError("Invalid choice!");
+                }
+
+                OutputHelper.ShowInfo("Press any key to continue...");
+                Console.ReadKey();
+            }
+        }
+
 
         private bool HandleProductInputs(ConsoleKey input)
         {
@@ -318,6 +364,22 @@ namespace NoFallZone.Menu
                     _shippingOptionService.EditShippingOption(); return true;
                 case ConsoleKey.D4:
                     _shippingOptionService.DeleteShippingOption(); return true;
+                default: return false;
+            }
+        }
+
+        private bool HandlePaymentOptionsInputs(ConsoleKey input)
+        {
+            switch (input)
+            {
+                case ConsoleKey.D1:
+                    _paymentOptionService.ShowAllPaymentOptions(); return true;
+                case ConsoleKey.D2:
+                    _paymentOptionService.AddPaymentOption(); return true;
+                case ConsoleKey.D3:
+                    _paymentOptionService.EditPaymentOption(); return true;
+                case ConsoleKey.D4:
+                    _paymentOptionService.DeletePaymentOption(); return true;
                 default: return false;
             }
         }

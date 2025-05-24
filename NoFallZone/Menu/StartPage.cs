@@ -89,6 +89,7 @@ public class StartPage
             case ConsoleKey.D3: _adminMenu!.ShowCustomerAdminMenu(); return true;
             case ConsoleKey.D4: _adminMenu!.ShowSupplierAdminMenu(); return true;
             case ConsoleKey.D5: _adminMenu!.ShowShippingOptionsAdminMenu(); return true;
+            case ConsoleKey.D6: _adminMenu!.ShowPaymentOptionsAdminMenu(); return true;
             default: return false;
         }
     }
