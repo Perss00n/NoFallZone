@@ -228,7 +228,7 @@ namespace NoFallZone.Utilities.Helpers
             int value;
             do
             {
-                Console.Write($"{label} (Min '{min}' and Max '{max}, enter to keep current): ");
+                Console.Write($"{label} (Min '{min}' and Max '{max}', enter to keep current): ");
                 input = Console.ReadLine()!;
                 if (string.IsNullOrWhiteSpace(input))
                     return null;
@@ -247,7 +247,7 @@ namespace NoFallZone.Utilities.Helpers
             decimal value;
             do
             {
-                Console.Write($"{label} (Min '{min}' and Max '{max}, enter to keep current): ");
+                Console.Write($"{label} (Min '{min}' and Max '{max}', enter to keep current): ");
                 input = Console.ReadLine()!;
                 if (string.IsNullOrWhiteSpace(input))
                     return null;
@@ -375,17 +375,19 @@ namespace NoFallZone.Utilities.Helpers
 
         public static Role? PromptOptionalRole(string label, string errorMsg)
         {
-            Console.Write($"{label} (user/admin, enter to keep current): ");
-            string input = Console.ReadLine()!.Trim();
+            while (true)
+            {
+                Console.Write($"{label} (user/admin, enter to keep current): ");
+                string input = Console.ReadLine()!.Trim();
 
-            if (string.IsNullOrWhiteSpace(input))
-                return null;
+                if (string.IsNullOrWhiteSpace(input))
+                    return null;
 
-            if (Enum.TryParse<Role>(input, true, out Role role))
-                return role;
+                if (Enum.TryParse<Role>(input, true, out Role role))
+                    return role;
 
-            OutputHelper.ShowError(errorMsg);
-            return PromptOptionalRole(label, errorMsg);
+                OutputHelper.ShowError(errorMsg);
+            }
         }
 
 
