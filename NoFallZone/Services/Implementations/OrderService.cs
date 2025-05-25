@@ -51,7 +51,7 @@ public class OrderService : IOrderService
                 var dbProduct = await db.Products.FirstOrDefaultAsync(p => p.Id == item.Product.Id);
                 if (dbProduct == null || dbProduct.Stock < item.Quantity)
                 {
-                    OutputHelper.ShowError($"Not enough stock for {item.Product.Name}. Available: {dbProduct?.Stock ?? 0}");
+                    OutputHelper.ShowError($"Not enough stock for {item.Product.Name}. Available: {dbProduct?.Stock}");
                     return false;
                 }
             }
@@ -64,7 +64,7 @@ public class OrderService : IOrderService
                 ShippingCost = shipping.Price,
                 PaymentOptionId = paymentMethodId,
                 PaymentOptionName = payment.Name ?? "Unknown",
-                TotalPrice = Session.GetCartTotal() + shipping.Price + (payment.Fee ?? 0),
+                TotalPrice = Session.GetCartTotal() + shipping.Price + (payment.Fee),
                 OrderItems = new List<OrderItem>()
             };
 
@@ -87,7 +87,7 @@ public class OrderService : IOrderService
 
             Session.Cart.Clear();
             await ShowReceiptAsync(order);
-
+            await LogHelper.LogAsync(db, "Purchase", $"OrderId: {order.Id}, Total: {order.TotalPrice:C}");
             return true;
         }
         catch (Exception ex)
@@ -107,7 +107,7 @@ public class OrderService : IOrderService
     {
         $"Customer:       {Session.LoggedInUser?.Username ?? "Unknown"}",
         $"Shipping:       {shipping.Name} ({shipping.Price:C})",
-        $"Payment Method: {payment.Name} (Fee: {payment.Fee.GetValueOrDefault():C})",
+        $"Payment Method: {payment.Name} (Fee: {payment.Fee:C})",
         $"--------------------------------------------------"
     };
 
@@ -121,7 +121,7 @@ public class OrderService : IOrderService
 
         decimal subtotal = Session.GetCartTotal();
         decimal shippingCost = shipping.Price;
-        decimal paymentFee = payment.Fee.GetValueOrDefault();
+        decimal paymentFee = payment.Fee;
         decimal total = subtotal + shippingCost + paymentFee;
 
         lines.Add($"--------------------------------------------------");
@@ -141,7 +141,7 @@ public class OrderService : IOrderService
 
         var customerName = Session.LoggedInUser?.Username ?? "Unknown";
         var paymentName = order.PaymentOption?.Name ?? "N/A";
-        var paymentFee = order.PaymentOption?.Fee.GetValueOrDefault() ?? 0;
+        var paymentFee = order.PaymentOption?.Fee ?? 0;
         var shipping = await db.ShippingOptions.FirstOrDefaultAsync(s => s.Id == order.ShippingOptionId);
         var shippingName = shipping?.Name ?? "Unknown";
         var shippingCost = shipping?.Price ?? order.ShippingCost;

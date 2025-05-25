@@ -62,7 +62,10 @@ public class CategoryService : ICategoryService
        await db.Categories.AddAsync(newCategory);
 
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
+        {
             OutputHelper.ShowSuccess("The category has been added to the database!");
+            await LogHelper.LogAsync(db, "AddCategory", $"New category added: {newCategory.Name}");
+        }
     }
     public async Task EditCategoryAsync()
     {
@@ -71,12 +74,17 @@ public class CategoryService : ICategoryService
         var category = await CategorySelector.ChooseCategoryAsync(db);
         if (category == null) return;
 
-        string? newCategoryName = CategoryValidator.PromptOptionalName(category.Name);
+        string oldName = category.Name;
+
+        string? newCategoryName = CategoryValidator.PromptOptionalName(oldName);
         if (!string.IsNullOrWhiteSpace(newCategoryName))
             category.Name = newCategoryName;
 
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
+        {
             OutputHelper.ShowSuccess("The category has been updated successfully!");
+            await LogHelper.LogAsync(db, "EditCategory", $"Category edited: {oldName} to {(string.IsNullOrWhiteSpace(newCategoryName) || newCategoryName == oldName ? "Unchanged" : newCategoryName)}");
+        }
     }
     public async Task DeleteCategoryAsync()
     {
@@ -98,7 +106,10 @@ public class CategoryService : ICategoryService
         db.Categories.Remove(category);
 
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
+        {
             OutputHelper.ShowSuccess("The category has been deleted successfully!");
+            await LogHelper.LogAsync(db, "DeleteCategory", $"Category deleted: {category.Name}");
+        }
     }
     private bool RequireAdminAccess()
     {

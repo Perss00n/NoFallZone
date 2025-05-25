@@ -67,7 +67,10 @@ public class PaymentOptionService : IPaymentOptionService
         await db.PaymentOptions.AddAsync(newPaymentOption);
 
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
+        {
             OutputHelper.ShowSuccess("The payment option has been added to the database!");
+            await LogHelper.LogAsync(db, "AddPaymentOption", $"New payment option added: {newPaymentOption.Name}");
+        }
     }
 
     public async Task EditPaymentOptionAsync()
@@ -77,19 +80,30 @@ public class PaymentOptionService : IPaymentOptionService
         var paymentOption = await PaymentSelector.ChoosePaymentOptionAsync(db);
         if (paymentOption == null) return;
 
+        string oldName = paymentOption.Name;
+        decimal oldFee = paymentOption.Fee;
+
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
 
-        string? newName = PaymentOptionValidator.PromptOptionalName(paymentOption.Name!);
+        string? newName = PaymentOptionValidator.PromptOptionalName(oldName);
         if (!string.IsNullOrWhiteSpace(newName))
             paymentOption.Name = newName;
 
-        decimal? newFee = PaymentOptionValidator.PromptOptionalFee(paymentOption.Fee ?? 0);
+        decimal? newFee = PaymentOptionValidator.PromptOptionalFee(oldFee);
         if (newFee.HasValue)
-            paymentOption.Fee = newFee;
+            paymentOption.Fee = newFee.Value;
 
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
+        {
             OutputHelper.ShowSuccess("The payment option has been updated successfully!");
+            await LogHelper.LogAsync(
+            db,
+            "EditPaymentOption",
+            $"Payment option edited: {oldName} to {(string.IsNullOrWhiteSpace(newName) || newName == oldName ? "Unchanged" : newName)}, " +
+            $"Price: {oldFee:C} to {(newFee.HasValue && newFee.Value != oldFee ? $"{newFee.Value:C}" : "Unchanged")}"
+        );
+        }
     }
 
     public async Task DeletePaymentOptionAsync()
@@ -111,7 +125,10 @@ public class PaymentOptionService : IPaymentOptionService
         db.PaymentOptions.Remove(paymentOption);
 
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
+        {
             OutputHelper.ShowSuccess("The payment option has been deleted successfully!");
+            await LogHelper.LogAsync(db, "DeletePaymentOption", $"Payment option deleted: {paymentOption.Name}");
+        }
     }
 
     private bool RequireAdminAccess()

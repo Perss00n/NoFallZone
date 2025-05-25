@@ -99,7 +99,10 @@ public class CustomerService : ICustomerService
         await db.Customers.AddAsync(customer);
 
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
+        {
             OutputHelper.ShowSuccess("The customer has been added to the database!");
+            await LogHelper.LogAsync(db, "AdminAddUser", $"A admin added the customer: {customer.FullName} with the role: {customer.Role}");
+        }
     }
 
     public async Task EditCustomerAsync()
@@ -110,46 +113,75 @@ public class CustomerService : ICustomerService
         var customer = await CustomerSelector.ChooseCustomerAsync(db);
         if (customer == null) return;
 
+        string oldName = customer.FullName;
+        string oldEmail = customer.Email;
+        string oldPhone = customer.Phone!;
+        string oldAddress = customer.Address;
+        string oldPostal = customer.PostalCode;
+        string oldCity = customer.City;
+        string oldCountry = customer.Country;
+        int oldAge = customer.Age!.Value;
+        string oldUsername = customer.Username;
+        string oldPassword = customer.Password;
+        Role oldRole = customer.Role;
+
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
-        OutputHelper.ShowInfo($"=== Editing customer: {customer.FullName} ===\n");
+        OutputHelper.ShowInfo($"=== Editing customer: {oldName} ===\n");
 
-        string? newName = CustomerValidator.PromptOptionalName(customer.FullName);
+        string? newName = CustomerValidator.PromptOptionalName(oldName);
         if (!string.IsNullOrWhiteSpace(newName)) customer.FullName = newName;
 
-        string? newEmail = CustomerValidator.PromptOptionalEmail(db, customer.Email);
+        string? newEmail = CustomerValidator.PromptOptionalEmail(db, oldEmail);
         if (!string.IsNullOrWhiteSpace(newEmail)) customer.Email = newEmail;
 
-        string? newPhone = CustomerValidator.PromptOptionalPhone(customer.Phone!);
+        string? newPhone = CustomerValidator.PromptOptionalPhone(oldPhone);
         if (!string.IsNullOrWhiteSpace(newPhone)) customer.Phone = newPhone;
 
-        string? newAddress = CustomerValidator.PromptOptionalAddress(customer.Address);
+        string? newAddress = CustomerValidator.PromptOptionalAddress(oldAddress);
         if (!string.IsNullOrWhiteSpace(newAddress)) customer.Address = newAddress;
 
-        string? newPostal = CustomerValidator.PromptOptionalPostalCode(customer.PostalCode);
+        string? newPostal = CustomerValidator.PromptOptionalPostalCode(oldPostal);
         if (!string.IsNullOrWhiteSpace(newPostal)) customer.PostalCode = newPostal;
 
-        string? newCity = CustomerValidator.PromptOptionalCity(customer.City);
+        string? newCity = CustomerValidator.PromptOptionalCity(oldCity);
         if (!string.IsNullOrWhiteSpace(newCity)) customer.City = newCity;
 
-        string? newCountry = CustomerValidator.PromptOptionalCountry(customer.Country);
+        string? newCountry = CustomerValidator.PromptOptionalCountry(oldCountry);
         if (!string.IsNullOrWhiteSpace(newCountry)) customer.Country = newCountry;
 
-        int? newAge = CustomerValidator.PromptOptionalAge(customer.Age!.Value);
+        int? newAge = CustomerValidator.PromptOptionalAge(oldAge);
         if (newAge.HasValue) customer.Age = newAge.Value;
 
-        string? newUsername = CustomerValidator.PromptOptionalUsername(db, customer.Username);
+        string? newUsername = CustomerValidator.PromptOptionalUsername(db, oldUsername);
         if (!string.IsNullOrWhiteSpace(newUsername)) customer.Username = newUsername;
 
-        string? newPassword = CustomerValidator.PromptOptionalPassword(customer.Password);
+        string? newPassword = CustomerValidator.PromptOptionalPassword(oldPassword);
         if (!string.IsNullOrWhiteSpace(newPassword)) customer.Password = newPassword;
 
-        Role? newRole = CustomerValidator.PromptOptionalRole(customer.Role);
+        Role? newRole = CustomerValidator.PromptOptionalRole(oldRole);
         if (newRole.HasValue) customer.Role = newRole.Value;
 
-
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
+        {
             OutputHelper.ShowSuccess("Customer updated successfully!");
+
+            await LogHelper.LogAsync(
+                db,
+                "EditCustomer",
+                $"Customer edited: {oldName} to {(string.IsNullOrWhiteSpace(newName) || newName == oldName ? "Unchanged" : newName)}, " +
+                $"Email: {oldEmail} to {(string.IsNullOrWhiteSpace(newEmail) || newEmail == oldEmail ? "Unchanged" : newEmail)}, " +
+                $"Phone: {oldPhone} to {(string.IsNullOrWhiteSpace(newPhone) || newPhone == oldPhone ? "Unchanged" : newPhone)}, " +
+                $"Address: {oldAddress} to {(string.IsNullOrWhiteSpace(newAddress) || newAddress == oldAddress ? "Unchanged" : newAddress)}, " +
+                $"PostalCode: {oldPostal} to {(string.IsNullOrWhiteSpace(newPostal) || newPostal == oldPostal ? "Unchanged" : newPostal)}, " +
+                $"City: {oldCity} to {(string.IsNullOrWhiteSpace(newCity) || newCity == oldCity ? "Unchanged" : newCity)}, " +
+                $"Country: {oldCountry} to {(string.IsNullOrWhiteSpace(newCountry) || newCountry == oldCountry ? "Unchanged" : newCountry)}, " +
+                $"Age: {oldAge} to {(newAge.HasValue && newAge.Value != oldAge ? newAge.Value : "Unchanged")}, " +
+                $"Username: {oldUsername} to {(string.IsNullOrWhiteSpace(newUsername) || newUsername == oldUsername ? "Unchanged" : newUsername)}, " +
+                $"Password: {(newPassword == oldPassword || string.IsNullOrWhiteSpace(newPassword) ? "Unchanged" : "Changed")}, " +
+                $"Role: {oldRole} to {(newRole.HasValue && newRole.Value != oldRole ? newRole.Value : "Unchanged")}"
+            );
+        }
     }
 
     public async Task DeleteCustomerAsync()
@@ -172,7 +204,10 @@ public class CustomerService : ICustomerService
             db.Customers.Remove(customer);
 
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
+        {
             OutputHelper.ShowSuccess("The customer was deleted successfully!");
+            await LogHelper.LogAsync(db, "DeleteUser", $"Customer deleted: {customer.FullName}");
+        }
     }
 
     private bool RequireAdminAccess()

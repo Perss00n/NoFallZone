@@ -62,7 +62,10 @@ public class ShippingOptionService : IShippingOptionService
         await db.ShippingOptions.AddAsync(newShippingOption);
 
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
+        {
             OutputHelper.ShowSuccess("The shipping option has been added to the database!");
+            await LogHelper.LogAsync(db, "AddShippingOption", $"New shipping option added: {newShippingOption.Name}, Price: {newShippingOption.Price}");
+        }
     }
 
     public async Task EditShippingOptionAsync()
@@ -70,22 +73,32 @@ public class ShippingOptionService : IShippingOptionService
         if (!RequireAdminAccess()) return;
 
         var shippingOption = await ShippingSelector.ChooseShippingAsync(db);
-
         if (shippingOption == null) return;
+
+        string oldName = shippingOption.Name;
+        decimal oldPrice = shippingOption.Price;
 
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
 
-        string? newShippingName = ShippingOptionValidator.PromptOptionalName(shippingOption.Name!);
+        string? newShippingName = ShippingOptionValidator.PromptOptionalName(oldName);
         if (!string.IsNullOrWhiteSpace(newShippingName))
             shippingOption.Name = newShippingName;
 
-        decimal? newPrice = ShippingOptionValidator.PromptOptionalPrice(shippingOption.Price);
+        decimal? newPrice = ShippingOptionValidator.PromptOptionalPrice(oldPrice);
         if (newPrice.HasValue)
             shippingOption.Price = newPrice.Value;
 
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
+        {
             OutputHelper.ShowSuccess("The shipping option has been updated successfully!");
+            await LogHelper.LogAsync(
+                db,
+                "EditShippingOption",
+                $"Shipping option edited: {oldName} to {(string.IsNullOrWhiteSpace(newShippingName) || newShippingName == oldName ? "Unchanged" : newShippingName)}, " +
+                $"Price: {oldPrice:C} to {(newPrice.HasValue && newPrice.Value != oldPrice ? $"{newPrice.Value:C}" : "Unchanged")}"
+            );
+        }
     }
 
     public async Task DeleteShippingOptionAsync()
@@ -108,7 +121,10 @@ public class ShippingOptionService : IShippingOptionService
         db.ShippingOptions.Remove(shippingOption);
 
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
+        {
             OutputHelper.ShowSuccess("The shipping option has been deleted successfully!");
+            await LogHelper.LogAsync(db, "DeleteShippingOption", $"Shipping option deleted: {shippingOption.Name}");
+        }
     }
 
     private bool RequireAdminAccess()

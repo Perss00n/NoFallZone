@@ -5,8 +5,8 @@ public class Product
 
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
-    public decimal Price { get; set; }
-    public int Stock { get; set; }
+    public decimal Price { get; set; } = decimal.Zero;
+    public int Stock { get; set; } = 0;
     public bool IsFeatured { get; set; } = false;
 
     public int CategoryId { get; set; }

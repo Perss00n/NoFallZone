@@ -58,8 +58,12 @@ namespace NoFallZone.Services.Implementations
 
            await db.Suppliers.AddAsync(newSupplier);
 
+
             if (await DatabaseHelper.TryToSaveToDbAsync(db))
+            {
                 OutputHelper.ShowSuccess("The Supplier has been added to the database!");
+                await LogHelper.LogAsync(db, "AddSupplier", $"New Supplier Added: {newSupplier.Name}");
+            }
 
         }
 
@@ -68,16 +72,19 @@ namespace NoFallZone.Services.Implementations
             if (!RequireAdminAccess()) return;
 
             var supplier = await SupplierSelector.ChooseSupplierAsync(db);
-
             if (supplier == null) return;
 
-            string? newSupplierName = SupplierValidator.PromptOptionalName(supplier.Name!);
+            string oldName = supplier.Name;
+
+            string? newSupplierName = SupplierValidator.PromptOptionalName(oldName);
             if (!string.IsNullOrWhiteSpace(newSupplierName))
                 supplier.Name = newSupplierName;
 
             if (await DatabaseHelper.TryToSaveToDbAsync(db))
+            {
                 OutputHelper.ShowSuccess("Supplier updated successfully!");
-
+                await LogHelper.LogAsync(db, "EditSupplier", $"Supplier edited: {oldName} to {(string.IsNullOrWhiteSpace(newSupplierName) || newSupplierName == oldName ? "Unchanged" : newSupplierName)}");
+            }
         }
 
         public async Task DeleteSupplierAsync()
@@ -100,7 +107,10 @@ namespace NoFallZone.Services.Implementations
             db.Suppliers.Remove(supplier);
 
             if (await DatabaseHelper.TryToSaveToDbAsync(db))
+            {
                 OutputHelper.ShowSuccess("Supplier deleted successfully!");
+                await LogHelper.LogAsync(db, "DeleteSupplier", $"Supplier Deleted: {supplier.Name}");
+            }
         }
 
 

@@ -88,6 +88,7 @@ public class ProductService : IProductService
             return;
         }
 
+        await LogHelper.LogAsync(db, "Search", $"A search was made with the keyword: {keyword}");
         var results = await db.Products
             .Where(p =>
                 p.Name.ToLower().Contains(keyword) ||
@@ -268,7 +269,10 @@ public class ProductService : IProductService
         await db.Products.AddAsync(product);
 
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
+        {
           OutputHelper.ShowSuccess("The product was added to the database!");
+          await LogHelper.LogAsync(db, "NewProduct", $"A new product was added in the category '{product.Category.Name}': {product.Name}");
+        }
     }
 
 
@@ -279,23 +283,28 @@ public class ProductService : IProductService
         var product = await ProductSelector.ChooseProductFromCategoryAsync(db);
         if (product == null) return;
 
+        string oldName = product.Name;
+        string oldDesc = product.Description;
+        decimal oldPrice = product.Price;
+        int oldStock = product.Stock;
+
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
-        Console.WriteLine($"\n=== Editing '{product.Name}' ===\n");
+        OutputHelper.ShowInfo($"\n=== Editing '{product.Name}' ===\n");
 
-        string? newName = ProductValidator.PromptOptionalName(product.Name);
+        string? newName = ProductValidator.PromptOptionalName(oldName);
         if (!string.IsNullOrWhiteSpace(newName))
             product.Name = newName;
 
-        string? newDesc = ProductValidator.PromptOptionalDescription(product.Description);
+        string? newDesc = ProductValidator.PromptOptionalDescription(oldDesc);
         if (!string.IsNullOrWhiteSpace(newDesc))
             product.Description = newDesc;
 
-        decimal? newPrice = ProductValidator.PromptOptionalPrice(product.Price);
+        decimal? newPrice = ProductValidator.PromptOptionalPrice(oldPrice);
         if (newPrice.HasValue)
             product.Price = newPrice.Value;
 
-        int? newStock = ProductValidator.PromptOptionalStock(product.Stock);
+        int? newStock = ProductValidator.PromptOptionalStock(oldStock);
         if (newStock.HasValue)
             product.Stock = newStock.Value;
 
@@ -304,7 +313,17 @@ public class ProductService : IProductService
         product.IsFeatured = ProductValidator.PromptConfirmation();
 
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
+        {
             OutputHelper.ShowSuccess("The product was updated successfully!");
+            await LogHelper.LogAsync(
+            db,
+            "EditProduct",
+            $"Product edited: {oldName} to {(string.IsNullOrWhiteSpace(newName)|| newName == oldName ? "Unchanged" : newName)}, " +
+            $"Price: {oldPrice:C} to {(newPrice.HasValue && newPrice.Value != oldPrice ? $"{newPrice.Value:C}" : "Unchanged")}, " +
+            $"Description: {oldDesc} to {(string.IsNullOrWhiteSpace(newDesc) || newDesc == oldDesc ? "Unchanged" : newDesc)}, " +
+            $"Stock: {oldStock} pcs to {(newStock.HasValue && newStock.Value != oldStock ? newStock.Value + " pcs" : "Unchanged")}"
+        );
+        }
     }
 
     public async Task DeleteProductAsync()
@@ -327,7 +346,10 @@ public class ProductService : IProductService
         db.Products.Remove(product);
 
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
+        {
             OutputHelper.ShowSuccess("The product was deleted successfully!");
+            await LogHelper.LogAsync(db, "DeleteProduct", $"Product deleted: {product.Name}");
+        }
     }
 
     private bool RequireAdminAccess()

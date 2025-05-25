@@ -5,7 +5,7 @@ using NoFallZone.Utilities.SessionManagement;
 namespace NoFallZone.Utilities.Helpers;
 public static class LogHelper
 {
-    public static async Task LogAsync(NoFallZoneContext db, string action, string? details = null)
+    public static async Task LogAsync(NoFallZoneContext db, string action, string description)
     {
         if (!Session.IsLoggedIn) return;
 
@@ -15,7 +15,7 @@ public static class LogHelper
             Role = Session.LoggedInUser.Role.ToString(),
             Action = action,
             Timestamp = DateTime.Now,
-            Details = details
+            Details = description
         };
 
         await db.ActivityLogs.AddAsync(log);
