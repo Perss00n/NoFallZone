@@ -133,7 +133,8 @@ namespace NoFallZone.Menu
                     "2. Add customer",
                     "3. Edit customer",
                     "4. Delete customer",
-                    "5. Return to Admin Menu"
+                    "5. View customer orderhistory",
+                    "6. Return to Admin Menu"
                  ];
 
                 Console.Clear();
@@ -142,7 +143,7 @@ namespace NoFallZone.Menu
 
                 var input = Console.ReadKey(true).Key;
 
-                if (input == ConsoleKey.D5)
+                if (input == ConsoleKey.D6)
                 {
                     inMenu = false;
                     continue;
@@ -293,7 +294,7 @@ namespace NoFallZone.Menu
             switch (input)
             {
                 case ConsoleKey.D1:
-                   await _productService.ShowProductsAsync(); return true;
+                   await _productService.ShowShopProductsAsync(); return true;
                 case ConsoleKey.D2:
                     await _productService.AddProductAsync(); return true;
                 case ConsoleKey.D3:
@@ -332,6 +333,8 @@ namespace NoFallZone.Menu
                     await _customerService.EditCustomerAsync(); return true;
                 case ConsoleKey.D4:
                     await _customerService.DeleteCustomerAsync(); return true;
+                case ConsoleKey.D5:
+                    await _customerService.ShowOrderHistoryAsync(); return true;
                 default: return false;
             }
         }

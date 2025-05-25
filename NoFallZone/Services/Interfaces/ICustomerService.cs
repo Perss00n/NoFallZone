@@ -5,4 +5,5 @@ public interface ICustomerService
     Task AddCustomerAsync();
     Task EditCustomerAsync();
     Task DeleteCustomerAsync();
+    Task ShowOrderHistoryAsync();
 }

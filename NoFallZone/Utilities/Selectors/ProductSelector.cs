@@ -28,9 +28,9 @@ public static class ProductSelector
         var lines = new List<string>();
 
         for (int i = 0; i < products.Count; i++)
-            lines.Add($"{i + 1}. {products[i].Name} || Price: {products[i].Price}");
+            lines.Add($"{i + 1}. Name: {products[i].Name} | Supplier: {products[i].Supplier.Name} | Price: {products[i].Price} | Stock: {products[i].Stock} {(products[i].IsFeatured ? "(DEAL)" : "")}");
 
-        GUI.DrawWindow($"Select a product from category '{category.Name}'", 1, 10, lines, 100);
+        GUI.DrawWindow($"Select a product from category '{category.Name}'", 1, 10, lines, 120);
 
         int productIndex = InputHelper.PromptInt("\nEnter product number", 1, products.Count,
             $"Please select a valid number from 1 to {products.Count}");

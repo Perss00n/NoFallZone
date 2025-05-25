@@ -1,13 +1,13 @@
-﻿using NoFallZone.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using NoFallZone.Data;
 using NoFallZone.Menu;
-using NoFallZone.Services.Interfaces;
-using NoFallZone.Utilities.Validators;
-using NoFallZone.Utilities.Selectors;
-using NoFallZone.Utilities.Helpers;
-using NoFallZone.Utilities.SessionManagement;
-using NoFallZone.Models.Enums;
 using NoFallZone.Models.Entities;
-using Microsoft.EntityFrameworkCore;
+using NoFallZone.Models.Enums;
+using NoFallZone.Services.Interfaces;
+using NoFallZone.Utilities.Helpers;
+using NoFallZone.Utilities.Selectors;
+using NoFallZone.Utilities.SessionManagement;
+using NoFallZone.Utilities.Validators;
 
 namespace NoFallZone.Services.Implementations;
 public class CustomerService : ICustomerService
@@ -38,10 +38,12 @@ public class CustomerService : ICustomerService
             return;
         }
 
-        int fromTop = 10;
         foreach (var c in customers)
         {
-            GUI.DrawWindow($"Customer: {c.FullName}", 1, fromTop, new List<string>
+            Console.Clear();
+            Console.WriteLine(DisplayHelper.ShowLogo());
+
+            var lines = new List<string>
         {
             $"ID:         {c.Id}",
             $"Name:       {c.FullName}",
@@ -54,9 +56,63 @@ public class CustomerService : ICustomerService
             $"Age:        {c.Age}",
             $"Username:   {c.Username}",
             $"Role:       {c.Role}"
-        }, 70);
+        };
 
-            fromTop += 13;
+            GUI.DrawWindow($"Customer: {c.FullName}", 1, 10, lines, 70);
+            Console.WriteLine("\nPress any key to view the next customer...");
+            Console.ReadKey(true);
+        }
+    }
+
+    public async Task ShowOrderHistoryAsync()
+    {
+        if (!RequireAdminAccess()) return;
+
+        var customer = await CustomerSelector.ChooseCustomerAsync(db);
+        if (customer == null) return;
+
+        var orders = await db.Orders
+            .Include(order => order.OrderItems)
+            .ThenInclude(order => order.Product)
+            .Include(order => order.PaymentOption)
+            .Include(order => order.ShippingOption)
+            .Where(order => order.CustomerId == customer.Id)
+            .OrderByDescending(order => order.OrderDate)
+            .ToListAsync();
+
+        Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
+
+        if (!orders.Any())
+        {
+            OutputHelper.ShowInfo($"{customer.FullName} has no orders.");
+            return;
+        }
+
+        foreach (var order in orders)
+        {
+            var lines = new List<string>
+        {
+            $"Order #{order.Id} - {order.OrderDate:G}",
+            $"Shipping: {order.ShippingOption!.Name} ({order.ShippingCost:C})",
+            $"Payment: {order.PaymentOption!.Name} (Fee: {order.PaymentOption.Fee:C})",
+            "Items:"
+        };
+
+            foreach (var item in order.OrderItems)
+            {
+                var dealTag = item.Product.IsFeatured ? "(DEAL)" : "";
+                lines.Add($" - {item.Quantity} x {item.Product.Name} ({item.PricePerUnit:C}) {dealTag}");
+            }
+
+            lines.Add(new string('-', 50));
+            lines.Add($"Total: {order.TotalPrice:C}");
+
+            Console.Clear();
+            Console.WriteLine(DisplayHelper.ShowLogo());
+            GUI.DrawWindow($"Order for {customer.FullName}", 1, 10, lines, 100);
+            Console.WriteLine("\nPress any key to view next order...");
+            Console.ReadKey(true);
         }
     }
 
@@ -201,7 +257,7 @@ public class CustomerService : ICustomerService
             OutputHelper.ShowInfo("Cancelled!");
             return;
         }
-            db.Customers.Remove(customer);
+        db.Customers.Remove(customer);
 
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
         {

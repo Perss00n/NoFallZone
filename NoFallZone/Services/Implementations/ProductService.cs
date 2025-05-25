@@ -20,47 +20,6 @@ public class ProductService : IProductService
         _cartService = cartService;
     }
 
-    public async Task ShowProductsAsync()
-    {
-        if (!RequireAdminAccess()) return;
-
-        Console.Clear();
-        var category =  await CategorySelector.ChooseCategoryAsync(db);
-        if (category == null) return;
-
-        var products = await db.Products
-            .Where(p => p.CategoryId == category.Id)
-            .Include(p => p.Supplier)
-            .ToListAsync();
-
-        Console.Clear();
-
-        if (products.Count == 0)
-        {
-            GUI.DrawWindow($"Products in {category.Name}", 1, 2,
-                new List<string> { "No products available in this category." },
-                70);
-            return;
-        }
-
-        int fromTop = 2;
-        foreach (var p in products)
-        {
-            GUI.DrawWindow($"Product: {p.Name}", 1, fromTop, new List<string>
-        {
-            $"ID:        {p.Id}",
-            $"Name:      {p.Name}",
-            $"Price:     {p.Price:C}",
-            $"Stock:     {p.Stock}",
-            $"Category:  {category.Name}",
-            $"Supplier:  {p.Supplier.Name}",
-            $"Featured:  {(p.IsFeatured == true ? "Yes" : "No")}"
-        }, 70);
-
-            fromTop += 10;
-        }
-    }
-
     public async Task ShowShopProductsAsync()
     {
         Console.Clear();
@@ -106,12 +65,21 @@ public class ProductService : IProductService
             return;
         }
 
-        var outputData = results
-            .Select((p, i) => $"{i + 1}. {p.Name} || {p.Category.Name} || {p.Price:C}")
-            .ToList();
+        var outputData = results.Select((p, i) =>
+        {
+            string index = (i + 1).ToString();
+            string name = p.Name;
+            string category = p.Category.Name;
+            string supplier = p.Supplier.Name;
+            string price = p.Price.ToString("C");
+            int stock = p.Stock;
+            string dealTag = p.IsFeatured ? "(DEAL)" : "";
+
+            return $"{index}. Name: {name} | Category: {category} | Supplier: {supplier} | Price: {price} | Stock: {stock} {dealTag}";
+        }).ToList();
 
         Console.WriteLine(DisplayHelper.ShowLogo());
-        GUI.DrawWindow("Matching products", 0, 10, outputData, 60);
+        GUI.DrawWindow("Matching products", 0, 10, outputData, 120);
 
         int index = InputHelper.PromptInt("\nEnter the number of the product you want to view the details of", 1, results.Count,
             $"Please enter a number from 1 to {results.Count}");
@@ -128,12 +96,13 @@ public class ProductService : IProductService
 
         var outputData = new List<string>
     {
-        $"Name:        {product.Name}",
-        $"Description: {product.Description}",
-        $"Price:       {product.Price:C}",
-        $"Stock:       {product.Stock}",
-        $"Category:    {product.Category.Name}",
-        $"Supplier:    {product.Supplier.Name}"
+        $"Name:             {product.Name}",
+        $"Description:      {product.Description}",
+        $"Price:            {product.Price:C}",
+        $"Stock:            {product.Stock}",
+        $"Category:         {product.Category.Name}",
+        $"Supplier:         {product.Supplier.Name}",
+        $"Featured Deal:    {(product.IsFeatured == true ? "Yes" : "No")}"
     };
 
         GUI.DrawWindow("Product Details", 20, 10, outputData, 80);
