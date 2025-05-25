@@ -77,9 +77,19 @@ public class OrderService : IOrderService
                     ProductId = product.Id,
                     Quantity = item.Quantity,
                     PricePerUnit = product.Price,
+                    WasDeal = product.IsFeatured
                 });
 
                 product.Stock -= item.Quantity;
+
+                if (product.IsFeatured)
+                {
+                    await LogHelper.LogAsync(
+                        db,
+                        "DealPurchase",
+                        $"{item.Quantity} x '{product.Name}' was purchased as a featured deal by {Session.LoggedInUser!.Username} on {DateTime.Now:g} (Unit price: {product.Price:C})"
+                    );
+                }
             }
 
             await db.Orders.AddAsync(order);
