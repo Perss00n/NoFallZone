@@ -43,8 +43,9 @@ public static class RegistrationHelper
         await db.Customers.AddAsync(customer);
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
         {
-            OutputHelper.ShowSuccess("Account created successfully!");
+            OutputHelper.ShowSuccess("Account created successfully! You have been logged in and are now redirected to the home page. Happy shopping!");
             Session.LoggedInUser = customer;
+            Console.ReadKey();
         }
     }
 }
