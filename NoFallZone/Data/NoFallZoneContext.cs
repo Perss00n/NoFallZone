@@ -15,6 +15,8 @@ public class NoFallZoneContext : DbContext
     public DbSet<ShippingOption> ShippingOptions { get; set; } = null!;
     public DbSet<OrderItem> OrderItems { get; set; } = null!;
     public DbSet<PaymentOption> PaymentOptions { get; set; } = null!;
+    public DbSet<ActivityLog> ActivityLogs { get; set; } = null!;
+
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

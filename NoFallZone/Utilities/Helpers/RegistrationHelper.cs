@@ -11,7 +11,7 @@ public static class RegistrationHelper
     {
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
-        Console.WriteLine("=== Register New Customer ===");
+        OutputHelper.ShowInfo("=== Register New Customer ===");
 
         string name = CustomerValidator.PromptName();
         string email = CustomerValidator.PromptEmail(db);
@@ -25,7 +25,7 @@ public static class RegistrationHelper
         string password = CustomerValidator.PromptPassword();
         Role role = Role.User;
 
-        var customer = new Customer
+        var newCustomer = new Customer
         {
             FullName = name,
             Email = email,
@@ -40,11 +40,12 @@ public static class RegistrationHelper
             Role = role
         };
 
-        await db.Customers.AddAsync(customer);
+        await db.Customers.AddAsync(newCustomer);
         if (await DatabaseHelper.TryToSaveToDbAsync(db))
         {
             OutputHelper.ShowSuccess("Account created successfully! You have been logged in and are now redirected to the home page. Happy shopping!");
-            Session.LoggedInUser = customer;
+            Session.LoggedInUser = newCustomer;
+            await LogHelper.LogAsync(db, "Register", $"New user registration: {newCustomer.FullName}");
             Console.ReadKey();
         }
     }

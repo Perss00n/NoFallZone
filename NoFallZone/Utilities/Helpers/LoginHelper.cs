@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NoFallZone.Data;
 using NoFallZone.Models.Entities;
+using NoFallZone.Utilities.SessionManagement;
 
 namespace NoFallZone.Utilities.Helpers;
 
@@ -28,13 +29,22 @@ public static class LoginHelper
             Console.WriteLine(DisplayHelper.ShowLogo());
             OutputHelper.ShowError("Login failed! Incorrect username or password");
             Thread.Sleep(1500);
+
+            await LogHelper.LogAnonymousAsync(db, "FailedLogin", $"Failed login attempt with username: {username}");
+
             return null;
         }
+
+        Session.LoggedInUser = customer;
 
         Console.Clear();
         Console.WriteLine(DisplayHelper.ShowLogo());
         OutputHelper.ShowInfo("".PadLeft(25) + $"Welcome back {customer.FullName}! You are now logged in as a {customer.Role}");
         Thread.Sleep(2000);
+
+        await LogHelper.LogAsync(db, "Login", $"{customer.FullName} successfully logged in to the shop");
+
         return customer;
     }
+
 }
