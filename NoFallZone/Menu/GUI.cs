@@ -1,7 +1,7 @@
 ﻿namespace NoFallZone.Menu;
 public class GUI
 {
-    public static void DrawWindow(string header, int fromLeft, int fromTop, List<string> graphic, int maxLineLength = 50)
+    public static void DrawWindow(string header, int fromLeft, int fromTop, List<string> graphic, int maxLineLength = 100)
     {
         List<string> wrappedLines = new List<string>();
         foreach (string line in graphic)

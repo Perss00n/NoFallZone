@@ -91,6 +91,7 @@ public class StartPage
             case ConsoleKey.D4: await _adminMenu!.ShowSupplierAdminMenuAsync(); return true;
             case ConsoleKey.D5: await _adminMenu!.ShowShippingOptionsAdminMenuAsync(); return true;
             case ConsoleKey.D6: await _adminMenu!.ShowPaymentOptionsAdminMenuAsync(); return true;
+            case ConsoleKey.D7: await _adminMenu!.ShowStatisticsAdminMenuAsync(); return true;
             default: return false;
         }
     }

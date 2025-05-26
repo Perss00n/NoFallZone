@@ -69,7 +69,7 @@ public class CartService : ICartService
     {
         string header = "Your Cart";
         int fromLeft = Session.IsUser ? 45 : 65;
-        int fromTop = 10;
+        int fromTop = 9;
 
         if (Session.Cart.Count == 0)
         {

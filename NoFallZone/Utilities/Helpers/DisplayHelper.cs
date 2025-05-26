@@ -40,7 +40,7 @@ public static class DisplayHelper
     {
         string header = "Customer Menu";
         int fromLeft = Session.IsUser ? 15 : 2;
-        int fromTop = 10;
+        int fromTop = 9;
 
         GUI.DrawWindow(header, fromLeft, fromTop, customerMenu.GetMenuItems());
     }
@@ -49,7 +49,7 @@ public static class DisplayHelper
     {
         string header = "Admin Menu";
         int fromLeft = 30;
-        int fromTop = 10;
+        int fromTop = 9;
 
         GUI.DrawWindow(header, fromLeft, fromTop, adminMenu.GetMenuItems());
     }

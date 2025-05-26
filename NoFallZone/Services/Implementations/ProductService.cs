@@ -47,7 +47,7 @@ public class ProductService : IProductService
             return;
         }
 
-        await LogHelper.LogAsync(db, "Search", $"A search was made with the keyword: {keyword}");
+        await LogHelper.LogAsync(db, "NewProductSearch", $"{keyword}");
         var results = await db.Products
             .Where(p =>
                 p.Name.ToLower().Contains(keyword) ||

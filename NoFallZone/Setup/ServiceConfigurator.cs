@@ -3,6 +3,7 @@ using NoFallZone.Data;
 using NoFallZone.Menu;
 using NoFallZone.Services.Implementations;
 using NoFallZone.Services.Interfaces;
+using NoFallZone.Services.Statistics;
 
 namespace NoFallZone.Setup;
 
@@ -20,6 +21,7 @@ public static class ServiceConfigurator
         services.AddScoped<IOrderService, OrderService>();
         services.AddScoped<IShippingOptionService, ShippingOptionService>();
         services.AddScoped<IPaymentOptionService, PaymentOptionService>();
+        services.AddScoped<IStatisticsService, StatisticsService>();
 
 
         services.AddScoped<AdminMenu>();

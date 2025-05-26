@@ -12,8 +12,9 @@ namespace NoFallZone.Menu
         private readonly ISupplierService _supplierService;
         private readonly IShippingOptionService _shippingOptionService;
         private readonly IPaymentOptionService _paymentOptionService;
+        private readonly IStatisticsService _statisticsService;
 
-        public AdminMenu(IProductService productService, ICustomerService customerService, ICategoryService categoryService, ISupplierService supplierService, IShippingOptionService shippingOptionService, IPaymentOptionService paymentOptionService)
+        public AdminMenu(IProductService productService, ICustomerService customerService, ICategoryService categoryService, ISupplierService supplierService, IShippingOptionService shippingOptionService, IPaymentOptionService paymentOptionService, IStatisticsService statisticsService)
         {
             _productService = productService;
             _customerService = customerService;
@@ -21,6 +22,7 @@ namespace NoFallZone.Menu
             _supplierService = supplierService;
             _shippingOptionService = shippingOptionService;
             _paymentOptionService = paymentOptionService;
+            _statisticsService = statisticsService;
         }
 
         public List<string> GetMenuItems()
@@ -32,7 +34,8 @@ namespace NoFallZone.Menu
                 "3. Manage customers",
                 "4. Manage suppliers",
                 "5. Manage Shipping Options",
-                "6. Manage Payment Options"
+                "6. Manage Payment Options",
+                "7. View Statistics"
         ];
         }
 
@@ -288,6 +291,50 @@ namespace NoFallZone.Menu
             }
         }
 
+        public async Task ShowStatisticsAdminMenuAsync()
+        {
+            bool inMenu = true;
+
+            while (inMenu)
+            {
+                int fromLeft = 0;
+                int fromTop = 10;
+                string header = "Statistics Menu";
+                List<string> lines = [
+                    "1. Show top 5 most sold products",
+                    "2. Show top 5 most popular categories",
+                    "3. Show how many deals bought as a 'Feautured Deal'",
+                    "4. Show purchases ordered by cities",
+                    "5. Show total sales by each supplier",
+                    "6. Show top 10 most searched keywords",
+                    "7. Return to Admin Menu"
+                ];
+
+                Console.Clear();
+                Console.WriteLine(DisplayHelper.ShowLogo());
+                GUI.DrawWindow(header, fromLeft, fromTop, lines);
+
+                var input = Console.ReadKey(true).Key;
+
+                if (input == ConsoleKey.D7)
+                {
+                    inMenu = false;
+                    continue;
+                }
+
+                bool isValidChoice = await HandleStatisticOptionsInputsAsync(input);
+
+                if (!isValidChoice)
+                {
+                    Console.Clear();
+                    OutputHelper.ShowError("Invalid choice!");
+                }
+
+                OutputHelper.ShowInfo("Press any key to continue...");
+                Console.ReadKey();
+            }
+        }
+
 
         private async Task<bool> HandleProductInputsAsync(ConsoleKey input)
         {
@@ -383,6 +430,26 @@ namespace NoFallZone.Menu
                     await _paymentOptionService.EditPaymentOptionAsync(); return true;
                 case ConsoleKey.D4:
                     await _paymentOptionService.DeletePaymentOptionAsync(); return true;
+                default: return false;
+            }
+        }
+
+        private async Task<bool> HandleStatisticOptionsInputsAsync(ConsoleKey input)
+        {
+            switch (input)
+            {
+                case ConsoleKey.D1:
+                    await _statisticsService.ShowMostSoldProductsAsync(); return true;
+                case ConsoleKey.D2:
+                    await _statisticsService.ShowTopCategoriesAsync(); return true;
+                case ConsoleKey.D3:
+                    await _statisticsService.ShowDealSalesCountAsync(); return true;
+                case ConsoleKey.D4:
+                    await _statisticsService.ShowOrdersByCityAsync(); return true;
+                case ConsoleKey.D5:
+                    await _statisticsService.ShowSalesBySupplierAsync(); return true;
+                case ConsoleKey.D6:
+                    await _statisticsService.ShowTopSearchKeywordsAsync(); return true;
                 default: return false;
             }
         }
