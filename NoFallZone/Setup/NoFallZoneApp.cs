@@ -20,6 +20,9 @@ public class NoFallZoneApp
 
         while (running)
         {
+            //await SeedData.ClearDatabaseAsync(_db);
+            //await SeedData.InitializeAsync(_db);
+
             Console.CursorVisible = false;
             DisplayHelper.ShowStartPage();
 
