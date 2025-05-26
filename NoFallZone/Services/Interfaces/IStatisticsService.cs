@@ -7,4 +7,8 @@ public interface IStatisticsService
     Task ShowOrdersByCityAsync();
     Task ShowSalesBySupplierAsync();
     Task ShowTopSearchKeywordsAsync();
+    Task ShowTopSellingProductsInCategoryAsync();
+    Task ShowMostCommonPaymentMethodAsync();
+    Task ShowMostActiveCustomersAsync();
+    Task ShowTopRevenueGeneratingProductsAsync();
 }

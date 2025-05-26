@@ -301,13 +301,17 @@ namespace NoFallZone.Menu
                 int fromTop = 10;
                 string header = "Statistics Menu";
                 List<string> lines = [
-                    "1. Show top 5 most sold products",
-                    "2. Show top 5 most popular categories",
+                    "1. Show top 10 most sold products",
+                    "2. Show top 10 most popular categories",
                     "3. Show how many deals bought as a 'Feautured Deal'",
                     "4. Show purchases ordered by cities",
                     "5. Show total sales by each supplier",
                     "6. Show top 10 most searched keywords",
-                    "7. Return to Admin Menu"
+                    "7. Show top selling products in a specific category",
+                    "8. Show most used payment methods",
+                    "9. Show top 10 customers who has placed the most orders",
+                    "R. Show products that has generated the most revenue",
+                    "Q. Return to Admin Menu"
                 ];
 
                 Console.Clear();
@@ -316,7 +320,7 @@ namespace NoFallZone.Menu
 
                 var input = Console.ReadKey(true).Key;
 
-                if (input == ConsoleKey.D7)
+                if (input == ConsoleKey.Q)
                 {
                     inMenu = false;
                     continue;
@@ -450,6 +454,14 @@ namespace NoFallZone.Menu
                     await _statisticsService.ShowSalesBySupplierAsync(); return true;
                 case ConsoleKey.D6:
                     await _statisticsService.ShowTopSearchKeywordsAsync(); return true;
+                case ConsoleKey.D7:
+                    await _statisticsService.ShowTopSellingProductsInCategoryAsync(); return true;
+                case ConsoleKey.D8:
+                    await _statisticsService.ShowMostCommonPaymentMethodAsync(); return true;
+                case ConsoleKey.D9:
+                    await _statisticsService.ShowMostActiveCustomersAsync(); return true;
+                case ConsoleKey.R:
+                    await _statisticsService.ShowTopRevenueGeneratingProductsAsync(); return true;
                 default: return false;
             }
         }
