@@ -69,14 +69,13 @@ public class ProductService : IProductService
         var outputData = results.Select((p, i) =>
         {
             string index = (i + 1).ToString();
-            string name = p.Name;
+            string name = OutputHelper.Truncate(p.Name, 40);
             string category = p.Category.Name;
-            string supplier = p.Supplier.Name;
             string price = p.Price.ToString("C");
             int stock = p.Stock;
             string dealTag = p.IsFeatured ? "(DEAL)" : "";
 
-            return $"{index}. Name: {name} | Category: {category} | Supplier: {supplier} | Price: {price} | Stock: {stock} {dealTag}";
+            return $"{index}. Name: {name} | Category: {category} | Price: {price} | Stock: {stock} {dealTag}";
         }).ToList();
 
         Console.WriteLine(DisplayHelper.ShowLogo());
@@ -183,8 +182,8 @@ public class ProductService : IProductService
             {
                 GUI.DrawWindow($"Deal {i + 1}", fromLeft, fromTop, new List<string>
             {
-                deal.Name,
-                deal.Description,
+                OutputHelper.Truncate(deal.Name, 33),
+                OutputHelper.Truncate(deal.Description, 135),
                 $"{deal.Price:C}",
                 $"{deal.Stock} pieces left in stock!",
                 "",

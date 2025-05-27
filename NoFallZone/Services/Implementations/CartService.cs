@@ -85,7 +85,7 @@ public class CartService : ICartService
         for (int i = 0; i < Session.Cart.Count; i++)
         {
             var item = Session.Cart[i];
-            lines.Add($"{item.Quantity} x {item.Product.Name} ({item.Product.Price:C} Each)");
+            lines.Add($"{item.Quantity} x {OutputHelper.Truncate(item.Product.Name, 27)} ({item.Product.Price:C} Each)");
         }
 
         lines.Add("------------------------");
@@ -223,7 +223,7 @@ public class CartService : ICartService
         {
             var item = Session.Cart[i];
             decimal total = item.Product.Price * item.Quantity;
-            lines.Add($"{i + 1}. {item.Quantity} x {item.Product.Name} ({item.Product.Price:C} each) = {total:C}");
+            lines.Add($"{i + 1}. {item.Quantity} x {OutputHelper.Truncate(item.Product.Name, 58)} ({item.Product.Price:C} each) = {total:C}");
         }
 
         lines.Add("------------------------");
