@@ -52,7 +52,8 @@ public class ProductService : IProductService
             .Where(p =>
                 p.Name.ToLower().Contains(keyword) ||
                 p.Description.ToLower().Contains(keyword) ||
-                (p.Supplier != null && p.Supplier.Name.ToLower().Contains(keyword)))
+                (p.Supplier != null && p.Supplier.Name.ToLower().Contains(keyword)) ||
+                (p.Category != null && p.Category.Name.ToLower().Contains(keyword)))
             .Include(p => p.Category)
             .Include(p => p.Supplier)
             .ToListAsync();

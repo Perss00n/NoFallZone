@@ -1,14 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NoFallZone.Models.Entities;
+﻿using NoFallZone.Models.Entities;
 using NoFallZone.Models.Enums;
+using NoFallZone.Utilities.Helpers;
 namespace NoFallZone.Data;
 public static class SeedData
 {
     public static async Task InitializeAsync(NoFallZoneContext db)
     {
-        if (!await db.Categories.AnyAsync())
+        Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
+
+        if (!InputHelper.PromptYesNo("\nAre you sure you want to populate the DB with info?", "Please enter 'Y' for yes and 'N' for no!"))
         {
-            var categories = new List<Category>
+            Console.Clear();
+            Console.WriteLine(DisplayHelper.ShowLogo());
+            OutputHelper.ShowInfo("The action was cancelled!");
+            return;
+        }
+        var categories = new List<Category>
         {
             new Category { Name = "Climbing Shoes" },
             new Category { Name = "Harnesses" },
@@ -20,13 +28,12 @@ public static class SeedData
             new Category { Name = "Slings & Runners" }
 
         };
-            db.Categories.AddRange(categories);
-            await db.SaveChangesAsync();
-        }
+        db.Categories.AddRange(categories);
+        await DatabaseHelper.TryToSaveToDbAsync(db);
 
-        if (!await db.Suppliers.AnyAsync())
-        {
-            var suppliers = new List<Supplier>
+
+
+        var suppliers = new List<Supplier>
         {
             new Supplier { Name = "Petzl" },
             new Supplier { Name = "Black Diamond" },
@@ -37,16 +44,11 @@ public static class SeedData
             new Supplier { Name = "Wild Country" },
             new Supplier { Name = "Blue Ice" }
         };
-            db.Suppliers.AddRange(suppliers);
-            await db.SaveChangesAsync();
-        }
+        db.Suppliers.AddRange(suppliers);
+        await DatabaseHelper.TryToSaveToDbAsync(db);
 
-        if (!await db.Products.AnyAsync())
-        {
-            var categories = await db.Categories.ToListAsync();
-            var suppliers = await db.Suppliers.ToListAsync();
 
-            var products = new List<Product>
+        var products = new List<Product>
         {
             new Product { Name = "La Sportiva Solution", Description = "Aggressive shoe ideal for overhanging routes.", Price = 2404, Stock = 12, CategoryId = categories[0].Id, SupplierId = suppliers[3].Id, IsFeatured = true },
             new Product { Name = "La Sportiva Miura", Description = "Precision shoe for vertical and overhanging routes.", Price = 1542, Stock = 10, CategoryId = categories[0].Id, SupplierId = suppliers[3].Id, IsFeatured = false },
@@ -97,13 +99,11 @@ public static class SeedData
             new Product { Name = "Petzl St’Anneau", Description = "Great for alpine anchors and extensions.", Price = 1403, Stock = 10, CategoryId = categories[7].Id, SupplierId = suppliers[0].Id, IsFeatured = false }
         };
 
-            db.Products.AddRange(products);
-            await db.SaveChangesAsync();
-        }
+        db.Products.AddRange(products);
+        await DatabaseHelper.TryToSaveToDbAsync(db);
 
-        if (!await db.ShippingOptions.AnyAsync())
-        {
-            var shippingOptions = new List<ShippingOption>
+
+        var shippingOptions = new List<ShippingOption>
         {
             new ShippingOption { Name = "Standard (3–5 business days)", Price = 59 },
             new ShippingOption { Name = "Express (1–2 business days)", Price = 99 },
@@ -112,13 +112,12 @@ public static class SeedData
             new ShippingOption { Name = "Home Delivery (4-5 business days)", Price = 149 },
             new ShippingOption { Name = "Free Shipping (5–7 business days, orders over 1000 kr)", Price = 0 }
         };
-            db.ShippingOptions.AddRange(shippingOptions);
-            await db.SaveChangesAsync();
-        }
+        db.ShippingOptions.AddRange(shippingOptions);
+        await DatabaseHelper.TryToSaveToDbAsync(db);
 
-        if (!await db.PaymentOptions.AnyAsync())
-        {
-            var paymentOptions = new List<PaymentOption>
+
+
+        var paymentOptions = new List<PaymentOption>
         {
             new PaymentOption { Name = "Credit/Debit Card (Visa, MasterCard)", Fee = 10 },
             new PaymentOption { Name = "Swish (Mobile payment via BankID)", Fee = 0 },
@@ -126,13 +125,12 @@ public static class SeedData
             new PaymentOption { Name = "Invoice (14 days payment, via Klarna)", Fee = 19 },
             new PaymentOption { Name = "Direct Bank Transfer (Instant checkout)", Fee = 0 }
         };
-            db.PaymentOptions.AddRange(paymentOptions);
-            await db.SaveChangesAsync();
-        }
+        db.PaymentOptions.AddRange(paymentOptions);
+        await DatabaseHelper.TryToSaveToDbAsync(db);
 
-        if (!await db.Customers.AnyAsync())
-        {
-            var customers = new List<Customer>
+
+
+        var customers = new List<Customer>
     {
         new Customer
         {
@@ -275,18 +273,11 @@ public static class SeedData
             Role = Role.User
         }
     };
-            db.Customers.AddRange(customers);
-            await db.SaveChangesAsync();
-        }
+        db.Customers.AddRange(customers);
+        await DatabaseHelper.TryToSaveToDbAsync(db);
 
-        if (!await db.Orders.AnyAsync())
-        {
-            var products = await db.Products.ToListAsync();
-            var customers = await db.Customers.ToListAsync();
-            var shippingOptions = await db.ShippingOptions.ToListAsync();
-            var paymentOptions = await db.PaymentOptions.ToListAsync();
 
-            var orders = new List<Order>
+        var orders = new List<Order>
         {
             new Order
             {
@@ -369,14 +360,25 @@ public static class SeedData
             }
         };
 
-            db.Orders.AddRange(orders);
-            await db.SaveChangesAsync();
-        }
+        db.Orders.AddRange(orders);
+
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
+            OutputHelper.ShowSuccess("The database has successfully been filled with some example data!");
     }
 
 
     public static async Task ClearDatabaseAsync(NoFallZoneContext db)
     {
+        Console.Clear();
+        Console.WriteLine(DisplayHelper.ShowLogo());
+        if (!InputHelper.PromptYesNo("\nAre you sure you want to clear the database?", "Please enter 'Y' for yes and 'N' for no!"))
+        {
+            Console.Clear();
+            Console.WriteLine(DisplayHelper.ShowLogo());
+            OutputHelper.ShowInfo("The action was cancelled!");
+            return;
+        }
+
         db.OrderItems.RemoveRange(db.OrderItems);
         db.Orders.RemoveRange(db.Orders);
 
@@ -388,7 +390,10 @@ public static class SeedData
 
         db.ShippingOptions.RemoveRange(db.ShippingOptions);
         db.PaymentOptions.RemoveRange(db.PaymentOptions);
+        db.ActivityLogs.RemoveRange(db.ActivityLogs);
 
-        await db.SaveChangesAsync();
+        if (await DatabaseHelper.TryToSaveToDbAsync(db))
+            OutputHelper.ShowSuccess("The database was successfully cleared!");
     }
+
 }

@@ -23,7 +23,7 @@ public static class DisplayHelper
     public static void ShowStartPage()
     {
         string header = "=== Welcome To The Shop ===";
-        int fromLeft = 40;
+        int fromLeft = 15;
         int fromTop = 10;
         List<string> lines = [
           "[1] Log In",
@@ -33,6 +33,20 @@ public static class DisplayHelper
 
         Console.Clear();
         Console.WriteLine(ShowLogo());
+        GUI.DrawWindow(header, fromLeft, fromTop, lines);
+    }
+
+    public static void ShowSetupPage()
+    {
+        string header = "=== Database Setup ===";
+        int fromLeft = 60;
+        int fromTop = 10;
+        List<string> lines = [
+          "[P]opulate All Tables In DB With Info",
+          "[C]lear Database"
+        ];
+
+        
         GUI.DrawWindow(header, fromLeft, fromTop, lines);
     }
 

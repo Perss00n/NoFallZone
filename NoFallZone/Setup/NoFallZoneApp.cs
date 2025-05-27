@@ -20,11 +20,10 @@ public class NoFallZoneApp
 
         while (running)
         {
-            //await SeedData.ClearDatabaseAsync(_db);
-            //await SeedData.InitializeAsync(_db);
-
             Console.CursorVisible = false;
+            Console.WriteLine(DisplayHelper.ShowLogo());
             DisplayHelper.ShowStartPage();
+            DisplayHelper.ShowSetupPage();
 
             var choice = Console.ReadKey(true).Key;
 
@@ -68,6 +67,14 @@ public class NoFallZoneApp
                 await RegistrationHelper.RegisterNewCustomerAsync(_db);
                 if (Session.IsLoggedIn)
                     await _startPage.ShowAsync();
+                return true;
+
+            case ConsoleKey.P:
+                await SeedData.InitializeAsync(_db);
+                return true;
+
+            case ConsoleKey.C:
+                await SeedData.ClearDatabaseAsync(_db);
                 return true;
 
             default:
