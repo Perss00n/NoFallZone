@@ -8,7 +8,7 @@ public class Order
     public decimal ShippingCost { get; set; } = 0m;
     public int? PaymentOptionId { get; set; }
 
-    public string? PaymentOptionName { get; set; }
+    public string? PaymentOptionName { get; set; } = "Unknown";
     public PaymentOption? PaymentOption { get; set; }
 
     public int CustomerId { get; set; }
