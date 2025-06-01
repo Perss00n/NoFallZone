@@ -1,6 +1,6 @@
 # 🧗 NoFallZone – Climbing Gear Webshop (Console Edition)
 
-NoFallZone is a C# console-based webshop simulation built with **Entity Framework Core** and a layered architecture. It allows users to register, log in, browse and search for products, manage a cart, and place orders — all through a robust role-based system (User/Admin).  
+**NoFallZone** is a full-featured climbing gear store simulation built with **C#**, using **Entity Framework Core** and **.NET Core**. It allows users to register, log in, browse and search for products, manage a cart, and place orders — all through a robust role-based system (User/Admin).  
 This is a backend-focused project built as part of my backend development studies.
 
 ## 🔧 Tech Stack
